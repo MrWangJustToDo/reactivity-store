@@ -1,0 +1,46 @@
+{
+  "name": "v-r-store",
+  "version": "0.0.1",
+  "description": "a reactive store, make you write reactive logic in react app",
+  "main": "index.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "index.js",
+    "dist"
+  ],
+  "sideEffects": false,
+  "buildOptions": {
+    "input": "./src/index.ts",
+    "output": [
+      {
+        "dir": "./dist",
+        "entryFileNames": "cjs/index.js",
+        "format": "cjs",
+        "multiple": true,
+        "sourcemap": true
+      },
+      {
+        "dir": "./dist",
+        "entryFileNames": "esm/index.js",
+        "format": "esm",
+        "sourcemap": true
+      },
+      {
+        "dir": "./dist",
+        "entryFileNames": "umd/index.js",
+        "format": "umd",
+        "multiple": true,
+        "name": "React",
+        "sourcemap": true
+      }
+    ]
+  },
+  "keywords": [
+    "store reactive vue react"
+  ],
+  "dependencies": {
+    "@vue/shared": "^3",
+    "@vue/reactivity": "^3",
+    "react": "^17.0.2 || ^18.2.0"
+  }
+}
