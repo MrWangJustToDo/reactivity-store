@@ -16,7 +16,7 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className={inter.className}>
-          <h2>test v-r-store</h2>
+          <p>test v-r-store</p>
         </div>
         <Count />
       </main>

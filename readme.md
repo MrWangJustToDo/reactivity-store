@@ -15,12 +15,15 @@ const useCount = createStore(() => {
 });
 
 const App = () => {
-  const { refValue, changeRef } = useCount();
+  const { ref, change } = useCount((state) => ({
+    ref: state.refValue,
+    change: state.changeRef,
+  }));
 
   return (
     <div>
-      <p>{refValue}</p>
-      <button onClick={() => changeRef(refValue + 1)}>add</button>
+      <p>{ref}</p>
+      <button onClick={() => change(ref + 1)}>add</button>
     </div>
   );
 };

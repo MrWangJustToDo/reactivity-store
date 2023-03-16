@@ -62,7 +62,7 @@ export function internalCreateStore<T extends {}>(creator: () => T) {
   function useSelector(): ShallowUnwrapRef<T>;
   function useSelector<P extends any = any>(
     selector: (state: ShallowUnwrapRef<T>) => P,
-    isEquals?: (prevState, nextState) => boolean
+    isEquals?: (prevState: P, nextState: P) => boolean
   ): P;
   function useSelector<P extends any = any>(
     selector?: (state: ShallowUnwrapRef<T>) => P,

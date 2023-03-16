@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "rootDir": "src",
-    "target": "ES5"
+    "target": "ES6",
+    "moduleResolution": "node"
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

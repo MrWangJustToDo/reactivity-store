@@ -1,14 +1,18 @@
 import { useCount } from "@/store/count";
+import { shallow } from "v-r-store";
 
 const Count1 = () => {
-  const { countRef, changeRef } = useCount();
+  const { count, change } = useCount((state) => ({
+    count: state.countRef,
+    change: state.changeRef,
+  }), shallow);
   console.log("run");
 
   return (
     <div>
       <p>count1</p>
-      <p>value: {countRef}</p>
-      <button onClick={() => changeRef(countRef + 1)}>add</button>
+      <p>value: {count}</p>
+      <button onClick={() => change(count + 1)}>add</button>
     </div>
   );
 };
