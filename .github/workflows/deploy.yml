@@ -19,8 +19,8 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
-          cache: pnpm
+          node-version: 18
+          cache: "pnpm"
       - run: pnpm install
       - run: pnpm run build:packages
       - name: Build
