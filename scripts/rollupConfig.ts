@@ -66,44 +66,24 @@ const transformBuildOptions = (
     multipleOther?: RollupOptions;
     multipleUMD?: RollupOptions;
   } = {};
-  if (
-    typeof options.input === "string" &&
-    !options.input.startsWith(relativePath)
-  ) {
+  if (typeof options.input === "string" && !options.input.startsWith(relativePath)) {
     options.input = resolve(relativePath, options.input);
   }
   if (options.output) {
-    options.output = Array.isArray(options.output)
-      ? options.output
-      : [options.output];
-    const singleConfig = options.output.filter(
-      (output: MultipleOutput) => !output.multiple
-    );
-    const singleOtherConfig = singleConfig.filter(
-      (output) => output.format !== "umd"
-    );
-    const singleUMDConfig = singleConfig.filter(
-      (output) => output.format === "umd"
-    );
-    const multipleConfig = options.output.filter(
-      (output: MultipleOutput) => output.multiple
-    );
-    const multipleOtherConfig = multipleConfig.filter(
-      (output) => output.format !== "umd"
-    );
-    const multipleUMDConfig = multipleConfig.filter(
-      (output) => output.format === "umd"
-    );
+    options.output = Array.isArray(options.output) ? options.output : [options.output];
+    const singleConfig = options.output.filter((output: MultipleOutput) => !output.multiple);
+    const singleOtherConfig = singleConfig.filter((output) => output.format !== "umd");
+    const singleUMDConfig = singleConfig.filter((output) => output.format === "umd");
+    const multipleConfig = options.output.filter((output: MultipleOutput) => output.multiple);
+    const multipleOtherConfig = multipleConfig.filter((output) => output.format !== "umd");
+    const multipleUMDConfig = multipleConfig.filter((output) => output.format === "umd");
     options.output = options.output.map((output: MultipleOutput) => {
       if (output.dir && !output.dir.startsWith(relativePath)) {
         output.dir = resolve(relativePath, output.dir);
         if (output.multiple) {
           const typedEntryFileNames = output.entryFileNames as string;
           const lastIndexofDote = typedEntryFileNames.lastIndexOf(".");
-          output.entryFileNames = `${typedEntryFileNames.slice(
-            0,
-            lastIndexofDote
-          )}.${mode}${typedEntryFileNames.slice(lastIndexofDote)}`;
+          output.entryFileNames = `${typedEntryFileNames.slice(0, lastIndexofDote)}.${mode}${typedEntryFileNames.slice(lastIndexofDote)}`;
           delete output.multiple;
         }
       }
@@ -112,10 +92,7 @@ const transformBuildOptions = (
         if (output.multiple) {
           const typedEntryFileNames = output.file as string;
           const lastIndexofDote = typedEntryFileNames.lastIndexOf(".");
-          output.file = `${typedEntryFileNames.slice(
-            0,
-            lastIndexofDote
-          )}.${mode}${typedEntryFileNames.slice(lastIndexofDote)}`;
+          output.file = `${typedEntryFileNames.slice(0, lastIndexofDote)}.${mode}${typedEntryFileNames.slice(lastIndexofDote)}`;
           delete output.multiple;
         }
       }
@@ -138,9 +115,7 @@ const transformBuildOptions = (
           commonjs({ exclude: "node_modules" }),
           replace({
             __DEV__: 'process.env.NODE_ENV === "development"',
-            __VERSION__: JSON.stringify(
-              packageFileObject["version"] || "0.0.1"
-            ),
+            __VERSION__: JSON.stringify(packageFileObject["version"] || "0.0.1"),
             preventAssignment: true,
           }),
           tsConfig(relativePath, mode),
@@ -152,23 +127,22 @@ const transformBuildOptions = (
       allOptions.singleUMD = {
         ...options,
         output: singleUMDConfig,
-        // external: (id) => {
-        //   if (packageFileObject["name"] === "@v-r-store/core")
-        //     return (
-        //       id.endsWith("@my-react/react") ||
-        //       id.endsWith("@my-react/react-reactive")
-        //     );
-        //   if (packageFileObject["name"] === "@my-react/react-reactive")
-        //     return id.endsWith("@my-react/react");
-        // },
+        external: (id) => {
+          return id.endsWith("react");
+          // if (packageFileObject["name"] === "@v-r-store/core")
+          //   return (
+          //     id.endsWith("@my-react/react") ||
+          //     id.endsWith("@my-react/react-reactive")
+          //   );
+          // if (packageFileObject["name"] === "@my-react/react-reactive")
+          //   return id.endsWith("@my-react/react");
+        },
         plugins: [
           nodeResolve(),
           commonjs({ exclude: "node_modules" }),
           replace({
             __DEV__: 'process.env.NODE_ENV === "development"',
-            __VERSION__: JSON.stringify(
-              packageFileObject["version"] || "0.0.1"
-            ),
+            __VERSION__: JSON.stringify(packageFileObject["version"] || "0.0.1"),
             preventAssignment: true,
           }),
           tsConfig(relativePath, mode),
@@ -186,9 +160,7 @@ const transformBuildOptions = (
           commonjs({ exclude: "node_modules" }),
           replace({
             __DEV__: mode === "development",
-            __VERSION__: JSON.stringify(
-              packageFileObject["version"] || "0.0.1"
-            ),
+            __VERSION__: JSON.stringify(packageFileObject["version"] || "0.0.1"),
             preventAssignment: true,
           }),
           tsConfig(relativePath, mode),
@@ -200,24 +172,23 @@ const transformBuildOptions = (
       allOptions.multipleUMD = {
         ...options,
         output: multipleUMDConfig,
-        // external: (id) => {
-        //   if (packageFileObject["name"] === "@my-react/react-dom")
-        //     return (
-        //       id.endsWith("@my-react/react") ||
-        //       id.endsWith("@my-react/react-reactive")
-        //     );
-        //   if (packageFileObject["name"] === "@my-react/react-reactive")
-        //     return id.endsWith("@my-react/react");
-        // },
+        external: (id) => {
+          return id.endsWith("react");
+          // if (packageFileObject["name"] === "@my-react/react-dom")
+          //   return (
+          //     id.endsWith("@my-react/react") ||
+          //     id.endsWith("@my-react/react-reactive")
+          //   );
+          // if (packageFileObject["name"] === "@my-react/react-reactive")
+          //   return id.endsWith("@my-react/react");
+        },
         plugins: [
           nodeResolve(),
           commonjs({ exclude: "node_modules" }),
           replace({
             __DEV__: mode === "development",
             ["process.env.NODE_ENV"]: JSON.stringify(mode),
-            __VERSION__: JSON.stringify(
-              packageFileObject["version"] || "0.0.1"
-            ),
+            __VERSION__: JSON.stringify(packageFileObject["version"] || "0.0.1"),
             preventAssignment: true,
           }),
           tsConfig(relativePath, mode),
@@ -229,10 +200,7 @@ const transformBuildOptions = (
   return allOptions;
 };
 
-export const getRollupConfig = async (
-  packageName: string,
-  packageScope = "packages"
-) => {
+export const getRollupConfig = async (packageName: string, packageScope = "packages") => {
   const modes: Mode[] = ["development", "production"];
 
   const relativePath = resolve(process.cwd(), packageScope, packageName);
@@ -257,20 +225,11 @@ export const getRollupConfig = async (
     rollupConfig = packageFileObject["buildOptions"] as RollupOptions;
   }
 
-  if (!rollupConfig.input)
-    throw new Error(`current package ${packageName} not have a input config`);
+  if (!rollupConfig.input) throw new Error(`current package ${packageName} not have a input config`);
 
-  if (!rollupConfig.output)
-    throw new Error(`current package ${packageName} not have a output config`);
+  if (!rollupConfig.output) throw new Error(`current package ${packageName} not have a output config`);
 
-  const allRollupOptions = modes.map((mode) =>
-    transformBuildOptions(
-      cloneDeep(rollupConfig),
-      packageFileObject,
-      relativePath,
-      mode
-    )
-  );
+  const allRollupOptions = modes.map((mode) => transformBuildOptions(cloneDeep(rollupConfig), packageFileObject, relativePath, mode));
 
   const allDevBuild = allRollupOptions[0];
 

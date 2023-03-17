@@ -5,12 +5,7 @@ import { getRollupConfig } from "./rollupConfig";
 import type { packages } from "./type";
 import type { RollupOptions } from "rollup";
 
-const watch = (
-  packageName: string,
-  rollupOptions: RollupOptions,
-  mode: string,
-  isUMD: boolean
-) => {
+const watch = (packageName: string, rollupOptions: RollupOptions, mode: string, isUMD: boolean) => {
   rollupOptions.watch = {
     buildDelay: 100,
   };
@@ -21,37 +16,23 @@ const watch = (
     if (event.code === "BUNDLE_START") {
       // look like rollup watch have a bug for some usage
 
-      console.log(
-        `[watch] start build package ${packageName} with ${mode} mode ${
-          isUMD ? "in umd format" : ""
-        }`
-      );
+      console.log(`[watch] start build package ${packageName} with ${mode} mode ${isUMD ? "in umd format" : ""}`);
     }
     if (event.code === "BUNDLE_END") {
       if (event.result) event.result.close();
 
-      console.log(
-        `[watch] package ${packageName} with ${mode} mode ${
-          isUMD ? "in umd format" : ""
-        } build success!`
-      );
+      console.log(`[watch] package ${packageName} with ${mode} mode ${isUMD ? "in umd format" : ""} build success!`);
     }
     if (event.code === "ERROR") {
       if (event.result) event.result.close();
 
-      console.log(
-        `[watch] package ${packageName} with ${mode} mode ${
-          isUMD ? "in umd format" : ""
-        } build error \n ${event.error.stack}`
-      );
+      console.log(`[watch] package ${packageName} with ${mode} mode ${isUMD ? "in umd format" : ""} build error \n ${event.error.stack}`);
     }
   });
 };
 
 const rollupWatch = async (packageName: packages) => {
-  const { allOtherDev, allUMDDev, allSingleOther } = await getRollupConfig(
-    packageName
-  );
+  const { allOtherDev, allUMDDev, allSingleOther } = await getRollupConfig(packageName);
 
   if (allOtherDev) {
     watch(packageName, allOtherDev, "development", false);
@@ -66,4 +47,4 @@ const rollupWatch = async (packageName: packages) => {
   }
 };
 
-rollupWatch("v-r-store");
+rollupWatch("r-store");

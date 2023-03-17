@@ -5,50 +5,24 @@ import { getRollupConfig } from "./rollupConfig";
 import type { packages } from "./type";
 import type { OutputOptions, RollupOptions, RollupBuild } from "rollup";
 
-const build = async (
-  packageName: string,
-  rollupOptions: RollupOptions,
-  mode: string,
-  isUMD: boolean
-) => {
-  console.log(
-    `[build] start build package '${packageName}' with ${mode} mode ${
-      isUMD ? "in umd format" : ""
-    }`
-  );
+const build = async (packageName: string, rollupOptions: RollupOptions, mode: string, isUMD: boolean) => {
+  console.log(`[build] start build package '${packageName}' with ${mode} mode ${isUMD ? "in umd format" : ""}`);
   let bundle: RollupBuild | null = null;
   try {
     const { output, ...options } = rollupOptions;
     bundle = await rollup(options);
-    await Promise.all(
-      (output as OutputOptions[]).map((output) => bundle?.write(output))
-    );
+    await Promise.all((output as OutputOptions[]).map((output) => bundle?.write(output)));
   } catch (e) {
-    console.error(
-      `[build] build package '${packageName}' with ${mode} mode ${
-        isUMD ? "in umd format error" : "error"
-      } \n ${(e as Error).message}`
-    );
+    console.error(`[build] build package '${packageName}' with ${mode} mode ${isUMD ? "in umd format error" : "error"} \n ${(e as Error).message}`);
     throw e;
   } finally {
     await bundle?.close();
   }
-  console.log(
-    `[build] build package '${packageName}' with ${mode} mode ${
-      isUMD ? "in umd format success" : "success"
-    }`
-  );
+  console.log(`[build] build package '${packageName}' with ${mode} mode ${isUMD ? "in umd format success" : "success"}`);
 };
 
 const rollupBuild = async (packageName: packages, packageScope?: string) => {
-  const {
-    allOtherDev,
-    allOtherProd,
-    allSingleOther,
-    allSingleUMD,
-    allUMDDev,
-    allUMDProd,
-  } = await getRollupConfig(packageName, packageScope);
+  const { allOtherDev, allOtherProd, allSingleOther, allSingleUMD, allUMDDev, allUMDProd } = await getRollupConfig(packageName, packageScope);
 
   const all = [];
 
@@ -80,7 +54,7 @@ const rollupBuild = async (packageName: packages, packageScope?: string) => {
 };
 
 const start = async () => {
-  await rollupBuild("v-r-store");
+  await rollupBuild("r-store");
   process.exit(0);
 };
 

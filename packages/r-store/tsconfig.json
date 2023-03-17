@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "target": "ES6",
+    "moduleResolution": "node"
+  },
+  "include": ["./src"],
+  "exclude": ["node_modules"]
+}

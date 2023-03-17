@@ -1,9 +1,13 @@
-## v-r-store
+# RStore
 
-this package provider a React store manage by Vue, that's mean we can use reactive api from Vue in the React component
+[![Deploy](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml/badge.svg)](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml)
+
+## A React state-management, just like use Vue
+
+a React state-management power by Reactive api, which mean you can use Vue Reactive api in React app, any change of the state will cause then UI update, you do not need add any `set` function !
 
 ```tsx
-import { createStore, reactive, ref, watch } from "v-r-store";
+import { createStore, reactive, ref, watch } from "r-store";
 
 // multipleStore
 const useCount = createStore(() => {
@@ -30,7 +34,7 @@ const App = () => {
 ```
 
 ```tsx
-import { createStoreWithLifeCycle, ref, onMounted, onUpdated } from "v-r-store";
+import { createStoreWithLifeCycle, ref, onMounted, onUpdated } from "r-store";
 
 // singleStore  TODO
 const useCount = createStoreWithLifeCycle(() => {
