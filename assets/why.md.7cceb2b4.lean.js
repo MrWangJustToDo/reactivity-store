@@ -1,0 +1,1 @@
+import{_ as e,o,c as t,N as a}from"./chunks/framework.f33099f8.js";const y=JSON.parse('{"title":"Why need RStore","description":"","frontmatter":{},"headers":[],"relativePath":"why.md"}'),n={name:"why.md"},r=a("",2),c=[r];function s(d,h,i,_,l,w){return o(),t("div",null,c)}const m=e(n,[["render",s]]);export{y as __pageData,m as default};
