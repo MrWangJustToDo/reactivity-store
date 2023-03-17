@@ -6,14 +6,12 @@ export const createStore = <T extends {} = any>(creator: () => T) => {
 
   function useSelectorWithDev(): ShallowUnwrapRef<T>;
   function useSelectorWithDev<P extends any = any>(
-    selector?: (state: ShallowUnwrapRef<T>) => P,
-    isEquals?: (prevState: P, nextState: P) => boolean
+    selector?: (state: ShallowUnwrapRef<T>) => P
   ): P;
   function useSelectorWithDev<P extends any = any>(
-    selector?: (state: ShallowUnwrapRef<T>) => P,
-    isEquals?: (prevState: P, nextState: P) => boolean
+    selector?: (state: ShallowUnwrapRef<T>) => P
   ) {
-    const re = useSelector<P>(selector, isEquals);
+    const re = useSelector<P>(selector);
 
     if (lifeCycleInstance.hasHookInstall) {
       console.warn(
@@ -30,20 +28,18 @@ export const createStore = <T extends {} = any>(creator: () => T) => {
 export const createStoreWithLifeCycle = <T extends {} = any>(
   creator: () => T
 ) => {
-  const { set, useSelector } = internalCreateStore(creator);
+  const { count, useSelector } = internalCreateStore(creator);
 
   function useSelectorWithDev(): ShallowUnwrapRef<T>;
   function useSelectorWithDev<P extends any = any>(
-    selector?: (state: ShallowUnwrapRef<T>) => P,
-    isEquals?: (prevState: P, nextState: P) => boolean
+    selector?: (state: ShallowUnwrapRef<T>) => P
   ): P;
   function useSelectorWithDev<P extends any = any>(
-    selector?: (state: ShallowUnwrapRef<T>) => P,
-    isEquals?: (prevState: P, nextState: P) => boolean
+    selector?: (state: ShallowUnwrapRef<T>) => P
   ) {
-    const re = useSelector<P>(selector, isEquals);
+    const re = useSelector<P>(selector);
 
-    if (set.size > 1) {
+    if (count > 1) {
       console.warn(
         "'createStoreWithLifeCycle' should only used in one component"
       );

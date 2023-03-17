@@ -5,8 +5,8 @@ export const useCount = createStore(() => {
   const reactiveObj = reactive({ a: { b: 1 } });
   const changeRef = (v: number) => (countRef.value = v);
   const changeReactiveField = (v: number) => (reactiveObj.a.b = v);
-  onBeforeMount(() => {
-    console.log("component will mount");
-  });
+  // onBeforeMount(() => {
+  //   console.log("component will mount");
+  // });
   return { countRef, changeRef, reactiveObj, changeReactiveField };
 });

@@ -1,11 +1,10 @@
 import { useCount } from "@/store/count";
-import { shallow } from "v-r-store";
 
 const Count1 = () => {
   const { count, change } = useCount((state) => ({
     count: state.countRef,
     change: state.changeRef,
-  }), shallow);
+  }));
   console.log("run");
 
   return (
@@ -34,12 +33,25 @@ const Count2 = () => {
   );
 };
 
+const Count3 = () => {
+  const obj = useCount((state) => state.reactiveObj);
+
+  return (
+    <div>
+      <p>count 3</p>
+      <p>obj test: {obj.a.b}</p>
+      <button onClick={() => obj.a.b++}>add</button>
+    </div>
+  );
+};
+
 export const Count = () => {
   return (
     <div>
       <p>reactive count example</p>
       <Count1 />
       <Count2 />
+      <Count3 />
     </div>
   );
 };

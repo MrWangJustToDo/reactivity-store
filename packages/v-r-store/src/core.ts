@@ -1,16 +1,6 @@
 import { proxyRefs, ReactiveEffect, ShallowUnwrapRef } from "@vue/reactivity";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import { traverse } from "./tools";
-
-const useSafeEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 type LifeCycle = {
   onBeforeMount: Array<() => void>;
@@ -26,6 +16,37 @@ type LifeCycle = {
   onUnmounted: Array<() => void>;
 
   hasHookInstall: boolean;
+};
+
+const useCallbackRef = <T extends any, K extends any>(
+  callback?: (arg: T) => K
+) => {
+  const callbackRef = useRef(callback);
+
+  callbackRef.current = callback;
+
+  const memoCallback = useCallback((arg: T) => {
+    if (callbackRef.current) {
+      const re = callbackRef.current(arg);
+      traverse(re);
+      return re;
+    } else {
+      traverse(arg);
+      return arg;
+    }
+  }, []);
+
+  return memoCallback;
+};
+
+const usePrevValue = <T extends any>(v: T) => {
+  const vRef = useRef(v);
+
+  useEffect(() => {
+    vRef.current = v;
+  }, [v]);
+
+  return vRef.current;
 };
 
 export let globalStoreLifeCycle: LifeCycle | null = null;
@@ -50,42 +71,22 @@ export function internalCreateStore<T extends {}>(creator: () => T) {
 
   const reactiveState = proxyRefs(state);
 
-  const set = new Set<() => void>();
-
-  const effect = new ReactiveEffect(
-    () => traverse(reactiveState),
-    () => set.forEach((f) => f())
-  );
-
-  effect.run();
+  let count = 0;
 
   function useSelector(): ShallowUnwrapRef<T>;
   function useSelector<P extends any = any>(
-    selector: (state: ShallowUnwrapRef<T>) => P,
-    isEquals?: (prevState: P, nextState: P) => boolean
+    selector: (state: ShallowUnwrapRef<T>) => P
   ): P;
   function useSelector<P extends any = any>(
-    selector?: (state: ShallowUnwrapRef<T>) => P,
-    isEquals?: (prevState: P, nextState: P) => boolean
+    selector?: (state: ShallowUnwrapRef<T>) => P
   ) {
     const [, forceUpdate] = useReducer((i) => i + 1, 0);
 
-    const selectorRef = useRef(selector);
+    const selectorRef = useCallbackRef(selector);
 
-    const reRef = useRef<P | ShallowUnwrapRef<T>>(null);
+    const prevSelect = usePrevValue(selector);
 
-    const prevReRef = useRef<P>(null);
-
-    selectorRef.current = selector;
-
-    prevReRef.current = reRef.current as P;
-
-    // initial
-    useMemo(() => {
-      reRef.current = selectorRef.current
-        ? selectorRef.current(reactiveState)
-        : reactiveState;
-    }, []);
+    const reRef = useRef(null);
 
     // beforeMount
     useMemo(() => {
@@ -98,20 +99,25 @@ export function internalCreateStore<T extends {}>(creator: () => T) {
       forceUpdate();
     }, []);
 
-    const subscribeCallback = useCallback(() => {
-      reRef.current = selectorRef.current
-        ? selectorRef.current(reactiveState)
-        : reactiveState;
-      if (reRef.current === reactiveState) {
-        forceUpdateCallback();
-        return;
-      }
-      const targetIsEquals = isEquals || Object.is;
-      if (!targetIsEquals(prevReRef.current, reRef.current as P)) {
-        forceUpdateCallback();
-        return;
-      }
+    const memoEffectInstance = useMemo(
+      () =>
+        new ReactiveEffect(
+          () => selectorRef(reactiveState),
+          () => forceUpdateCallback()
+        ),
+      []
+    );
+
+    // initial
+    useMemo(() => {
+      reRef.current = memoEffectInstance.run();
     }, []);
+
+    useMemo(() => {
+      if (prevSelect !== selector) {
+        reRef.current = memoEffectInstance.run();
+      }
+    }, [prevSelect, selector]);
 
     // mounted
     useEffect(() => {
@@ -134,14 +140,18 @@ export function internalCreateStore<T extends {}>(creator: () => T) {
       };
     }, []);
 
-    useSafeEffect(() => {
-      set.add(subscribeCallback);
-    }, []);
+    // clean effect
+    useEffect(() => () => memoEffectInstance.stop(), []);
 
-    useEffect(() => () => (set.delete(subscribeCallback), void 0), []);
+    useEffect(() => {
+      count++;
+      return () => {
+        count--;
+      };
+    }, []);
 
     return reRef.current;
   }
 
-  return { set, effect, state, lifeCycleInstance, useSelector };
+  return { count, state, lifeCycleInstance, useSelector };
 }
