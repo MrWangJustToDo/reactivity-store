@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "RStore",
-  base: "/MrWangJustToDo/r-store/",
+  base: "/MrWangJustToDo.io/r-store/",
   description: "A React state-management tool power by Reactive api",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
