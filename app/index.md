@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "RStore"
   text: "A React state-management tool power by Reactive api"
-  tagline: My great project tagline
+  tagline: coming soon...
   actions:
     - theme: brand
       text: Get Started
@@ -20,6 +20,6 @@ features:
   - title: Type safe
     details: All the Typescript, All the type safe.
   - title: Easy to use
-    details: Reactive api, just like use `Vue`.
+    details: Reactive api, just like `Vue`.
       Custom hook api, just like `Redux`.
 ---
