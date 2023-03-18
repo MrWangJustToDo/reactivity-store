@@ -4,6 +4,7 @@
 .eslintcache
 .DS_Store
 .vitepress/dist
+
 .vitepress/cache
 node_modules
 dev
