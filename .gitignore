@@ -3,9 +3,8 @@
 .cache
 .eslintcache
 .DS_Store
-.vitepress/dist
-
-.vitepress/cache
+/app/.vitepress/dist
+/app/.vitepress/cache
 node_modules
 dev
 dist
