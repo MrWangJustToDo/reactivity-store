@@ -72,7 +72,7 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
 
   const reactiveState = proxyRefs(state);
 
-  let count = 0;
+  const canUpdateComponent = { flag: true };
 
   function useSelector(): ShallowUnwrapRef<T>;
   function useSelector<P>(selector: (state: ShallowUnwrapRef<T>) => P): P;
@@ -85,76 +85,31 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
 
     const reRef = useRef(null);
 
-    const canUpdateRef = useRef(true);
-
-    // beforeMount
-    useMemo(() => {
-      lifeCycleInstance.onBeforeMount.forEach((f) => f());
-    }, []);
-
-    // beforeUpdate
     const forceUpdateCallback = useCallback(() => {
-      if (canUpdateRef.current) {
-        canUpdateRef.current = false;
-        lifeCycleInstance.onBeforeUpdate.forEach((f) => f());
-        canUpdateRef.current = true;
+      if (canUpdateComponent.flag) {
         forceUpdate();
       }
     }, []);
 
-    const memoEffectInstance = useMemo(
-      () =>
-        new ReactiveEffect(
-          () => selectorRef(reactiveState),
-          () => forceUpdateCallback()
-        ),
-      []
-    );
+    const memoEffectInstance = useMemo(() => new ReactiveEffect(() => selectorRef(reactiveState), forceUpdateCallback), []);
 
     // initial
     useMemo(() => {
       reRef.current = memoEffectInstance.run();
     }, []);
 
+    // if selector function change, rerun
     useMemo(() => {
       if (prevSelect !== selector) {
         reRef.current = memoEffectInstance.run();
       }
     }, [prevSelect, selector]);
 
-    // mounted
-    useEffect(() => {
-      lifeCycleInstance.onMounted.forEach((f) => f());
-    }, []);
-
-    // updated
-    // TODO
-    useEffect(() => {
-      lifeCycleInstance.onUpdated.forEach((f) => f());
-    });
-
-    // beforeUnmount & Unmounted
-    useEffect(() => {
-      return () => {
-        lifeCycleInstance.onBeforeUnmount.forEach((f) => f());
-        Promise.resolve().then(() => {
-          lifeCycleInstance.onUnmounted.forEach((f) => f());
-        });
-      };
-    }, []);
-
     // clean effect
     useEffect(() => () => memoEffectInstance.stop(), []);
-
-    useEffect(() => {
-      count++;
-      return () => {
-        count--;
-      };
-    }, []);
 
     return reRef.current;
   }
 
-  return { count, state, lifeCycleInstance, useSelector };
+  return { useSelector, lifeCycleInstance, canUpdateComponent };
 }
