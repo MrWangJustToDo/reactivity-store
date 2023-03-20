@@ -9,7 +9,7 @@ a React state-management power by Reactive api, which mean you can use Vue React
 ```tsx
 import { createStore, reactive, ref, watch } from "r-store";
 
-// multipleStore
+// simple reactive store
 const useCount = createStore(() => {
   const refValue = ref(0);
 
@@ -34,35 +34,41 @@ const App = () => {
 ```
 
 ```tsx
-import { createStoreWithLifeCycle, ref, onMounted, onUpdated } from "r-store";
+import { createStoreWithComponent, ref, onMounted, onUpdated } from "r-store";
 
-// singleStore  TODO
-const useCount = createStoreWithLifeCycle(() => {
-  const refValue = ref(0);
+// reactive store with component lifeCycle
+const Count = createStoreWithComponent({
+  setup: () => {
+    const refValue = ref(0);
 
-  const changeRef = (v) => (refValue.value = v);
+    const changeRef = (v) => (refValue.value = v);
 
-  onUpdated(() => {
-    console.log("component updated");
-  });
+    onUpdated(() => {
+      console.log("component updated");
+    });
 
-  onMounted(() => {
-    console.log("component mounted");
-  });
+    onMounted(() => {
+      console.log("component mounted");
+    });
 
-  return { refValue, changeRef };
+    return { refValue, changeRef };
+  },
 });
 
 const App = () => {
-  const { refValue, changeRef } = useCount();
-
   return (
     <div>
-      <p>{refValue}</p>
-      <button onClick={() => changeRef(refValue + 1)}>add</button>
+      <Count>
+        {({ refValue, changeRef }) => (
+          <>
+            <p>{refValue}</p>
+            <button onClick={() => changeRef(refValue + 1)}>add</button>
+          </>
+        )}
+      </Count>
     </div>
   );
 };
 ```
 
-still in progress ...
+TODO
