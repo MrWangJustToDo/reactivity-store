@@ -31,7 +31,15 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
       }
     }
 
-    return createElement(ForBeforeUnmount, null, createElement(ComponentWithLifeCycle, { ...props, ...state }));
+    if (lifeCycleInstance.hasHookInstall) {
+      return createElement(ForBeforeUnmount, null, createElement(ComponentWithLifeCycle, { ...props, ...state }));
+    } else {
+      const { children, ...last } = props;
+
+      const targetRender = (render || children) as CreateStoreWithComponentProps<P, T>["render"];
+
+      return targetRender?.({ ...last, ...state } as P & ShallowUnwrapRef<T>) || null;
+    }
   };
 
   type ClassProps = P & ShallowUnwrapRef<T> & { children?: CreateStoreWithComponentProps<P, T>["render"] };
