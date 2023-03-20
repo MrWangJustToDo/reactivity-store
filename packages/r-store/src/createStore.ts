@@ -1,4 +1,4 @@
-import { Component, createElement, Fragment, memo } from "react";
+import { Component, createElement, memo } from "react";
 
 import { internalCreateStore } from "./core";
 
@@ -31,7 +31,7 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
       }
     }
 
-    return createElement(ComponentWithLifeCycle, { ...props, ...state });
+    return createElement(ForBeforeUnmount, null, createElement(ComponentWithLifeCycle, { ...props, ...state }));
   };
 
   type ClassProps = P & ShallowUnwrapRef<T> & { children?: CreateStoreWithComponentProps<P, T>["render"] };
@@ -61,23 +61,29 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
 
       const targetRender = render || children;
 
-      return typeof targetRender === "function"
-        ? createElement(Fragment, null, targetRender(props as P & ShallowUnwrapRef<T>), createElement(OnlyForLifeCycle))
-        : null;
+      return createElement(ForBeforeMount, { children: targetRender?.(props as P & ShallowUnwrapRef<T>) || null });
     }
   }
 
-  class OnlyForLifeCycle extends Component {
-    componentDidMount(): void {
-      lifeCycleInstance.onBeforeMount.forEach((f) => f());
-    }
-
+  // parent component unmount will be invoked before children
+  class ForBeforeUnmount extends Component<{ children: ReactNode }> {
     componentWillUnmount(): void {
       lifeCycleInstance.onBeforeUnmount.forEach((f) => f());
     }
 
     render(): ReactNode {
-      return null;
+      return this.props.children;
+    }
+  }
+
+  // child component didMount will be invoked before parent
+  class ForBeforeMount extends Component<{ children: ReactNode }> {
+    componentDidMount(): void {
+      lifeCycleInstance.onBeforeMount.forEach((f) => f());
+    }
+
+    render(): ReactNode {
+      return this.props.children;
     }
   }
 
