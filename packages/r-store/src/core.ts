@@ -5,7 +5,7 @@ import { traverse } from "./tools";
 
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 
-type LifeCycle = {
+export type LifeCycle = {
   onBeforeMount: Array<() => void>;
 
   onMounted: Array<() => void>;
@@ -19,6 +19,8 @@ type LifeCycle = {
   onUnmounted: Array<() => void>;
 
   hasHookInstall: boolean;
+
+  canUpdateComponent: boolean;
 };
 
 const useCallbackRef = <T, K>(callback?: (arg: T) => K) => {
@@ -60,8 +62,8 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
     onMounted: [],
     onUpdated: [],
     onUnmounted: [],
-
     hasHookInstall: false,
+    canUpdateComponent: true,
   };
 
   globalStoreLifeCycle = lifeCycleInstance;
@@ -71,8 +73,6 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
   globalStoreLifeCycle = null;
 
   const reactiveState = proxyRefs(state);
-
-  const canUpdateComponent = { flag: true };
 
   function useSelector(): ShallowUnwrapRef<T>;
   function useSelector<P>(selector: (state: ShallowUnwrapRef<T>) => P): P;
@@ -86,7 +86,7 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
     const reRef = useRef(null);
 
     const forceUpdateCallback = useCallback(() => {
-      if (canUpdateComponent.flag) {
+      if (lifeCycleInstance.canUpdateComponent) {
         forceUpdate();
       }
     }, []);
@@ -111,5 +111,5 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
     return reRef.current;
   }
 
-  return { useSelector, lifeCycleInstance, canUpdateComponent };
+  return { useSelector, lifeCycleInstance };
 }

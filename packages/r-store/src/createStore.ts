@@ -1,7 +1,8 @@
-import { Component, createElement, memo } from "react";
+import { Component, createElement, useMemo } from "react";
 
 import { internalCreateStore } from "./core";
 
+import type { LifeCycle } from "./core";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode } from "react";
 
@@ -18,9 +19,10 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 
 export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) => {
   const { setup, render } = props;
-  const { useSelector, lifeCycleInstance, canUpdateComponent } = internalCreateStore(setup);
 
   const ComponentWithState = (props: P) => {
+    const { useSelector, lifeCycleInstance } = useMemo(() => internalCreateStore(setup), []);
+
     const state = useSelector();
 
     if (__DEV__) {
@@ -32,7 +34,10 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     }
 
     if (lifeCycleInstance.hasHookInstall) {
-      return createElement(ForBeforeUnmount, null, createElement(ComponentWithLifeCycle, { ...props, ...state }));
+      return createElement(ForBeforeUnmount, {
+        ["$$__instance__$$"]: lifeCycleInstance,
+        children: createElement(ComponentWithLifeCycle, { ...props, ...state, ["$$__instance__$$"]: lifeCycleInstance }),
+      });
     } else {
       const { children, ...last } = props;
 
@@ -42,41 +47,41 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     }
   };
 
-  type ClassProps = P & ShallowUnwrapRef<T> & { children?: CreateStoreWithComponentProps<P, T>["render"] };
+  type ClassProps = P & ShallowUnwrapRef<T> & { children?: CreateStoreWithComponentProps<P, T>["render"] } & { ["$$__instance__$$"]: LifeCycle };
 
   class ComponentWithLifeCycle extends Component<ClassProps> {
     componentDidMount(): void {
-      lifeCycleInstance.onMounted.forEach((f) => f());
+      this.props.$$__instance__$$.onMounted.forEach((f) => f());
     }
 
     componentDidUpdate(): void {
-      lifeCycleInstance.onUpdated.forEach((f) => f());
+      this.props.$$__instance__$$.onUpdated.forEach((f) => f());
     }
 
     componentWillUnmount(): void {
-      lifeCycleInstance.onUnmounted.forEach((f) => f());
+      this.props.$$__instance__$$.onUnmounted.forEach((f) => f());
     }
 
     shouldComponentUpdate(): boolean {
-      canUpdateComponent.flag = false;
-      lifeCycleInstance.onBeforeUpdate.forEach((f) => f());
-      canUpdateComponent.flag = true;
+      this.props.$$__instance__$$.canUpdateComponent = false;
+      this.props.$$__instance__$$.onBeforeUpdate.forEach((f) => f());
+      this.props.$$__instance__$$.canUpdateComponent = true;
       return true;
     }
 
     render(): ReactNode {
-      const { children, ...props } = this.props;
+      const { children, $$__instance__$$, ...props } = this.props;
 
       const targetRender = render || children;
 
-      return createElement(ForBeforeMount, { children: targetRender?.(props as P & ShallowUnwrapRef<T>) || null });
+      return createElement(ForBeforeMount, { ["$$__instance__$$"]: $$__instance__$$, children: targetRender?.(props as P & ShallowUnwrapRef<T>) || null });
     }
   }
 
   // parent component unmount will be invoked before children
-  class ForBeforeUnmount extends Component<{ children: ReactNode }> {
+  class ForBeforeUnmount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
     componentWillUnmount(): void {
-      lifeCycleInstance.onBeforeUnmount.forEach((f) => f());
+      this.props.$$__instance__$$.onBeforeUnmount.forEach((f) => f());
     }
 
     render(): ReactNode {
@@ -85,9 +90,9 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
   }
 
   // child component didMount will be invoked before parent
-  class ForBeforeMount extends Component<{ children: ReactNode }> {
+  class ForBeforeMount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
     componentDidMount(): void {
-      lifeCycleInstance.onBeforeMount.forEach((f) => f());
+      this.props.$$__instance__$$.onBeforeMount.forEach((f) => f());
     }
 
     render(): ReactNode {
@@ -95,5 +100,5 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     }
   }
 
-  return memo(ComponentWithState);
+  return ComponentWithState;
 };
