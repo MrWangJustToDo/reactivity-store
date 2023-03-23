@@ -7,9 +7,13 @@ import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode } from "react";
 
 export const createStore = <T extends Record<string, unknown>>(creator: () => T) => {
-  const { useSelector } = internalCreateStore(creator);
+  const { useSelector, updateStateWithoutReactiveUpdate } = internalCreateStore(creator);
 
-  return useSelector;
+  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate };
+
+  typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
+
+  return typedUseSelector;
 };
 
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
@@ -20,7 +24,7 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) => {
   const { setup, render } = props;
 
-  const ComponentWithState = (props: P) => {
+  const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<Q, T>["render"] }) => {
     const { useSelector, lifeCycleInstance } = useMemo(() => internalCreateStore(setup), []);
 
     const state = useSelector();
@@ -78,7 +82,6 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     }
   }
 
-  // parent component unmount will be invoked before children
   class ForBeforeUnmount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
     componentWillUnmount(): void {
       this.props.$$__instance__$$.onBeforeUnmount.forEach((f) => f());
@@ -89,7 +92,6 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     }
   }
 
-  // child component didMount will be invoked before parent
   class ForBeforeMount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
     componentDidMount(): void {
       this.props.$$__instance__$$.onBeforeMount.forEach((f) => f());

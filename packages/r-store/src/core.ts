@@ -111,5 +111,11 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
     return reRef.current;
   }
 
-  return { useSelector, lifeCycleInstance };
+  function updateStateWithoutReactiveUpdate(cb: (state: T) => void) {
+    lifeCycleInstance.canUpdateComponent = false;
+    cb(state);
+    lifeCycleInstance.canUpdateComponent = true;
+  }
+
+  return { useSelector, lifeCycleInstance, updateStateWithoutReactiveUpdate };
 }
