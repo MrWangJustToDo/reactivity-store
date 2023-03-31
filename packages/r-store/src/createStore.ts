@@ -24,7 +24,7 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) => {
   const { setup, render } = props;
 
-  const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<Q, T>["render"] }) => {
+  const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
     const { useSelector, lifeCycleInstance } = useMemo(() => internalCreateStore(setup), []);
 
     const state = useSelector();
@@ -45,7 +45,7 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     } else {
       const { children, ...last } = props;
 
-      const targetRender = (render || children) as CreateStoreWithComponentProps<P, T>["render"];
+      const targetRender = render || children;
 
       return targetRender?.({ ...last, ...state } as P & ShallowUnwrapRef<T>) || null;
     }

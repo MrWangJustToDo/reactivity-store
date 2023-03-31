@@ -4,7 +4,7 @@
 
 ## A React state-management, just like use Vue
 
-a React state-management power by Reactive api, which mean you can use Vue Reactive api in React app, any change of the state will cause then UI update, you do not need add any `set` function !
+a React state-management power by Reactive api, which mean you can use Vue Reactive api in React app, any change of the state will make then UI update automatic, you do not need add any `set` function !
 
 ```tsx
 import { createStore, reactive, ref, watch } from "r-store";
