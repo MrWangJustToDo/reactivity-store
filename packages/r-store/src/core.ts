@@ -1,6 +1,7 @@
 import { proxyRefs, ReactiveEffect } from "@vue/reactivity";
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 
+import { isServer } from "./env";
 import { traverse } from "./tools";
 
 import type { ShallowUnwrapRef } from "@vue/reactivity";
@@ -86,6 +87,9 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
     const reRef = useRef(null);
 
     const forceUpdateCallback = useCallback(() => {
+      if (__DEV__ && isServer) {
+        console.warn(`[r-store] unexpected update for r-store, should not update a r-store on the server!`);
+      }
       if (lifeCycleInstance.canUpdateComponent) {
         forceUpdate();
       }

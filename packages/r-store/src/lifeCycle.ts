@@ -4,7 +4,7 @@ import { globalStoreLifeCycle } from "./core";
 export const onMounted = (cb: () => void) => {
   if (!globalStoreLifeCycle)
     throw new Error(
-      "can not use 'onMount' outside of the 'createStoreWithComponent' function"
+      "can not use 'onMounted' outside of the 'createStoreWithComponent' function"
     );
 
   globalStoreLifeCycle.onMounted.push(cb);

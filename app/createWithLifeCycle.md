@@ -1,4 +1,4 @@
-# Create Store with LifeCycle <small>( experimental )</small>
+# Create Store with LifeCycle
 
 ## Description
 
