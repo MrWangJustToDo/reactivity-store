@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { createStoreWithComponent, ref, onMounted, onBeforeUpdate, onBeforeUnmount } from "r-store";
+import { createStoreWithComponent, ref, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted } from "r-store";
 import { onMounted as vue_OnMounted, onBeforeUnmount as vue_OnBeforeUnmount } from "vue";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
@@ -17,9 +17,11 @@ const Time = createStoreWithComponent({
       id = setInterval(() => (timeRef.value = new Date().toString()), 1000);
     });
 
-    onBeforeUpdate(() => updateCountRef.value++);
+    onBeforeUpdate(() => {
+      updateCountRef.value++
+    });
 
-    onBeforeUnmount(() => {
+    onUnmounted(() => {
       clearInterval(id);
     });
 
@@ -28,7 +30,7 @@ const Time = createStoreWithComponent({
 });
 
 const App = () => {
-  return React.createElement(
+  return React.createElement(React.StrictMode, null, React.createElement(
     "div",
     { className: "react_container" },
     React.createElement(Time, {
@@ -42,7 +44,7 @@ const App = () => {
         );
       },
     })
-  );
+  ));
 };
 
 let root: ReturnType<(typeof ReactDOM)["createRoot"]> | null = null;

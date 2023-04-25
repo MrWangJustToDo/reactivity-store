@@ -1,5 +1,5 @@
 import { proxyRefs, ReactiveEffect } from "@vue/reactivity";
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 
 import { isServer } from "./env";
 import { traverse } from "./tools";
@@ -24,7 +24,7 @@ export type LifeCycle = {
   canUpdateComponent: boolean;
 };
 
-const useCallbackRef = <T, K>(callback?: (arg: T) => K) => {
+export const useCallbackRef = <T, K>(callback?: (arg?: T) => K) => {
   const callbackRef = useRef(callback);
 
   callbackRef.current = callback;
@@ -43,7 +43,7 @@ const useCallbackRef = <T, K>(callback?: (arg: T) => K) => {
   return memoCallback;
 };
 
-const usePrevValue = <T>(v: T) => {
+export const usePrevValue = <T>(v: T) => {
   const vRef = useRef(v);
 
   useEffect(() => {
@@ -51,6 +51,14 @@ const usePrevValue = <T>(v: T) => {
   }, [v]);
 
   return vRef.current;
+};
+
+export const ueForceUpdate = () => {
+  const [, setState] = useState(0);
+
+  const forceUpdate = useCallback(() => setState((i) => i + 1), []);
+
+  return forceUpdate;
 };
 
 export let globalStoreLifeCycle: LifeCycle | null = null;
@@ -121,5 +129,9 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
     lifeCycleInstance.canUpdateComponent = true;
   }
 
-  return { useSelector, lifeCycleInstance, updateStateWithoutReactiveUpdate };
+  function getState() {
+    return state;
+  }
+
+  return { useSelector, lifeCycleInstance, updateStateWithoutReactiveUpdate, getState };
 }
