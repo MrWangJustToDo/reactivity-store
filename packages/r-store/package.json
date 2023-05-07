@@ -1,15 +1,25 @@
 {
   "name": "r-store",
   "version": "0.0.1",
+  "author": "MrWangJustToDo",
+  "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app",
   "main": "index.js",
   "module": "./dist/esm/index.js",
+  "unpkg": "./dist/umd/index.development.js",
+  "jsdelivr": "./dist/umd/index.development.js",
   "types": "./dist/types/index.d.ts",
   "files": [
     "index.js",
     "dist"
   ],
   "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrWangJustToDo/r-store.git",
+    "directory": "packages/r-store"
+  },
+  "homepage": "https://mrwangjusttodo.github.io/r-store",
   "buildOptions": {
     "input": "./src/index.ts",
     "output": [
