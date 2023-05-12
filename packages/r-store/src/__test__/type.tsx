@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, ref } from "..";
+import { createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted } from "..";
+
+import type { ReactiveApi } from "..";
 
 const Time = createStoreWithComponent({
-  setup: () => {
+  setup: ({ ref }) => {
     const timeRef = ref(new Date().toString());
     const updateCountRef = ref(0);
 
@@ -22,7 +24,7 @@ const Time = createStoreWithComponent({
   },
 });
 
-const setup = () => {
+const setup = ({ ref }: ReactiveApi) => {
   const timeRef = ref(new Date().toString());
   const updateCountRef = ref(0);
 

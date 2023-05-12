@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { createStoreWithComponent, ref, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted } from "r-store";
-import { onMounted as vue_OnMounted, onBeforeUnmount as vue_OnBeforeUnmount } from "vue";
+import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted } from "r-store";
+import { onMounted as vue_OnMounted, onBeforeUnmount as vue_OnBeforeUnmount, ref } from "vue";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 
 const divRef = ref<HTMLElement | null>(null);
 
 const Time = createStoreWithComponent({
-  setup: () => {
+  setup: ({ ref }) => {
     const timeRef = ref(new Date().toString());
     const updateCountRef = ref(0);
 

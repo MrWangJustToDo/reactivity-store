@@ -9,11 +9,11 @@ So `Vue` have a lifeCycle function in the `setup` step, can we use it in `React`
 ## Code Example
 
 ```tsx
-import { createStoreWithComponent, ref, reactive, onMounted, onBeforeUpdate, onBeforeUnmount } from "r-store";
+import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount } from "r-store";
 
 // just like `Vue` api
 const Time = createStoreWithComponent({
-  setup: () => {
+  setup: ({ ref }) => {
     const timeRef = ref(new Date().toString());
     const updateCountRef = ref(0);
 

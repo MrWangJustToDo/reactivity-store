@@ -1,13 +1,17 @@
+// `createStore` provider all the reactive api in the `creator` function
 import { ReactiveEffect, proxyRefs } from "@vue/reactivity";
 import { Component, createElement, useCallback, useMemo, useState } from "react";
 
-import { internalCreateStore, ueForceUpdate } from "./core";
+import { useForceUpdate } from "../shared";
 
-import type { LifeCycle } from "./core";
+import { internalCreateStore } from "./core";
+
+import type { Creator} from "./core";
+import type { LifeCycle} from "../shared";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode } from "react";
 
-export const createStore = <T extends Record<string, unknown>>(creator: () => T) => {
+export const createStore = <T extends Record<string, unknown>>(creator: Creator<T>) => {
   const { useSelector, updateStateWithoutReactiveUpdate } = internalCreateStore(creator);
 
   const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate };
@@ -18,7 +22,7 @@ export const createStore = <T extends Record<string, unknown>>(creator: () => T)
 };
 
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
-  setup: () => T;
+  setup: Creator<T>;
   render?: (props: P & ShallowUnwrapRef<T>) => JSX.Element;
 };
 
@@ -115,7 +119,7 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
 
     const state = useMemo(() => proxyRefs(getState()), []);
 
-    const update = ueForceUpdate();
+    const update = useForceUpdate();
 
     const forceUpdate = useCallback(() => {
       if (lifeCycleInstance.canUpdateComponent) {

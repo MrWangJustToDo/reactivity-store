@@ -7,10 +7,10 @@
 a React state-management power by Reactive api, which mean you can use Vue Reactive api in React app, any change of the state will make then UI update automatic, you do not need add any `set` function !
 
 ```tsx
-import { createStore, reactive, ref, watch } from "r-store";
+import { createStore } from "r-store";
 
 // simple reactive store
-const useCount = createStore(() => {
+const useCount = createStore(({ ref }) => {
   const refValue = ref(0);
 
   const changeRef = (v) => (refValue.value = v);
@@ -33,12 +33,23 @@ const App = () => {
 };
 ```
 
+<!-- ```tsx
+import { createState } from 'r-store';
+
+// simple reactive state
+const useCount = createState(() => {
+  let count = 0;
+
+
+})
+``` -->
+
 ```tsx
-import { createStoreWithComponent, ref, onMounted, onUpdated } from "r-store";
+import { createStoreWithComponent, onMounted, onUpdated } from "r-store";
 
 // reactive store with component lifeCycle
 const Count = createStoreWithComponent({
-  setup: () => {
+  setup: ({ ref }) => {
     const refValue = ref(0);
 
     const changeRef = (v) => (refValue.value = v);
@@ -70,5 +81,3 @@ const App = () => {
   );
 };
 ```
-
-TODO
