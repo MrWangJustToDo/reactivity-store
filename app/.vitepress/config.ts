@@ -9,7 +9,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
-      { text: "Usage", link: "/create" },
+      { text: "Usage", link: "/createStore" },
     ],
 
     sidebar: [
@@ -23,8 +23,9 @@ export default defineConfig({
       {
         text: "Usage",
         items: [
-          { text: "Create Store", link: "/create" },
-          { text: "Create Store with lifeCycle", link: "/createWithLifeCycle" },
+          { text: "Create Store", link: "/createStore" },
+          { text: "Create Store with lifeCycle", link: "/createStoreWithLifeCycle" },
+          { text: "Create State", link: "/createState" },
         ],
       },
       {

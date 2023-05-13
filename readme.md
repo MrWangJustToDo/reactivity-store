@@ -33,16 +33,33 @@ const App = () => {
 };
 ```
 
-<!-- ```tsx
-import { createState } from 'r-store';
+### `createState` support middleware
+
+```tsx
+import { createState, withPersist } from "r-store";
 
 // simple reactive state
 const useCount = createState(() => {
-  let count = 0;
+  return { data: { count: 0 } };
+});
 
+// simple reactive state with middleware
+const useCount = createState(withPersist(() => ({ data: { count: 0 } }), { key: "count" }));
 
-})
-``` -->
+// the createState have the same usage with createStore
+const App = () => {
+  const count = useCount((state) => state.data);
+
+  return (
+    <div>
+      <p>{count.count}</p>
+      <button onClick={() => count.count++}>add</button>
+    </div>
+  );
+};
+```
+
+### `createStoreWithComponent` support lifeCycle
 
 ```tsx
 import { createStoreWithComponent, onMounted, onUpdated } from "r-store";

@@ -21,5 +21,5 @@ features:
     details: All the Typescript, All the type safe.
   - title: Easy to use
     details: Reactive api, just like `Vue`.
-      Custom hook api, just like `Redux`.
+      Custom hook api, just like `Zustand`.
 ---

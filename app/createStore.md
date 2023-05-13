@@ -57,7 +57,7 @@ const App = () => {
 ## Online Example
 
 <script setup>
-  import Create from '@theme/components/create.vue'
+  import Create from '@theme/components/createStore.vue'
 </script>
 
 <Create />

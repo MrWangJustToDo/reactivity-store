@@ -1,1 +1,2 @@
-export * from './createState'
+export * from "./middleware";
+export * from "./createState";
