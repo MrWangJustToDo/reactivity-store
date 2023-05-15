@@ -21,6 +21,8 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
 
   const reactiveState = proxyRefs(state);
 
+  const getReactiveState = () => reactiveState;
+
   const useSelector = createHook(reactiveState, lifeCycleInstance);
 
   const updateStateWithoutReactiveUpdate = (cb: (state: T) => void) => {
@@ -29,5 +31,5 @@ export function internalCreateStore<T extends Record<string, unknown>>(creator: 
     lifeCycleInstance.canUpdateComponent = true;
   };
 
-  return { useSelector, lifeCycleInstance, updateStateWithoutReactiveUpdate, getState };
+  return { useSelector, lifeCycleInstance, updateStateWithoutReactiveUpdate, getState, getReactiveState };
 }

@@ -1,13 +1,13 @@
 // `createStore` provider all the reactive api in the `creator` function
-import { ReactiveEffect, proxyRefs } from "@vue/reactivity";
+import { ReactiveEffect } from "@vue/reactivity";
 import { Component, createElement, useCallback, useMemo, useState } from "react";
 
 import { useForceUpdate } from "../shared";
 
 import { internalCreateStore } from "./core";
 
-import type { Creator} from "./core";
-import type { LifeCycle} from "../shared";
+import type { Creator } from "./core";
+import type { LifeCycle } from "../shared";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode } from "react";
 
@@ -115,9 +115,9 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
   }
 
   const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
-    const [{ lifeCycleInstance, getState }] = useState(() => internalCreateStore(setup));
+    const [{ lifeCycleInstance, getReactiveState }] = useState(() => internalCreateStore(setup));
 
-    const state = useMemo(() => proxyRefs(getState()), []);
+    const state = useMemo(getReactiveState, []);
 
     const update = useForceUpdate();
 
