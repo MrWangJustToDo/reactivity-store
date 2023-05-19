@@ -8,7 +8,7 @@
 
 2. `createState` support middleware
 
-## Simple count Code Example
+## Simple Code Example
 
 ```tsx
 import { createState } from "r-store";

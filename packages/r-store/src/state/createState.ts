@@ -31,5 +31,5 @@ export const createState = <T extends Record<string, unknown>>(setup: Setup<T>) 
 
   typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
 
-  return useSelector;
+  return typedUseSelector;
 };

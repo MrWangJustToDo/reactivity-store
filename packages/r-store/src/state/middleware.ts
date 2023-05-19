@@ -43,44 +43,47 @@ export const withPersist = <T extends Record<string, unknown>>(setup: Setup<T>, 
     return () => {
       const initialState = setup();
 
-      const storage = options?.getStorage?.() || window.localStorage;
+      try {
+        const storage = options?.getStorage?.() || window.localStorage;
 
-      const storageStateString = storage.getItem(persistKey + options.key) as string;
+        const storageStateString = storage.getItem(persistKey + options.key) as string;
 
-      const storageState = JSON.parse(storageStateString) as StorageState;
+        const storageState = JSON.parse(storageStateString) as StorageState;
 
-      let re = initialState;
+        let re = initialState;
 
-      if (storageState?.version === (options.version || options.key) && storageState.data) {
-        try {
+        if (storageState?.version === (options.version || options.key) && storageState.data) {
           const cachedState = options?.parse?.(storageState.data) || JSON.parse(storageState.data);
-  
+
           re = options?.merge?.(initialState, cachedState) || Object.assign(initialState, cachedState);
-        } catch(e) {
-          console.error(`[r-store/persist] parse state error, error: ${e}`)
         }
-      }
 
-      re = reactive(re) as T;
+        re = reactive(re) as T;
 
-      new ReactiveEffect(
-        () => traverse(re),
-        debounce(() => {
-          try {
-            const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
+        new ReactiveEffect(
+          () => traverse(re),
+          debounce(() => {
+            try {
+              const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
 
-            const cache = { data: stringifyState, version: options.version || options.key };
+              const cache = { data: stringifyState, version: options.version || options.key };
 
-            storage.setItem(persistKey + options.key, JSON.stringify(cache));
-          } catch (e) {
-            if (__DEV__) {
-              console.error(`[r-store/persist] cache newState error, error: ${e}`);
+              storage.setItem(persistKey + options.key, JSON.stringify(cache));
+            } catch (e) {
+              if (__DEV__) {
+                console.error(`[r-store/persist] cache newState error, error: ${e}`);
+              }
             }
-          }
-        }, options.debounceTime || 40)
-      ).run();
+          }, options.debounceTime || 40)
+        ).run();
 
-      return re;
+        return re;
+      } catch (e) {
+        if (__DEV__) {
+          console.error(`[r-store/persist] middleware failed, error: ${e.message}`);
+        }
+        return initialState;
+      }
     };
   }
 };

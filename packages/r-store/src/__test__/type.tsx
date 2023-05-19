@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted } from "..";
+import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted } from "..";
 
 import type { ReactiveApi } from "..";
+
+const useCount = createState(() => ({ count: { data: 1 } }));
 
 const Time = createStoreWithComponent({
   setup: ({ ref }) => {

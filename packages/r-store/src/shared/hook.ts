@@ -52,7 +52,7 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
 
     const selectorRef = useSubscribeCallbackRef(selector);
 
-    const prevSelect = usePrevValue(selector);
+    const prevSelector = usePrevValue(selector);
 
     const reRef = useRef(null);
 
@@ -74,10 +74,10 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
 
     // if selector function change, rerun
     useMemo(() => {
-      if (prevSelect !== selector) {
+      if (prevSelector !== selector) {
         reRef.current = memoEffectInstance.run();
       }
-    }, [prevSelect, selector]);
+    }, [prevSelector, selector]);
 
     // clean effect
     useEffect(() => () => memoEffectInstance.stop(), []);

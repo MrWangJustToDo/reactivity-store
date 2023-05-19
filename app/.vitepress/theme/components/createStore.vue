@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { createStore/* , createState */ } from "r-store";
+import { createStore } from "r-store";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
@@ -11,11 +11,8 @@ const useCount = createStore(({ reactive }) => {
   return { reactiveCount };
 });
 
-// const useCountState = createState(() => ({ count: 1 }));
-
 const App = () => {
   const reactiveObj = useCount((state) => state.reactiveCount);
-  // const count = useCountState();
 
   return React.createElement(
     "div",
