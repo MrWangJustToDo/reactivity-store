@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted } from "r-store";
+import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted } from "reactivity-store";
 import { onMounted as vue_OnMounted, onBeforeUnmount as vue_OnBeforeUnmount, ref } from "vue";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";

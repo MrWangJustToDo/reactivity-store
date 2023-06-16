@@ -58,7 +58,7 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
 
     const forceUpdateCallback = useCallback(() => {
       if (__DEV__ && isServer) {
-        console.warn(`[r-store] unexpected update for r-store, should not update a r-store on the server!`);
+        console.warn(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server!`);
       }
       if (lifeCycle.canUpdateComponent) {
         forceUpdate();

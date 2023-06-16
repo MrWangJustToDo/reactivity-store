@@ -4,7 +4,7 @@ import { isServer, traverse } from "../shared";
 
 import type { Setup } from "./createState";
 
-const persistKey = "r-store/persist-";
+const persistKey = "reactivity-store/persist-";
 
 type StorageState = {
   version: string;
@@ -37,7 +37,7 @@ export const withPersist = <T extends Record<string, unknown>>(setup: Setup<T>, 
   } else {
     if (__DEV__) {
       console.warn(
-        `[r-store/persist] the persist middleware may cause hydrate error for 'React' app, because of the initialState what from server and client may do not have the same state`
+        `[reactivity-store/persist] the persist middleware may cause hydrate error for 'React' app, because of the initialState what from server and client may do not have the same state`
       );
     }
     return () => {
@@ -71,7 +71,7 @@ export const withPersist = <T extends Record<string, unknown>>(setup: Setup<T>, 
               storage.setItem(persistKey + options.key, JSON.stringify(cache));
             } catch (e) {
               if (__DEV__) {
-                console.error(`[r-store/persist] cache newState error, error: ${e}`);
+                console.error(`[reactivity-store/persist] cache newState error, error: ${e}`);
               }
             }
           }, options.debounceTime || 40)
@@ -80,7 +80,7 @@ export const withPersist = <T extends Record<string, unknown>>(setup: Setup<T>, 
         return re;
       } catch (e) {
         if (__DEV__) {
-          console.error(`[r-store/persist] middleware failed, error: ${e.message}`);
+          console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
         }
         return initialState;
       }

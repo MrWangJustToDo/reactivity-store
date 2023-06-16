@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { createState, withPersist } from "r-store";
+import { createState, withPersist } from "reactivity-store";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);

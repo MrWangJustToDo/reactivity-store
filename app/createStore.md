@@ -11,7 +11,7 @@ The hook which return by `createStore` can be used in the `React` component just
 ## Code Example
 
 ```tsx
-import { createStore } from "r-store";
+import { createStore } from "reactivity-store";
 
 // here we create a `count` store
 const useCount = createStore(({ reactive }) => {

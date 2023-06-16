@@ -11,7 +11,7 @@
 ## Simple Code Example
 
 ```tsx
-import { createState } from "r-store";
+import { createState } from "reactivity-store";
 
 const useCount = createState(() => {
   const data = { count: 0 };
@@ -44,7 +44,7 @@ const App = () => {
 ## Code Example with middleware
 
 ```tsx
-import { createState, withPersist } from "r-store";
+import { createState, withPersist } from "reactivity-store";
 
 const useCount = createState(
   withPersist(
