@@ -39,6 +39,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reactivity-store": "workspaces: *",
+    "search-insights": "^2.6.0",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
     "typescript": "^4.7.4",
