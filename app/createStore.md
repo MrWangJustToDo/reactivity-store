@@ -33,7 +33,7 @@ const App = () => {
 };
 ```
 
-::: warning
+<!-- ::: warning
 I recommend provide a memo select to the hook which pick the state if we do not need all of the store state, like:
 
 ```tsx
@@ -52,7 +52,7 @@ const App = () => {
 };
 ```
 
-:::
+::: -->
 
 ## Online Example
 

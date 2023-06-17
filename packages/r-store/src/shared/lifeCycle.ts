@@ -14,9 +14,11 @@ export type LifeCycle = {
   hasHookInstall: boolean;
 
   canUpdateComponent: boolean;
+
+  shouldRunSelector: boolean;
 };
 
-export const createLifeCycle = () => ({
+export const createLifeCycle = (): LifeCycle => ({
   onBeforeMount: [],
   onBeforeUpdate: [],
   onBeforeUnmount: [],
@@ -24,5 +26,7 @@ export const createLifeCycle = () => ({
   onUpdated: [],
   onUnmounted: [],
   hasHookInstall: false,
+  // a flag to make selector rerun when the state has been changed
+  shouldRunSelector: true,
   canUpdateComponent: true,
 });

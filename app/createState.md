@@ -6,7 +6,7 @@
 
 1. `createStore` need a `creator` function as params, and the `creator` function also have `ref`、`reactive`、`computed`... reactive api as params. `createState` also need a `setup` function as params, the different is `setup` function not have reactive params, only need return a plain object
 
-2. `createState` support middleware, currently `createState` support two middleware: 1. `withPersist` middleware support automatic sync state to the `localStorage` or `getStorage` provider in the `withPersist` options params. 2. `withActions` middleware support you define action for current `state`, and also can be get the action from `useSelector`.
+2. `createState` support middleware, currently `createState` support two middleware: 1. `withPersist` middleware support automatic sync state to the `localStorage` or `getStorage` provider in the `withPersist` options params. 2. `withActions` middleware support you define action for current `state`, and also can be get the action from `selector`.
 
 ## Simple Code Example
 

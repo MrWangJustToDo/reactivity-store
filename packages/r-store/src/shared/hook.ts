@@ -52,8 +52,6 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
 
     const selectorRef = useSubscribeCallbackRef(selector);
 
-    const prevSelector = usePrevValue(selector);
-
     const reRef = useRef(null);
 
     const forceUpdateCallback = useCallback(() => {
@@ -61,25 +59,18 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
         console.warn(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server!`);
       }
       if (lifeCycle.canUpdateComponent) {
+        lifeCycle.shouldRunSelector = true;
         forceUpdate();
       }
     }, []);
 
     const memoEffectInstance = useMemo(() => new ReactiveEffect(() => selectorRef(state), forceUpdateCallback), []);
 
-    // initial
-    useMemo(() => {
+    if (lifeCycle.shouldRunSelector) {
+      lifeCycle.shouldRunSelector = false;
       memoEffectInstance.run();
       reRef.current = selectorRef({ ...state, ...actions });
-    }, []);
-
-    // if selector function change, rerun
-    useMemo(() => {
-      if (prevSelector !== selector) {
-        memoEffectInstance.run();
-        reRef.current = selectorRef({ ...state, ...actions });
-      }
-    }, [prevSelector, selector]);
+    }
 
     // clean effect
     useEffect(() => () => memoEffectInstance.stop(), []);
