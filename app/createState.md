@@ -4,7 +4,7 @@
 
 `RStore` also provide a `createState` function, this function have some difference for `createStore`
 
-1. `createStore` need a `creator` function as params, and the `creator` function also have `ref`、`reactive`、`computed`... reactive api as params. `createState` also need a `setup` function as params, the different is `setup` function not have reactive params, only need return a plain object
+1. `createStore` need a `creator` function as params, you can use `reactiveApi` in the `creator` function what export from `RStore`. `createState` also need a `setup` function as params, the different is `setup` function only need return a plain object not a reactive
 
 2. `createState` support middleware, currently `createState` support two middleware: 1. `withPersist` middleware support automatic sync state to the `localStorage` or `getStorage` provider in the `withPersist` options params. 2. `withActions` middleware support you define action for current `state`, and also can be get the action from `selector`.
 
@@ -122,16 +122,16 @@ const App = () => {
 import { createState, withActions, withPersist } from "reactivity-store";
 
 const useCount = createState(
-  withPersist(
-    withActions(
+  withActions(
+    withPersist(
       () => {
         const data = { count: 0 };
 
         return data;
       },
-      { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
+      { key: "foo" }
     ),
-    { key: "foo" }
+    { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
   )
 );
 
@@ -147,6 +147,7 @@ const App = () => {
   );
 };
 ```
+
 ## Online Example
 
 <CreateAllMiddleware />

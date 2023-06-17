@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted } from "reactivity-store";
+import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted, ref as _ref } from "reactivity-store";
 import { onMounted as vue_OnMounted, onBeforeUnmount as vue_OnBeforeUnmount, ref } from "vue";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
@@ -7,9 +7,9 @@ import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
 
 const Time = createStoreWithComponent({
-  setup: ({ ref }) => {
-    const timeRef = ref(new Date().toString());
-    const updateCountRef = ref(0);
+  setup: () => {
+    const timeRef = _ref(new Date().toString());
+    const updateCountRef = _ref(0);
 
     let id;
 

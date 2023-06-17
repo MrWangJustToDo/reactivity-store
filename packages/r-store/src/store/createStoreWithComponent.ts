@@ -1,7 +1,7 @@
 import { ReactiveEffect, proxyRefs } from "@vue/reactivity";
 import { Component, createElement, useCallback, useMemo } from "react";
 
-import { createLifeCycle, reactiveApi, useForceUpdate } from "../shared";
+import { createLifeCycle, useForceUpdate } from "../shared";
 
 import type { Creator } from "./createStore";
 import type { LifeCycle } from "../shared";
@@ -109,7 +109,7 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
 
       const lifeCycleInstance = globalStoreLifeCycle;
 
-      const state = proxyRefs(setup(reactiveApi));
+      const state = proxyRefs(setup());
 
       globalStoreLifeCycle = null;
 

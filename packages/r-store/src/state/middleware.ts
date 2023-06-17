@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ReactiveEffect, reactive } from "@vue/reactivity";
 
-import { isServer, traverse } from "../shared";
+import { checkHasReactive, isServer, traverse } from "../shared";
 
 import type { Setup } from "./createState";
 
@@ -85,6 +85,15 @@ export const withPersist = <T extends Record<string, unknown>>(
     }
 
     const initialState = getFinalState(_initialState);
+
+    if (__DEV__ && checkHasReactive(initialState)) {
+      console.error(
+        `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object 
+          you may: 1. write 'withActions' in the 'withPersist'
+                   2. use reactiveApi in the 'setup' function 
+        `
+      );
+    }
 
     const middleware = getFinalMiddleware(_initialState);
 

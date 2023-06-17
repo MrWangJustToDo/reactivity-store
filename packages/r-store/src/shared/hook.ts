@@ -1,4 +1,4 @@
-import { ReactiveEffect, toRaw } from "@vue/reactivity";
+import { ReactiveEffect } from "@vue/reactivity";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { isServer } from "./env";
@@ -80,7 +80,8 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
     // clean effect
     useEffect(() => () => memoEffectInstance.stop(), []);
 
-    return selector ? selector({ ...toRaw(state), ...actions }) : { ...toRaw(state), ...actions };
+    // TODO improve when the React.StrictMode bug fixed
+    return selector ? selector({ ...state, ...actions }) : { ...state, ...actions };
   }
 
   return useSelector;

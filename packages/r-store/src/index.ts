@@ -2,4 +2,4 @@ export { createStore, createStoreWithComponent, onBeforeMount, onBeforeUpdate, o
 
 export { createState, withPersist, withActions } from "./state";
 
-export type { ReactiveApi } from "./shared";
+export * from "@vue/reactivity";

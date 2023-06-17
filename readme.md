@@ -2,15 +2,15 @@
 
 [![Deploy](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml/badge.svg)](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml)
 
-## A React state-management, just like use Vue
+## A React state-management, inspired by the `Vue` and `zustand`
 
 a React state-management power by Reactive api, which mean you can use Vue Reactive api in React app, any change of the state will make then UI update automatic, you do not need add any `set` function !
 
 ```tsx
-import { createStore } from "reactivity-store";
+import { createStore, ref } from "reactivity-store";
 
 // simple reactive store
-const useCount = createStore(({ ref }) => {
+const useCount = createStore(() => {
   const refValue = ref(0);
 
   const changeRef = (v) => (refValue.value = v);
@@ -70,11 +70,11 @@ const App = () => {
 ### `createStoreWithComponent` support lifeCycle
 
 ```tsx
-import { createStoreWithComponent, onMounted, onUpdated } from "reactivity-store";
+import { createStoreWithComponent, onMounted, onUpdated, ref } from "reactivity-store";
 
 // reactive store with component lifeCycle
 const Count = createStoreWithComponent({
-  setup: ({ ref }) => {
+  setup: () => {
     const refValue = ref(0);
 
     const changeRef = (v) => (refValue.value = v);

@@ -21,10 +21,10 @@ export const createState = <T extends Record<string, unknown>>(setup: Setup<Mayb
   const initialState = getFinalState(state);
 
   const actions = getFinalActions(state);
-  
-  const refState = reactive(initialState);
 
-  const finalState = proxyRefs(refState);
+  const reactiveState = reactive(initialState);
+
+  const finalState = proxyRefs(reactiveState);
 
   const useSelector = createHook<T>(finalState as ShallowUnwrapRef<T>, lifeCycle, actions);
 

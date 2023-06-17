@@ -4,17 +4,17 @@
 
 The `RStore` package export a `createStore` function which can be used to create a store.
 
-Only the `createStore` is not enough, we also need make the data have the ability to be responsive, so the `creator` function also have the reactive function like `ref`、`reactive`、`computed`... which provide by [`@vue/reactivity`](https://www.npmjs.com/package/@vue/reactivity) as the params,
+Only the `createStore` is not enough, we also need make the data have the ability to be responsive, so the `RStore` also export the reactive api like `ref`、`reactive`、`computed`... which provide by [`@vue/reactivity`](https://www.npmjs.com/package/@vue/reactivity),
 
 The hook which return by `createStore` can be used in the `React` component just like a custom hook, and this hook also could expect a `selector` function which can be pick a part of state from the store.
 
 ## Code Example
 
 ```tsx
-import { createStore } from "reactivity-store";
+import { createStore, reactive } from "reactivity-store";
 
 // here we create a `count` store
-const useCount = createStore(({ reactive }) => {
+const useCount = createStore(() => {
   const reactiveCount = reactive({ count: 0 });
 
   return { reactiveCount };

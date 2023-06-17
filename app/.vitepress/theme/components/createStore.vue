@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { createStore } from "reactivity-store";
+import { createStore, reactive } from "reactivity-store";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
 
-const useCount = createStore(({ reactive }) => {
+const useCount = createStore(() => {
   const reactiveCount = reactive({ count: 0 });
 
   return { reactiveCount };

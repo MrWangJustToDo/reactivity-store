@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, withActions, withPersist } from "..";
-
-import type { ReactiveApi } from "..";
+import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, withActions, withPersist, ref } from "..";
 
 const useCount = createState(() => ({ count: { data: 1 } }));
 
@@ -37,7 +35,7 @@ const useCount_v3 = createState(
 const { count, add, del } = useCount_v3();
 
 const Time = createStoreWithComponent({
-  setup: ({ ref }) => {
+  setup: () => {
     const timeRef = ref(new Date().toString());
     const updateCountRef = ref(0);
 
@@ -57,7 +55,7 @@ const Time = createStoreWithComponent({
   },
 });
 
-const setup = ({ ref }: ReactiveApi) => {
+const setup = () => {
   const timeRef = ref(new Date().toString());
   const updateCountRef = ref(0);
 

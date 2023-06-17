@@ -1,19 +1,19 @@
-import { proxyRefs } from "@vue/reactivity";
+import { proxyRefs, reactive } from "@vue/reactivity";
 
-import { createHook, createLifeCycle, reactiveApi } from "../shared";
+import { createHook, createLifeCycle } from "../shared";
 
-import type { ReactiveApi} from "../shared";
-
-export type Creator<T extends Record<string, unknown>> = (reactiveApi: ReactiveApi) => T;
+export type Creator<T extends Record<string, unknown>> = () => T;
 
 export const createStore = <T extends Record<string, unknown>>(creator: Creator<T>) => {
-  const state = creator(reactiveApi);
+  const state = creator();
 
-  const reactiveState = proxyRefs(state);
+  const reactiveState = reactive(state);
+
+  const finalState = proxyRefs(reactiveState);
 
   const lifeCycleInstance = createLifeCycle();
 
-  const useSelector = createHook(reactiveState, lifeCycleInstance);
+  const useSelector = createHook(finalState, lifeCycleInstance);
 
   const updateStateWithoutReactiveUpdate = (cb: (state: T) => void) => {
     lifeCycleInstance.canUpdateComponent = false;
