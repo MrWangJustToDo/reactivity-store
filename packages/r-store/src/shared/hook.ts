@@ -44,11 +44,11 @@ export const useForceUpdate = () => {
   return forceUpdate;
 };
 
-export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwrapRef<T>, lifeCycle: LifeCycle) => {
+export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwrapRef<T>, lifeCycle: LifeCycle, actions: Record<string, unknown> = {}) => {
   function useSelector(): ShallowUnwrapRef<T>;
   function useSelector<P>(selector: (state: ShallowUnwrapRef<T>) => P): P;
   function useSelector<P>(selector?: (state: ShallowUnwrapRef<T>) => P) {
-    const forceUpdate = useForceUpdate(); 
+    const forceUpdate = useForceUpdate();
 
     const selectorRef = useSubscribeCallbackRef(selector);
 
@@ -69,13 +69,15 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
 
     // initial
     useMemo(() => {
-      reRef.current = memoEffectInstance.run();
+      memoEffectInstance.run();
+      reRef.current = selectorRef({ ...state, ...actions });
     }, []);
 
     // if selector function change, rerun
     useMemo(() => {
       if (prevSelector !== selector) {
-        reRef.current = memoEffectInstance.run();
+        memoEffectInstance.run();
+        reRef.current = selectorRef({ ...state, ...actions });
       }
     }, [prevSelector, selector]);
 

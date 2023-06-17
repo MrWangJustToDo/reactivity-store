@@ -1,9 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted } from "..";
+import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, withActions, withPersist } from "..";
 
 import type { ReactiveApi } from "..";
 
 const useCount = createState(() => ({ count: { data: 1 } }));
+
+const useCount_v2 = createState(
+  withActions(() => ({ count: 1, name: "haha" }), {
+    generateActions: (state) => {
+      return {
+        add: () => state.count++,
+        del: () => {
+          state.count--;
+        },
+      };
+    },
+  })
+);
+
+const useCount_v3 = createState(
+  withPersist(
+    withActions(
+      () => {
+        const data = { count: 0 };
+
+        return data;
+      },
+      { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
+    ),
+    { key: "foo" }
+  )
+);
+
+// const { count, add, del } = useCount_v2();
+
+const { count, add, del } = useCount_v3();
 
 const Time = createStoreWithComponent({
   setup: ({ ref }) => {
