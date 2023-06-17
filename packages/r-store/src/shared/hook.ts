@@ -1,4 +1,4 @@
-import { ReactiveEffect } from "@vue/reactivity";
+import { ReactiveEffect, toRaw } from "@vue/reactivity";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { isServer } from "./env";
@@ -52,30 +52,35 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
 
     const selectorRef = useSubscribeCallbackRef(selector);
 
-    const reRef = useRef(null);
+    const prevSelector = usePrevValue(selector);
 
     const forceUpdateCallback = useCallback(() => {
       if (__DEV__ && isServer) {
         console.warn(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server!`);
       }
       if (lifeCycle.canUpdateComponent) {
-        lifeCycle.shouldRunSelector = true;
         forceUpdate();
       }
     }, []);
 
     const memoEffectInstance = useMemo(() => new ReactiveEffect(() => selectorRef(state), forceUpdateCallback), []);
 
-    if (lifeCycle.shouldRunSelector) {
-      lifeCycle.shouldRunSelector = false;
+    // initial
+    useMemo(() => {
       memoEffectInstance.run();
-      reRef.current = selectorRef({ ...state, ...actions });
-    }
+    }, []);
+
+    // rerun when the selector change
+    useMemo(() => {
+      if (prevSelector !== selector) {
+        memoEffectInstance.run();
+      }
+    }, [prevSelector, selector]);
 
     // clean effect
     useEffect(() => () => memoEffectInstance.stop(), []);
 
-    return reRef.current;
+    return selector ? selector({ ...toRaw(state), ...actions }) : { ...toRaw(state), ...actions };
   }
 
   return useSelector;
