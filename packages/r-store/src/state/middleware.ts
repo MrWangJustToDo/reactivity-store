@@ -38,19 +38,6 @@ const debounce = <T extends Function>(cb: T, time): T => {
   }) as unknown as T;
 };
 
-const once = <T extends Function>(cb: T) => {
-  let hasCalled = false;
-  return ((...args) => {
-    if (hasCalled) return;
-    hasCalled = true;
-    return cb.call(null, ...args);
-  }) as unknown as T;
-};
-
-const onceWarn = once((message: string) => {
-  console.warn(message);
-});
-
 export const getFinalState = <T extends Record<string, unknown>>(state: MaybeStateWithMiddleware<T>) => {
   if (state["$$__state__$$"]) return state["$$__state__$$"] as T;
 
@@ -75,11 +62,7 @@ export const withPersist = <T extends Record<string, unknown>>(
 ): Setup<StateWithMiddleware<T>> => {
   return () => {
     const _initialState = setup();
-    if (!isServer && __DEV__) {
-      onceWarn(
-        `[reactivity-store/persist] the persist middleware may cause hydrate error for 'React' app, because of the initialState what from server and client may do not have the same state`
-      );
-    }
+
     if (__DEV__ && _initialState["$$__state__$$"] && _initialState["$$__middleware__$$"] && _initialState["$$__middleware__$$"]["withPersist"]) {
       console.warn(`[reactivity-store/persist] you are using multiple of the 'withPersist' middleware, this is a unexpected usage`);
     }

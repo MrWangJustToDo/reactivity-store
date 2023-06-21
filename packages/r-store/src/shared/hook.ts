@@ -1,7 +1,7 @@
-import { ReactiveEffect } from "@vue/reactivity";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, version } from "react";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 
-import { isServer } from "./env";
+import { Controller } from "./controller";
 import { traverse } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -26,6 +26,19 @@ export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K) => {
   return memoCallback;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const useCallbackRef = <T extends Function>(callback: T) => {
+  const callbackRef = useRef(callback);
+
+  callbackRef.current = callback;
+
+  const memoCallback = useCallback(() => {
+    return callbackRef.current();
+  }, []) as unknown as T;
+
+  return memoCallback;
+};
+
 export const usePrevValue = <T>(v: T) => {
   const vRef = useRef(v);
 
@@ -44,44 +57,52 @@ export const useForceUpdate = () => {
   return forceUpdate;
 };
 
+// eslint-disable-next-line no-extra-boolean-cast
+const needUnmountEffect = version.startsWith("18") ? !Boolean(__DEV__) : true;
+
 export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwrapRef<T>, lifeCycle: LifeCycle, actions: Record<string, unknown> = {}) => {
   function useSelector(): ShallowUnwrapRef<T>;
   function useSelector<P>(selector: (state: ShallowUnwrapRef<T>) => P): P;
   function useSelector<P>(selector?: (state: ShallowUnwrapRef<T>) => P) {
-    const forceUpdate = useForceUpdate();
+    const ref = useRef<P | ShallowUnwrapRef<T>>();
 
     const selectorRef = useSubscribeCallbackRef(selector);
 
+    const getSelected = useCallbackRef(() => {
+      if (selector) {
+        ref.current = selector({ ...state, ...actions });
+      } else {
+        ref.current = { ...state, ...actions };
+      }
+    });
+
     const prevSelector = usePrevValue(selector);
 
-    const forceUpdateCallback = useCallback(() => {
-      if (__DEV__ && isServer) {
-        console.warn(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server!`);
-      }
-      if (lifeCycle.canUpdateComponent) {
-        forceUpdate();
-      }
-    }, []);
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(state), lifeCycle, getSelected), []);
 
-    const memoEffectInstance = useMemo(() => new ReactiveEffect(() => selectorRef(state), forceUpdateCallback), []);
+    useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
     // initial
     useMemo(() => {
-      memoEffectInstance.run();
-    }, []);
+      ControllerInstance.getEffect().run();
+      getSelected();
+    }, [ControllerInstance, getSelected]);
 
     // rerun when the selector change
     useMemo(() => {
       if (prevSelector !== selector) {
-        memoEffectInstance.run();
+        ControllerInstance.getEffect().run();
+        getSelected();
       }
-    }, [prevSelector, selector]);
+    }, [ControllerInstance, prevSelector, selector]);
 
     // clean effect
-    useEffect(() => () => memoEffectInstance.stop(), []);
+    // currently, the 18 version of `StrictMode` not work if the unmount logic run, so need disable it in the development mode
+    if (needUnmountEffect) {
+      useEffect(() => () => ControllerInstance.getEffect().stop(), [ControllerInstance]);
+    }
 
-    // TODO improve when the React.StrictMode bug fixed
-    return selector ? selector({ ...state, ...actions }) : { ...state, ...actions };
+    return ref.current;
   }
 
   return useSelector;

@@ -9,6 +9,7 @@
   "packageManager": "pnpm@8.6.1",
   "scripts": {
     "dev:packages": "ts-node ./scripts/rollupWatch.ts",
+    "dev:ui" : "cd packages/ui && pnpm run dev",
     "build:packages": "ts-node ./scripts/rollupBuild.ts",
     "lint": "eslint --cache --ext ts,tsx .",
     "lint:fix": "pnpm run lint --fix",
