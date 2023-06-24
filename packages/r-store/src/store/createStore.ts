@@ -1,4 +1,4 @@
-import { proxyRefs, reactive } from "@vue/reactivity";
+import { proxyRefs, reactive, toRaw } from "@vue/reactivity";
 
 import { createHook, createLifeCycle } from "../shared";
 
@@ -23,9 +23,11 @@ export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(crea
     lifeCycleInstance.canUpdateComponent = true;
   };
 
-  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate };
+  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate, getState: () => T };
 
   typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
+
+  typedUseSelector.getState = () => toRaw(state);
 
   return typedUseSelector;
 };

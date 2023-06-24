@@ -8,8 +8,6 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   const { count, add, del } = useCount();
 
-  add();
-
   return (
     <main className={`flex min-h-screen flex-col items-center p-24 ${inter.className} justify-center`}>
       <div className="w-[100px] h-[100px] border rounded-md border-red-500">

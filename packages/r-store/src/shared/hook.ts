@@ -58,7 +58,7 @@ export const useForceUpdate = () => {
 };
 
 // eslint-disable-next-line no-extra-boolean-cast
-const needUnmountEffect = version.startsWith("18") ? !Boolean(__DEV__) : true;
+const needUnmountEffect = version?.startsWith("18") ? !Boolean(__DEV__) : true;
 
 export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwrapRef<T>, lifeCycle: LifeCycle, actions: Record<string, unknown> = {}) => {
   function useSelector(): ShallowUnwrapRef<T>;
