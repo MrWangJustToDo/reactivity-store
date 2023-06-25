@@ -1,7 +1,7 @@
 import { ReactiveEffect, proxyRefs } from "@vue/reactivity";
 import { Component, createElement, useCallback, useMemo } from "react";
 
-import { createLifeCycle, useForceUpdate } from "../shared";
+import { createLifeCycle, isServer, useForceUpdate } from "../shared";
 
 import type { Creator } from "./createStore";
 import type { LifeCycle } from "../shared";
@@ -123,6 +123,9 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
 
     const forceUpdate = useCallback(() => {
       if (lifeCycleInstance.canUpdateComponent) {
+        if (__DEV__ && isServer) {
+          console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
+        }
         update();
       }
     }, [lifeCycleInstance]);
@@ -130,7 +133,7 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     if (__DEV__) {
       for (const key in props) {
         if (key in state) {
-          console.warn(`duplicate key ${key} in Component props and RStore state, please fix this usage`);
+          console.warn(`[reactivity-store] duplicate key ${key} in Component props and RStore state, please fix this usage`);
         }
       }
     }
