@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ReactiveEffect, reactive } from "@vue/reactivity";
+import { unstable_batchedUpdates } from "react-dom";
 
 import { checkHasReactive, isServer, traverse } from "../shared";
 
@@ -54,6 +55,17 @@ export const getFinalActions = <T extends Record<string, unknown>>(state: MaybeS
   if (state["$$__state__$$"]) return (state["$$__actions__$$"] || {}) as Record<string, unknown>;
 
   return {} as Record<string, unknown>;
+};
+
+export const wrapperBatchUpdate = <T extends () => void>(cb: T) => {
+  return unstable_batchedUpdates(cb);
+};
+
+export const getBatchUpdateActions = <T extends Record<string, unknown>>(actions: ReturnType<typeof getFinalActions<T>>) => {
+  return Object.keys(actions).reduce<typeof actions>((p, c) => {
+    p[c] = wrapperBatchUpdate(p[c] as () => void);
+    return p;
+  }, {}) as ReturnType<typeof getFinalActions>;
 };
 
 export const withPersist = <T extends Record<string, unknown>>(
