@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ReactiveEffect, reactive } from "@vue/reactivity";
-import { unstable_batchedUpdates } from "react-dom";
 
-import { checkHasReactive, isServer, traverse } from "../shared";
+import { checkHasReactive, isServer, traverse, wrapperBatchUpdate } from "../shared";
 
 import type { Setup } from "./createState";
 
@@ -57,10 +56,6 @@ export const getFinalActions = <T extends Record<string, unknown>>(state: MaybeS
   return {} as Record<string, unknown>;
 };
 
-export const wrapperBatchUpdate = <T extends () => void>(cb: T) => {
-  return unstable_batchedUpdates(cb);
-};
-
 export const getBatchUpdateActions = <T extends Record<string, unknown>>(actions: ReturnType<typeof getFinalActions<T>>) => {
   return Object.keys(actions).reduce<typeof actions>((p, c) => {
     p[c] = wrapperBatchUpdate(p[c] as () => void);
@@ -85,7 +80,7 @@ export const withPersist = <T extends Record<string, unknown>>(
       console.error(
         `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object 
           you may: 1. write 'withActions' in the 'withPersist'
-                   2. use reactiveApi in the 'setup' function 
+                   2. use 'reactiveApi' in the 'setup' function 
         `
       );
     }

@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "RStore"
   text: "A React state-management tool power by Reactive api"
-  tagline: coming soon...
+  tagline: use RStore to build your React app
   actions:
     - theme: brand
       text: Get Started
