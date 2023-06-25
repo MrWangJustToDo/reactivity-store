@@ -154,7 +154,7 @@ export const withActions = <T extends Record<string, unknown>, P = Record<string
 
     const pendingGenerate = options.generateActions;
 
-    const allActions = pendingGenerate(reactiveState);
+    const allActions = pendingGenerate?.(reactiveState);
 
     middleware["withActions"] = true;
 
