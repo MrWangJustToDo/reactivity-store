@@ -4,7 +4,7 @@ import { proxyRefs, reactive, toRaw } from "@vue/reactivity";
 
 import { createHook, createLifeCycle } from "../shared";
 
-import { getBatchUpdateActions, getFinalActions, getFinalState, type MaybeStateWithMiddleware } from "./middleware";
+import { getFinalActions, getFinalState, type MaybeStateWithMiddleware } from "./middleware";
 
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 
@@ -22,13 +22,11 @@ export const createState = <T extends Record<string, unknown>>(setup: Setup<Mayb
 
   const actions = getFinalActions(state);
 
-  const batchActions = getBatchUpdateActions(actions);
-
   const reactiveState = reactive(initialState);
 
   const finalState = proxyRefs(reactiveState);
 
-  const useSelector = createHook<T>(finalState as ShallowUnwrapRef<T>, lifeCycle, batchActions);
+  const useSelector = createHook<T>(finalState as ShallowUnwrapRef<T>, lifeCycle, actions);
 
   const updateStateWithoutReactiveUpdate = (cb: (state: T) => void) => {
     lifeCycle.canUpdateComponent = false;

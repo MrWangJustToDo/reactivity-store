@@ -28,6 +28,7 @@ type WithPersistProps<T extends Record<string, unknown>> = {
 
 type WithActionsProps<T, P> = {
   generateActions?: (state: T) => P;
+  automaticBatchAction?: boolean;
 };
 
 const debounce = <T extends Function>(cb: T, time): T => {
@@ -140,7 +141,7 @@ export const withPersist = <T extends Record<string, unknown>>(
   };
 };
 
-export const withActions = <T extends Record<string, unknown>, P = Record<string, () => any>>(
+export const withActions = <T extends Record<string, unknown>, P extends Record<string, Function> = Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T>>,
   options: WithActionsProps<T, P>
 ): Setup<StateWithMiddleware<T & P>> => {
@@ -148,7 +149,7 @@ export const withActions = <T extends Record<string, unknown>, P = Record<string
     const _initialState = setup();
 
     if (__DEV__ && _initialState["$$__state__$$"] && _initialState["$$__middleware__$$"] && _initialState["$$__middleware__$$"]["withActions"]) {
-      console.warn(`[reactivity-store/persist] you are using multiple of the 'withActions' middleware, this is a unexpected usage`);
+      console.warn(`[reactivity-store/actions] you are using multiple of the 'withActions' middleware, this is a unexpected usage`);
     }
 
     const initialState = getFinalState(_initialState);
@@ -163,20 +164,25 @@ export const withActions = <T extends Record<string, unknown>, P = Record<string
 
     const allActions = pendingGenerate?.(reactiveState);
 
+    const batchActions =
+      options.automaticBatchAction === undefined || options.automaticBatchAction === null || options.automaticBatchAction === true
+        ? getBatchUpdateActions(allActions)
+        : allActions;
+
     middleware["withActions"] = true;
 
     // check duplicate key
     if (__DEV__) {
       Object.keys(initialState).forEach((key) => {
         if (allActions[key]) {
-          console.error(`[reactivity-store/action] there are duplicate key in the 'setup' and 'generateAction' returned value, this is a unexpected behavior`);
+          console.error(`[reactivity-store/actions] there are duplicate key in the 'setup' and 'generateAction' returned value, this is a unexpected behavior`);
         }
       });
     }
 
     return {
       ["$$__state__$$"]: reactiveState,
-      ["$$__actions__$$"]: { ...actions, ...allActions },
+      ["$$__actions__$$"]: { ...actions, ...batchActions },
       ["$$__middleware__$$"]: middleware,
     } as unknown as StateWithMiddleware<T & P>;
   };
