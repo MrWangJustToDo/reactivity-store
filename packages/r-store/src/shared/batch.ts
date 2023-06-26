@@ -6,6 +6,10 @@ export const setBatch = (batch: (cb: () => void) => void) => {
   batchObject.current = batch;
 };
 
+export const getBatch = () => {
+  return batchObject.current;
+};
+
 export const resetBatch = () => {
   batchObject.current = unstable_batchedUpdates;
 };

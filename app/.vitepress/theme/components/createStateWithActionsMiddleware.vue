@@ -7,7 +7,7 @@ const divRef = ref<HTMLElement | null>(null);
 
 const useCountState = createState(withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) }));
 
-const useCountState_v2 = createState(withActions(() => ({ count: 1 }), { generateActions: (state) => { return { add: () => state.count++, del: () => state.count-- } } }));
+const useCountState_v2 = createState(withActions(() => ({ count: 1 }), { generateActions: (state) => { return { add: () => { state.count++ }, del: () => state.count-- } } }));
 
 const App = () => {
   const { count, add } = useCountState_v2();

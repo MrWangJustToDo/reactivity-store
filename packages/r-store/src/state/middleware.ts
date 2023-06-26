@@ -59,7 +59,7 @@ export const getFinalActions = <T extends Record<string, unknown>>(state: MaybeS
 
 export const getBatchUpdateActions = <T extends Record<string, unknown>>(actions: ReturnType<typeof getFinalActions<T>>) => {
   return Object.keys(actions).reduce<typeof actions>((p, c) => {
-    p[c] = wrapperBatchUpdate(p[c] as () => void);
+    p[c] = wrapperBatchUpdate(actions[c] as () => void);
     return p;
   }, {}) as ReturnType<typeof getFinalActions>;
 };

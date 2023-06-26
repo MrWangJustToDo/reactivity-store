@@ -2,6 +2,6 @@ export { createStore, createStoreWithComponent, onBeforeMount, onBeforeUpdate, o
 
 export { createState, withPersist, withActions } from "./state";
 
-export { wrapperBatchUpdate } from "./shared";
+export { wrapperBatchUpdate, getBatch, setBatch, resetBatch } from "./shared";
 
 export * from "@vue/reactivity";
