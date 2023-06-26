@@ -42,7 +42,8 @@
         "format": "umd",
         "multiple": true,
         "globals": {
-          "react": "React"
+          "react": "React",
+          "react-dom": "ReactDOM"
         },
         "name": "RStore",
         "sourcemap": true
