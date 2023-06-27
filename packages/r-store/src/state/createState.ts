@@ -2,7 +2,8 @@
 
 import { proxyRefs, reactive, toRaw } from "@vue/reactivity";
 
-import { createHook, createLifeCycle } from "../shared";
+import { createHook } from "../shared/hook";
+import { createLifeCycle } from "../shared/lifeCycle";
 
 import { getFinalActions, getFinalState, type MaybeStateWithMiddleware } from "./middleware";
 

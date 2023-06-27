@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ReactiveEffect, reactive } from "@vue/reactivity";
 
-import { checkHasReactive, isServer, traverse, wrapperBatchUpdate } from "../shared";
+import { wrapperBatchUpdate } from "../shared/batch";
+import { isServer } from "../shared/env";
+import { checkHasReactive, traverse } from "../shared/tools";
 
 import type { Setup } from "./createState";
 

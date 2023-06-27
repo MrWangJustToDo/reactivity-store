@@ -29,7 +29,6 @@ export function traverse(value: unknown, seen?: Set<unknown>) {
 }
 
 export function checkHasReactive(value: unknown) {
-
   let hasReactive = false;
 
   function traverse(value: unknown, seen?: Set<unknown>) {
@@ -59,8 +58,15 @@ export function checkHasReactive(value: unknown) {
     }
     return;
   }
-  
+
   traverse(value);
 
   return hasReactive;
+}
+
+export function checkHasMiddleware(value: unknown) {
+  if (value && value?.["$$__middleware__$$"]) {
+    return true;
+    // console.warn(`[reactivity-store] '${name}' not support middleware usage, please change to use 'createState'`);
+  }
 }

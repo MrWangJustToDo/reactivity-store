@@ -1,10 +1,13 @@
 import { ReactiveEffect, proxyRefs } from "@vue/reactivity";
 import { Component, createElement, useCallback, useMemo } from "react";
 
-import { createLifeCycle, isServer, useForceUpdate } from "../shared";
+import { isServer } from "../shared/env";
+import { useForceUpdate } from "../shared/hook";
+import { createLifeCycle } from "../shared/lifeCycle";
+import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
 
 import type { Creator } from "./createStore";
-import type { LifeCycle } from "../shared";
+import type { LifeCycle } from "../shared/lifeCycle";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode } from "react";
 
@@ -104,17 +107,27 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
   }
 
   const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
-    const { lifeCycleInstance, state } = useMemo(() => {
+    const { lifeCycleInstance, proxyState: state } = useMemo(() => {
       globalStoreLifeCycle = createLifeCycle();
 
       const lifeCycleInstance = globalStoreLifeCycle;
 
-      const state = proxyRefs(setup());
+      const state = setup();
+
+      if (__DEV__ && checkHasMiddleware(state)) {
+        console.error(`[reactivity-store] 'createStoreWithComponent' not support middleware usage, please change to use 'createState'`);
+      }
+
+      if (__DEV__ && !checkHasReactive(state)) {
+        console.error(`[reactivity-store] 'createStoreWithComponent' expect receive a reactive object but got a plain object, this is a unexpected usage`);
+      }
+
+      const proxyState = proxyRefs(state);
 
       globalStoreLifeCycle = null;
 
       return {
-        state,
+        proxyState,
         lifeCycleInstance,
       };
     }, []);

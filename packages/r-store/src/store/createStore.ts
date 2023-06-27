@@ -1,17 +1,25 @@
-import { proxyRefs, reactive, toRaw } from "@vue/reactivity";
+import { proxyRefs, toRaw } from "@vue/reactivity";
 
-import { createHook, createLifeCycle } from "../shared";
+import { createHook } from "../shared/hook";
+import { createLifeCycle } from "../shared/lifeCycle";
+import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
 
-import type { LifeCycle} from "../shared";
+import type { LifeCycle } from "../shared/lifeCycle";
 
 export type Creator<T extends Record<string, unknown>> = () => T;
 
 export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(creator: Creator<T>, lifeCycle?: LifeCycle) => {
   const state = creator();
 
-  const reactiveState = reactive(state);
+  if (__DEV__ && checkHasMiddleware(state)) {
+    console.error(`[reactivity-store] 'createStore' not support middleware usage, please change to use 'createState'`);
+  }
 
-  const finalState = proxyRefs(reactiveState);
+  if (__DEV__ && !checkHasReactive(state)) {
+    console.error(`[reactivity-store] 'createStore' expect receive a reactive object but got a plain object, this is a unexpected usage`);
+  }
+
+  const finalState = proxyRefs(state);
 
   const lifeCycleInstance = lifeCycle || createLifeCycle();
 
@@ -23,7 +31,7 @@ export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(crea
     lifeCycleInstance.canUpdateComponent = true;
   };
 
-  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate, getState: () => T };
+  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate; getState: () => T };
 
   typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
 
@@ -34,4 +42,4 @@ export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(crea
 
 export const createStore = <T extends Record<string, unknown>>(creator: Creator<T>) => {
   return createStoreWithLifeCycle(creator);
-}
+};
