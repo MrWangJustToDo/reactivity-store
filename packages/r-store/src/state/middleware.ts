@@ -2,7 +2,7 @@
 import { ReactiveEffect, reactive } from "@vue/reactivity";
 
 import { wrapperBatchUpdate } from "../shared/batch";
-import { isServer } from "../shared/env";
+import { isReact18, isServer } from "../shared/env";
 import { checkHasReactive, traverse } from "../shared/tools";
 
 import type { Setup } from "./createState";
@@ -166,10 +166,13 @@ export const withActions = <T extends Record<string, unknown>, P extends Record<
 
     const allActions = pendingGenerate?.(reactiveState);
 
-    const batchActions =
-      options.automaticBatchAction === undefined || options.automaticBatchAction === null || options.automaticBatchAction === true
+    const batchActions = isReact18
+      ? options.automaticBatchAction === true
         ? getBatchUpdateActions(allActions)
-        : allActions;
+        : allActions
+      : options.automaticBatchAction === undefined || options.automaticBatchAction === null || options.automaticBatchAction === true
+      ? getBatchUpdateActions(allActions)
+      : allActions;
 
     middleware["withActions"] = true;
 

@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState, version } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Controller } from "./controller";
+import { isReact18 } from "./env";
 import { traverse } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -58,7 +59,7 @@ export const useForceUpdate = () => {
 };
 
 // eslint-disable-next-line no-extra-boolean-cast
-const needUnmountEffect = version?.startsWith("18") ? !Boolean(__DEV__) : true;
+const needUnmountEffect = isReact18 ? !Boolean(__DEV__) : true;
 
 export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwrapRef<T>, lifeCycle: LifeCycle, actions: Record<string, unknown> = {}) => {
   function useSelector(): ShallowUnwrapRef<T>;
