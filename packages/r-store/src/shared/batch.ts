@@ -14,6 +14,7 @@ export const resetBatch = () => {
   batchObject.current = unstable_batchedUpdates;
 };
 
-export const wrapperBatchUpdate = (cb: () => void) => {
-  return () => batchObject.current(cb);
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const wrapperBatchUpdate = <T extends Function>(cb: T): T => {
+  return ((...args: any[]) => batchObject.current(() => (args.length ? cb.call(null, ...args) : cb.call(null)))) as unknown as T;
 };

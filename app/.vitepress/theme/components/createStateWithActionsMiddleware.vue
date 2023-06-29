@@ -9,15 +9,17 @@ const useCountState = createState(withActions(() => ({ data: { count: 1 } }), { 
 
 const useCountState_v2 = createState(withActions(() => ({ count: 1 }), { generateActions: (state) => { return { add: () => { state.count++ }, del: () => state.count-- } } }));
 
+const useCountState_v3 = createState(withActions(() => ({ count: 1 }), { generateActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } } }));
+
 const App = () => {
-  const { count, add } = useCountState_v2();
+  const { count, add } = useCountState_v3();
 
   return React.createElement(React.StrictMode, null, React.createElement(
     "div",
     { className: "react_container" },
     React.createElement("p", null, "React Reactive Count"),
     React.createElement("p", { style: { color: "red" } }, "count: " + count),
-    React.createElement("button", { className: "react_button", onClick: add }, "Add button")
+    React.createElement("button", { className: "react_button", onClick: () => add('args') }, "Add button")
   ));
 };
 
