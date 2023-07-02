@@ -67,6 +67,5 @@ export function checkHasReactive(value: unknown) {
 export function checkHasMiddleware(value: unknown) {
   if (value && value?.["$$__middleware__$$"]) {
     return true;
-    // console.warn(`[reactivity-store] '${name}' not support middleware usage, please change to use 'createState'`);
   }
 }

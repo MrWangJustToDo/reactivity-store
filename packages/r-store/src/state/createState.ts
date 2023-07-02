@@ -4,8 +4,9 @@ import { proxyRefs, reactive, toRaw } from "@vue/reactivity";
 
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
+import { checkHasReactive } from "../shared/tools";
 
-import { getFinalActions, getFinalState, type MaybeStateWithMiddleware } from "./middleware";
+import { getFinalActions, getFinalMiddleware, getFinalState, type MaybeStateWithMiddleware } from "./middleware";
 
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 
@@ -22,6 +23,12 @@ export const createState = <T extends Record<string, unknown>>(setup: Setup<Mayb
   const initialState = getFinalState(state);
 
   const actions = getFinalActions(state);
+
+  const middleware = getFinalMiddleware(state);
+
+  if (__DEV__ && !middleware['withPersist'] && checkHasReactive(initialState)) {
+    console.error(`[reactivity-store] 'createState' expect receive a plain object but got a reactive object, this is a unexpected usage`);
+  }
 
   const reactiveState = reactive(initialState);
 
