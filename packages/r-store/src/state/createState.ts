@@ -6,8 +6,9 @@ import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasReactive } from "../shared/tools";
 
-import { getFinalActions, getFinalMiddleware, getFinalState, type MaybeStateWithMiddleware } from "./middleware";
+import { getFinalActions, getFinalMiddleware, getFinalState } from "./tools";
 
+import type { MaybeStateWithMiddleware} from "./tools";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 
 export type Setup<T extends Record<string, unknown>> = () => T;

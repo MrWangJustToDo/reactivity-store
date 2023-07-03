@@ -8,7 +8,7 @@
   "module": "./dist/esm/index.js",
   "unpkg": "./dist/umd/index.development.js",
   "jsdelivr": "./dist/umd/index.development.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "index.js",
     "dist"
@@ -49,6 +49,15 @@
         "sourcemap": true
       }
     ]
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/esm/index.js",
+      "module": "./dist/esm/index.js",
+      "default": "./dist/cjs/index.js"
+    }
   },
   "keywords": [
     "state-management, reactive, vue, react"

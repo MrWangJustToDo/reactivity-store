@@ -5,6 +5,9 @@ import { isServer } from "./env";
 import type { LifeCycle } from "./lifeCycle";
 
 // TODO
+/**
+ * @internal
+ */
 export class Controller<T = any> {
   readonly listeners = new Set<() => void>();
 

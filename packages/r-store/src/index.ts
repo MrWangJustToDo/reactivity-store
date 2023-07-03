@@ -1,4 +1,3 @@
-// make export more clear
 export { createStore } from "./store/createStore";
 export { createStoreWithComponent } from "./store/createStoreWithComponent";
 export { onBeforeMount, onBeforeUpdate, onBeforeUnmount, onMounted, onUpdated, onUnmounted } from "./store/lifeCycle";

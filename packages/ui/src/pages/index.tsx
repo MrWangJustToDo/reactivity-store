@@ -13,8 +13,12 @@ export default function Home() {
       <div className="w-[100px] h-[100px] border rounded-md border-red-500">
         {count}
         <br />
-        <button onClick={add} className="px-[10px] py-[4px] border">add</button>
-        <button onClick={del} className="px-[10px] py-[4px] border">del</button>
+        <button onClick={add} className="px-[10px] py-[4px] border">
+          add
+        </button>
+        <button onClick={del} className="px-[10px] py-[4px] border">
+          del
+        </button>
       </div>
       {/* <div className="w-[100px] h-[100px] border rounded-md border-purple-500">
         <Count>
@@ -22,8 +26,12 @@ export default function Home() {
             <>
               {count}
               <br />
-              <button onClick={add} className="px-[10px] py-[4px] border">add</button>
-              <button onClick={del} className="px-[10px] py-[4px] border">del</button>
+              <button onClick={add} className="px-[10px] py-[4px] border">
+                add
+              </button>
+              <button onClick={del} className="px-[10px] py-[4px] border">
+                del
+              </button>
             </>
           )}
         </Count>

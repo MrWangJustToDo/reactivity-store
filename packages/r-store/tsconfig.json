@@ -3,8 +3,9 @@
     "rootDir": "src",
     "target": "ES6",
     "moduleResolution": "node",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "stripInternal": true
   },
-  "include": ["./src"],
+  "include": ["./src", "./global.d.ts"],
   "exclude": ["node_modules"]
 }

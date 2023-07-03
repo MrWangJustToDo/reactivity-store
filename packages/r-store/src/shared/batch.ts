@@ -1,6 +1,9 @@
 import { unstable_batchedUpdates } from "react-dom";
 
-export const batchObject: { current: (cb: () => void) => void } = { current: unstable_batchedUpdates };
+/**
+ * @internal
+ */
+const batchObject: { current: (cb: () => void) => void } = { current: unstable_batchedUpdates };
 
 export const setBatch = (batch: (cb: () => void) => void) => {
   batchObject.current = batch;

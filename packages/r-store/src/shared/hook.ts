@@ -8,6 +8,9 @@ import { traverse } from "./tools";
 import type { LifeCycle } from "./lifeCycle";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 
+/**
+ * @internal
+ */
 export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K) => {
   const callbackRef = useRef(callback);
 
@@ -27,7 +30,9 @@ export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K) => {
   return memoCallback;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+/**
+ * @internal
+ */
 export const useCallbackRef = <T extends Function>(callback: T) => {
   const callbackRef = useRef(callback);
 
@@ -40,6 +45,9 @@ export const useCallbackRef = <T extends Function>(callback: T) => {
   return memoCallback;
 };
 
+/**
+ * @internal
+ */
 export const usePrevValue = <T>(v: T) => {
   const vRef = useRef(v);
 
@@ -50,6 +58,9 @@ export const usePrevValue = <T>(v: T) => {
   return vRef.current;
 };
 
+/**
+ * @internal
+ */
 export const useForceUpdate = () => {
   const [, setState] = useState(0);
 
@@ -61,6 +72,9 @@ export const useForceUpdate = () => {
 // eslint-disable-next-line no-extra-boolean-cast
 const needUnmountEffect = isReact18 ? !Boolean(__DEV__) : true;
 
+/**
+ * @internal
+ */
 export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwrapRef<T>, lifeCycle: LifeCycle, actions: Record<string, unknown> = {}) => {
   function useSelector(): ShallowUnwrapRef<T>;
   function useSelector<P>(selector: (state: ShallowUnwrapRef<T>) => P): P;

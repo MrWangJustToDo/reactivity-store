@@ -6,19 +6,19 @@ import { useForceUpdate } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
 
-import type { Creator } from "./createStore";
+import { setGlobalStoreLifeCycle } from "./internal";
+
+import type { Creator} from "./internal";
 import type { LifeCycle } from "../shared/lifeCycle";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode } from "react";
-
-export let globalStoreLifeCycle: LifeCycle | null = null;
 
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
   setup: Creator<T>;
   render?: (props: P & ShallowUnwrapRef<T>) => JSX.Element;
 };
 
-export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) => {
+export const createStoreWithComponent = <P extends Record<string, unknown> = any, T extends Record<string, unknown> = any>(props: CreateStoreWithComponentProps<P, T>) => {
   const { setup, render } = props;
 
   class ForBeforeUnmount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
@@ -108,11 +108,13 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
 
   const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
     const { lifeCycleInstance, proxyState: state } = useMemo(() => {
-      globalStoreLifeCycle = createLifeCycle();
+      const lifeCycleInstance = createLifeCycle();
 
-      const lifeCycleInstance = globalStoreLifeCycle;
+      setGlobalStoreLifeCycle(lifeCycleInstance);
 
       const state = setup();
+
+      setGlobalStoreLifeCycle(null);
 
       if (__DEV__ && checkHasMiddleware(state)) {
         console.error(`[reactivity-store] 'createStoreWithComponent' not support middleware usage, please change to use 'createState'`);
@@ -123,8 +125,6 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
       }
 
       const proxyState = proxyRefs(state);
-
-      globalStoreLifeCycle = null;
 
       return {
         proxyState,

@@ -1,3 +1,6 @@
+/**
+ * @internal
+ */
 export type LifeCycle = {
   onBeforeMount: Array<() => void>;
 
@@ -14,8 +17,11 @@ export type LifeCycle = {
   hasHookInstall: boolean;
 
   canUpdateComponent: boolean;
-};
+}
 
+/**
+ * @internal
+ */
 export const createLifeCycle = (): LifeCycle => ({
   onBeforeMount: [],
   onBeforeUpdate: [],
