@@ -11,6 +11,8 @@ import type { LifeCycle } from "./lifeCycle";
 export class Controller<T = any> {
   readonly listeners = new Set<() => void>();
 
+  name: string;
+
   effect: ReactiveEffect<T>;
 
   // make the state change and component update
@@ -46,5 +48,5 @@ export class Controller<T = any> {
 
   getLifeCycle = () => {
     return this.lifeCycle;
-  }
+  };
 }
