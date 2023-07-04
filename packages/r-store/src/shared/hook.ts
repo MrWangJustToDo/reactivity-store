@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
@@ -94,6 +95,20 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
     const prevSelector = usePrevValue(selector);
 
     const ControllerInstance = useMemo(() => new Controller(() => selectorRef(state), lifeCycle, getSelected), []);
+
+    if (__DEV__) {
+      useEffect(() => {
+        window.__store__ = window.__store__ || new Set();
+
+        const set = window.__store__;
+
+        set.add(ControllerInstance);
+
+        return () => {
+          set.delete(ControllerInstance);
+        };
+      }, [ControllerInstance]);
+    }
 
     useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 

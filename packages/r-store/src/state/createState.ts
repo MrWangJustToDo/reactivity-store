@@ -8,7 +8,7 @@ import { checkHasReactive } from "../shared/tools";
 
 import { getFinalActions, getFinalMiddleware, getFinalState } from "./tools";
 
-import type { MaybeStateWithMiddleware} from "./tools";
+import type { MaybeStateWithMiddleware } from "./tools";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 
 export type Setup<T extends Record<string, unknown>> = () => T;
@@ -27,7 +27,7 @@ export const createState = <T extends Record<string, unknown>>(setup: Setup<Mayb
 
   const middleware = getFinalMiddleware(state);
 
-  if (__DEV__ && !middleware['withPersist'] && checkHasReactive(initialState)) {
+  if (__DEV__ && !middleware["withPersist"] && !middleware["withActions"] && checkHasReactive(initialState)) {
     console.error(`[reactivity-store] 'createState' expect receive a plain object but got a reactive object, this is a unexpected usage`);
   }
 
@@ -43,7 +43,7 @@ export const createState = <T extends Record<string, unknown>>(setup: Setup<Mayb
     lifeCycle.canUpdateComponent = true;
   };
 
-  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate, getState: () => T };
+  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate; getState: () => T };
 
   typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
 

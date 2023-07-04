@@ -7,6 +7,10 @@ declare global {
       NODE_ENV: "development" | "production" | "test";
     }
   }
+
+  interface Window {
+    __store__: Set<any>
+  }
 }
 
 export {};
