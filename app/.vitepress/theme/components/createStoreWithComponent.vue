@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted, ref as _ref } from "reactivity-store";
+import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, onUnmounted, ref as _ref, onBeforeMount, onUpdated } from "reactivity-store";
 import { onMounted as vue_OnMounted, onBeforeUnmount as vue_OnBeforeUnmount, ref } from "vue";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
@@ -13,13 +13,37 @@ const Time = createStoreWithComponent({
 
     let id;
 
+    onBeforeMount(() => {
+      console.log('before mount')
+    })
+
+    onMounted(() => {
+      console.log('mounted')
+    })
+
     onMounted(() => {
       id = setInterval(() => (timeRef.value = new Date().toString()), 1000);
     });
 
     onBeforeUpdate(() => {
+      console.log('before update')
+    })
+
+    onBeforeUpdate(() => {
       updateCountRef.value++
     });
+
+    onUpdated(() => {
+      console.log('updated')
+    })
+
+    onBeforeUnmount(() => {
+      console.log('before unmount')
+    })
+
+    onUnmounted(() => {
+      console.log('unmounted')
+    })
 
     onUnmounted(() => {
       clearInterval(id);

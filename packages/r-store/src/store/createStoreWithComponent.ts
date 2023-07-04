@@ -1,14 +1,10 @@
-import { ReactiveEffect, proxyRefs } from "@vue/reactivity";
-import { Component, createElement, useCallback, useMemo } from "react";
+import { Component, createElement, useMemo } from "react";
 
-import { isServer } from "../shared/env";
-import { useForceUpdate } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
-import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
 
-import { setGlobalStoreLifeCycle } from "./internal";
+import { createStoreWithLifeCycle, setGlobalStoreLifeCycle } from "./internal";
 
-import type { Creator} from "./internal";
+import type { Creator } from "./internal";
 import type { LifeCycle } from "../shared/lifeCycle";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode } from "react";
@@ -18,7 +14,9 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
   render?: (props: P & ShallowUnwrapRef<T>) => JSX.Element;
 };
 
-export const createStoreWithComponent = <P extends Record<string, unknown> = any, T extends Record<string, unknown> = any>(props: CreateStoreWithComponentProps<P, T>) => {
+export const createStoreWithComponent = <P extends Record<string, unknown> = any, T extends Record<string, unknown> = any>(
+  props: CreateStoreWithComponentProps<P, T>
+) => {
   const { setup, render } = props;
 
   class ForBeforeUnmount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
@@ -41,23 +39,13 @@ export const createStoreWithComponent = <P extends Record<string, unknown> = any
     }
   }
 
-  type RenderWithLifeCycleProps = P & {
-    ["$$__state__$$"]: ShallowUnwrapRef<T>;
-    ["$$__trigger__$$"]: () => void;
+  type RenderWithLifeCycleProps = {
     ["$$__instance__$$"]: LifeCycle;
-    children?: CreateStoreWithComponentProps<P, T>["render"];
-  };
-
-  type RenderProps = P & {
-    ["$$__state__$$"]: ShallowUnwrapRef<T>;
-    ["$$__trigger__$$"]: () => void;
-    children?: CreateStoreWithComponentProps<P, T>["render"];
+    children: JSX.Element;
   };
 
   class RenderWithLifeCycle extends Component<RenderWithLifeCycleProps> {
     componentDidMount(): void {
-      this.effect.active = true;
-      this.effect.run();
       this.props.$$__instance__$$.onMounted.forEach((f) => f());
     }
 
@@ -67,7 +55,6 @@ export const createStoreWithComponent = <P extends Record<string, unknown> = any
 
     componentWillUnmount(): void {
       this.props.$$__instance__$$.onUnmounted.forEach((f) => f());
-      this.effect.stop();
     }
 
     shouldComponentUpdate(): boolean {
@@ -77,73 +64,26 @@ export const createStoreWithComponent = <P extends Record<string, unknown> = any
       return true;
     }
 
-    effect = new ReactiveEffect(() => {
-      const { children, $$__trigger__$$, $$__state__$$, $$__instance__$$, ...last } = this.props;
-      const targetRender = render || children;
-      const element = targetRender?.({ ...last, ...$$__state__$$ } as P & ShallowUnwrapRef<T>) || null;
-      return element;
-    }, this.props.$$__trigger__$$);
-
     render(): ReactNode {
-      return createElement(ForBeforeMount, { ["$$__instance__$$"]: this.props.$$__instance__$$, children: this.effect.run() });
-    }
-  }
-
-  class Render extends Component<RenderProps> {
-    componentWillUnmount(): void {
-      this.effect.stop();
-    }
-
-    effect = new ReactiveEffect(() => {
-      const { children, $$__trigger__$$, $$__state__$$, $$__instance__$$, ...last } = this.props;
-      const targetRender = render || children;
-      const element = targetRender?.({ ...last, ...$$__state__$$ } as P & ShallowUnwrapRef<T>) || null;
-      return element;
-    }, this.props.$$__trigger__$$);
-
-    render(): ReactNode {
-      return this.effect.run();
+      return createElement(ForBeforeMount, { ["$$__instance__$$"]: this.props.$$__instance__$$, children: this.props.children });
     }
   }
 
   const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
-    const { lifeCycleInstance, proxyState: state } = useMemo(() => {
+    const useSelector = useMemo(() => {
       const lifeCycleInstance = createLifeCycle();
 
       setGlobalStoreLifeCycle(lifeCycleInstance);
 
-      const state = setup();
+      const useSelector = createStoreWithLifeCycle(setup, "createStoreWithComponent", lifeCycleInstance);
 
       setGlobalStoreLifeCycle(null);
 
-      if (__DEV__ && checkHasMiddleware(state)) {
-        console.error(`[reactivity-store] 'createStoreWithComponent' not support middleware usage, please change to use 'createState'`);
-      }
-
-      if (__DEV__ && !checkHasReactive(state)) {
-        console.error(`[reactivity-store] 'createStoreWithComponent' expect receive a reactive object but got a plain object, this is a unexpected usage`);
-      }
-
-      const proxyState = proxyRefs(state);
-
-      return {
-        proxyState,
-        lifeCycleInstance,
-      };
+      return useSelector;
     }, []);
 
-    const update = useForceUpdate();
-
-    const forceUpdate = useCallback(() => {
-      if (lifeCycleInstance.canUpdateComponent) {
-        if (__DEV__ && isServer) {
-          console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
-        }
-        update();
-      }
-    }, [lifeCycleInstance]);
-
     if (__DEV__) {
+      const state = useSelector.getState();
       for (const key in props) {
         if (key in state) {
           console.warn(`[reactivity-store] duplicate key ${key} in Component props and RStore state, please fix this usage`);
@@ -151,18 +91,24 @@ export const createStoreWithComponent = <P extends Record<string, unknown> = any
       }
     }
 
+    const lifeCycleInstance = useSelector.getLifeCycle();
+
+    const { children, ...last } = props;
+
+    const targetRender = render || props.children;
+
+    const renderedChildren = useSelector((state) => targetRender({ ...last, ...state } as P & ShallowUnwrapRef<T>)) || null;
+
     if (lifeCycleInstance.hasHookInstall) {
       return createElement(ForBeforeUnmount, {
         ["$$__instance__$$"]: lifeCycleInstance,
         children: createElement(RenderWithLifeCycle, {
-          ...props,
-          ["$$__state__$$"]: state,
-          ["$$__trigger__$$"]: forceUpdate,
+          children: renderedChildren,
           ["$$__instance__$$"]: lifeCycleInstance,
         }),
       });
     } else {
-      return createElement(Render, { ...props, ["$$__state__$$"]: state, ["$$__trigger__$$"]: forceUpdate });
+      return renderedChildren;
     }
   };
 

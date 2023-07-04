@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Controller } from "./controller";
@@ -57,17 +57,6 @@ export const usePrevValue = <T>(v: T) => {
   }, [v]);
 
   return vRef.current;
-};
-
-/**
- * @internal
- */
-export const useForceUpdate = () => {
-  const [, setState] = useState(0);
-
-  const forceUpdate = useCallback(() => setState((i) => i + 1), []);
-
-  return forceUpdate;
 };
 
 // eslint-disable-next-line no-extra-boolean-cast

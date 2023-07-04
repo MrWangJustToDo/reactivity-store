@@ -11,15 +11,15 @@ export type Creator<T extends Record<string, unknown>> = () => T;
 /**
  * @internal
  */
-export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(creator: Creator<T>, lifeCycle?: LifeCycle) => {
+export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(creator: Creator<T>, name = 'createStore', lifeCycle?: LifeCycle) => {
   const state = creator();
 
   if (__DEV__ && checkHasMiddleware(state)) {
-    console.error(`[reactivity-store] 'createStore' not support middleware usage, please change to use 'createState'`);
+    console.error(`[reactivity-store] '${name}' not support middleware usage, please change to use 'createState'`);
   }
 
   if (__DEV__ && !checkHasReactive(state)) {
-    console.error(`[reactivity-store] 'createStore' expect receive a reactive object but got a plain object, this is a unexpected usage`);
+    console.error(`[reactivity-store] '${name}' expect receive a reactive object but got a plain object, this is a unexpected usage`);
   }
 
   const finalState = proxyRefs(state);
@@ -34,11 +34,13 @@ export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(crea
     lifeCycleInstance.canUpdateComponent = true;
   };
 
-  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate; getState: () => T };
+  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate; getState: () => T; getLifeCycle: () => LifeCycle };
 
   typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
 
   typedUseSelector.getState = () => toRaw(state);
+
+  typedUseSelector.getLifeCycle = () => lifeCycleInstance;
 
   return typedUseSelector;
 };
