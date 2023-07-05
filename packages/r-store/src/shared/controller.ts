@@ -1,52 +1,77 @@
 import { ReactiveEffect } from "@vue/reactivity";
+import { isPromise } from "@vue/shared";
 
 import { isServer } from "./env";
 
 import type { LifeCycle } from "./lifeCycle";
+
+const catchError =
+  <T>(cb: () => T) =>
+  () => {
+    try {
+      const res = cb();
+      if (isPromise(res)) {
+        throw new Error(`[reactivity-store] selector should be a pure function, but current is a async function`);
+      }
+      return res;
+    } catch (e) {
+      if (__DEV__) {
+        console.error(`[reactivity-store] have an error for current selector, ${(e as Error)?.message}`);
+      }
+      return null;
+    }
+  };
 
 // TODO
 /**
  * @internal
  */
 export class Controller<T = any> {
-  readonly listeners = new Set<() => void>();
+  readonly _listeners = new Set<() => void>();
 
   name: string;
 
-  effect: ReactiveEffect<T>;
+  _safeGetState: () => T;
+
+  _effect: ReactiveEffect<T>;
 
   // make the state change and component update
-  count = 0;
+  _updateCount = 0;
 
-  constructor(readonly state: () => T, readonly lifeCycle: LifeCycle, readonly onUpdate?: () => void) {
-    this.effect = new ReactiveEffect(state, this.notify);
+  constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly onUpdate?: () => void) {
+    this._safeGetState = catchError(_state);
+    this._effect = new ReactiveEffect(this._safeGetState, this.notify);
   }
 
   notify = () => {
-    if (this.lifeCycle.canUpdateComponent) {
+    if (this._lifeCycle.canUpdateComponent) {
       if (__DEV__ && isServer) {
         console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
       }
       this.onUpdate?.();
-      this.count++;
-      this.listeners.forEach((f) => f());
+      this._updateCount++;
+      this._listeners.forEach((f) => f());
     }
   };
 
   subscribe = (listener: () => void) => {
-    this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
+    this._listeners.add(listener);
+    return () => this._listeners.delete(listener);
   };
 
   getState = () => {
-    return this.count;
+    return this._updateCount;
   };
 
   getEffect = () => {
-    return this.effect;
+    return this._effect;
+  };
+
+  getSelectorState = () => {
+    return this._safeGetState();
   };
 
   getLifeCycle = () => {
-    return this.lifeCycle;
+    return this._lifeCycle;
   };
 }
