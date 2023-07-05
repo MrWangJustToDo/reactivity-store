@@ -22,7 +22,7 @@ export default function Home() {
       </div>
       {/* <div className="w-[100px] h-[100px] border rounded-md border-purple-500">
         <Count>
-          {({ count, add, del }) => (
+          {({ count, del, add }) => (
             <>
               {count}
               <br />

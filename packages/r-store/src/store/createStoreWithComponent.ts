@@ -14,7 +14,7 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
   render?: (props: P & ShallowUnwrapRef<T>) => JSX.Element;
 };
 
-export const createStoreWithComponent = <P extends Record<string, unknown> = any, T extends Record<string, unknown> = any>(
+export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<P, T>
 ) => {
   const { setup, render } = props;
@@ -69,7 +69,7 @@ export const createStoreWithComponent = <P extends Record<string, unknown> = any
     }
   }
 
-  const ComponentWithState = <Q extends P>(props: Q & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
+  const ComponentWithState = (props: P & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
     const useSelector = useMemo(() => {
       const lifeCycleInstance = createLifeCycle();
 
