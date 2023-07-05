@@ -14,9 +14,7 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
   render?: (props: P & ShallowUnwrapRef<T>) => JSX.Element;
 };
 
-export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(
-  props: CreateStoreWithComponentProps<P, T>
-) => {
+export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) => {
   const { setup, render } = props;
 
   class ForBeforeUnmount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
@@ -95,7 +93,15 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
 
     const { children, ...last } = props;
 
-    const targetRender = render || props.children;
+    const _targetRender = render || props.children;
+
+    const targetRender =
+      _targetRender ??
+      (() => {
+        if (__DEV__) {
+          console.warn(`[reactivity-store] current reactive component not have a render function`);
+        }
+      });
 
     const renderedChildren = useSelector((state) => targetRender({ ...last, ...state } as P & ShallowUnwrapRef<T>)) || null;
 

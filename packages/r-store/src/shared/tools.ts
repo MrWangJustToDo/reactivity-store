@@ -5,6 +5,10 @@ import { isArray, isMap, isObject, isPlainObject, isSet } from "@vue/shared";
  * @internal
  */
 export function traverse(value: unknown, seen?: Set<unknown>) {
+  if (isRef(value)) return value.value;
+
+  if (!isReactive(value)) return value;
+  
   if (!isObject(value) || (value as any)[ReactiveFlags.SKIP]) {
     return value;
   }
