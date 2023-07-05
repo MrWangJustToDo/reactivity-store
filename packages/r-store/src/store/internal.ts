@@ -5,13 +5,14 @@ import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
 
 import type { LifeCycle } from "../shared/lifeCycle";
+import type { ShallowUnwrapRef } from "@vue/reactivity";
 
 export type Creator<T extends Record<string, unknown>> = () => T;
 
 /**
  * @internal
  */
-export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(creator: Creator<T>, name = 'createStore', lifeCycle?: LifeCycle) => {
+export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(creator: Creator<T>, name = "createStore", lifeCycle?: LifeCycle) => {
   const state = creator();
 
   if (__DEV__ && checkHasMiddleware(state)) {
@@ -34,11 +35,18 @@ export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(crea
     lifeCycleInstance.canUpdateComponent = true;
   };
 
-  const typedUseSelector = useSelector as typeof useSelector & { updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate; getState: () => T; getLifeCycle: () => LifeCycle };
+  const typedUseSelector = useSelector as typeof useSelector & {
+    getState: () => T;
+    getLifeCycle: () => LifeCycle;
+    getFinalState: () => ShallowUnwrapRef<T>;
+    updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate;
+  };
 
   typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
 
   typedUseSelector.getState = () => toRaw(state);
+
+  typedUseSelector.getFinalState = () => finalState;
 
   typedUseSelector.getLifeCycle = () => lifeCycleInstance;
 

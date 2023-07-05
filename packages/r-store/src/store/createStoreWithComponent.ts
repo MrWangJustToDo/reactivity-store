@@ -1,4 +1,4 @@
-import { Component, createElement, useMemo } from "react";
+import { Component, Fragment, createElement, useMemo } from "react";
 
 import { createLifeCycle } from "../shared/lifeCycle";
 
@@ -11,9 +11,10 @@ import type { ReactNode } from "react";
 
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
   setup: Creator<T>;
-  render?: (props: P & ShallowUnwrapRef<T>) => JSX.Element;
+  render?: (props: P & ShallowUnwrapRef<T>) => ReactNode;
 };
 
+// TODO
 export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) => {
   const { setup, render } = props;
 
@@ -39,7 +40,7 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
 
   type RenderWithLifeCycleProps = {
     ["$$__instance__$$"]: LifeCycle;
-    children: JSX.Element;
+    children: ReactNode;
   };
 
   class RenderWithLifeCycle extends Component<RenderWithLifeCycleProps> {
@@ -80,8 +81,9 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
       return useSelector;
     }, []);
 
+    const state = useSelector.getFinalState();
+
     if (__DEV__) {
-      const state = useSelector.getState();
       for (const key in props) {
         if (key in state) {
           console.warn(`[reactivity-store] duplicate key ${key} in Component props and RStore state, please fix this usage`);
@@ -98,23 +100,27 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
     const targetRender =
       _targetRender ??
       (() => {
+        lifeCycleInstance.canUpdateComponent = false;
         if (__DEV__) {
           console.warn(`[reactivity-store] current reactive component not have a render function`);
         }
       });
 
-    const renderedChildren = useSelector((state) => targetRender({ ...last, ...state } as P & ShallowUnwrapRef<T>)) || null;
+    // subscribe reactivity-store update
+    useSelector();
+
+    const renderedChildren = targetRender({ ...last, ...state } as P & ShallowUnwrapRef<T>) || null;
 
     if (lifeCycleInstance.hasHookInstall) {
       return createElement(ForBeforeUnmount, {
         ["$$__instance__$$"]: lifeCycleInstance,
         children: createElement(RenderWithLifeCycle, {
-          children: renderedChildren,
+          children: createElement(Fragment, null, renderedChildren),
           ["$$__instance__$$"]: lifeCycleInstance,
         }),
       });
     } else {
-      return renderedChildren;
+      return createElement(Fragment, null, renderedChildren);
     }
   };
 
