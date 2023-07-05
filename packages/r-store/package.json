@@ -57,7 +57,7 @@
       "types": "./index.d.ts",
       "import": "./dist/esm/index.js",
       "module": "./dist/esm/index.js",
-      "default": "./dist/cjs/index.js"
+      "default": "./index.js"
     }
   },
   "keywords": [
