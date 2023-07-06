@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 
-import { useCount, useCount_2 } from "@/hooks/useCount";
+import { useCount, useCount_2, useCount_3 } from "@/hooks/useCount";
 import { Count } from "@/store/Count";
 
 const inter = Inter({ subsets: ["latin"] });

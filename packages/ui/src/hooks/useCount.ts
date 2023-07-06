@@ -15,3 +15,17 @@ export const useCount_2 = createStore(() => {
 
   return { data: { d, add, del } };
 });
+
+export const useCount_3 = createStore(() => {
+  const count = ref(0);
+
+  const d = ref(0);
+
+  const addC = () => count.value++;
+
+  const add = () => d.value++;
+
+  const del = () => d.value--;
+
+  return { count, d, add, del, addC };
+});

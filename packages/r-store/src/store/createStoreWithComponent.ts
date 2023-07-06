@@ -7,7 +7,7 @@ import { createStoreWithLifeCycle, setGlobalStoreLifeCycle } from "./internal";
 import type { Creator } from "./internal";
 import type { LifeCycle } from "../shared/lifeCycle";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
-import type { ReactNode } from "react";
+import type { ReactNode, ReactElement } from "react";
 
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
   setup: Creator<T>;
@@ -15,7 +15,13 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 };
 
 // TODO
-export const createStoreWithComponent = <P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) => {
+export function createStoreWithComponent<T extends Record<string, unknown>>(
+  props: CreateStoreWithComponentProps<never, T>
+): ({ children }: { children: (p: ShallowUnwrapRef<T>) => ReactNode }) => ReactElement;
+export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
+  props: CreateStoreWithComponentProps<P, T>
+): ({ children }: { children: (p: P & ShallowUnwrapRef<T>) => ReactNode } & P) => ReactElement;
+export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {
   const { setup, render } = props;
 
   class ForBeforeUnmount extends Component<{ ["$$__instance__$$"]: LifeCycle; children: ReactNode }> {
@@ -125,4 +131,4 @@ export const createStoreWithComponent = <P extends Record<string, unknown>, T ex
   };
 
   return ComponentWithState;
-};
+}

@@ -42,13 +42,13 @@ export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(crea
     updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate;
   };
 
-  typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
-
   typedUseSelector.getState = () => toRaw(state);
 
   typedUseSelector.getFinalState = () => finalState;
 
   typedUseSelector.getLifeCycle = () => lifeCycleInstance;
+
+  typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
 
   return typedUseSelector;
 };

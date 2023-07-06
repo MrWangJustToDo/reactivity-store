@@ -126,6 +126,11 @@ export const withActions = <T extends Record<string, unknown>, P extends Record<
           console.error(`[reactivity-store/actions] there are duplicate key in the 'setup' and 'generateAction' returned value, this is a unexpected behavior`);
         }
       });
+      Object.keys(allActions).forEach((key) => {
+        if (typeof allActions[key] !== 'function') {
+          console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]}`)
+        }
+      })
     }
 
     return {

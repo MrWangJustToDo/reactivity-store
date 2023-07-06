@@ -82,4 +82,4 @@ const Bar = <Time>{({ timeRef, updateCountRef }) => <div>123</div>}</Time>;
 
 const Baz = <Time children={({ timeRef, updateCountRef }) => <div></div>} />;
 
-const Bar2 = ({ name }: { name: string }) => <Time2>{({ name, timeRef, updateCountRef }) => <div>123</div>}</Time2>;
+const Bar2 = ({ name }: { name: string }) => <Time2>{({ timeRef, updateCountRef }) => 123}</Time2>;

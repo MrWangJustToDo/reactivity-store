@@ -2,7 +2,7 @@
 import { globalStoreLifeCycle } from "./internal";
 
 export const onMounted = (cb: () => void) => {
-  if (!globalStoreLifeCycle) throw new Error("can not use 'onMounted' outside of the 'createStoreWithComponent' function");
+  if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onMounted' outside of the 'createStoreWithComponent' function");
 
   globalStoreLifeCycle.onMounted.push(cb);
 
@@ -10,7 +10,7 @@ export const onMounted = (cb: () => void) => {
 };
 
 export const onUpdated = (cb: () => void) => {
-  if (!globalStoreLifeCycle) throw new Error("can not use 'onUpdated' outside of the 'createStoreWithComponent' function");
+  if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onUpdated' outside of the 'createStoreWithComponent' function");
 
   globalStoreLifeCycle.onUpdated.push(cb);
 
@@ -18,7 +18,7 @@ export const onUpdated = (cb: () => void) => {
 };
 
 export const onUnmounted = (cb: () => void) => {
-  if (!globalStoreLifeCycle) throw new Error("can not use 'onUnmounted' outside of the 'createStoreWithComponent' function");
+  if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onUnmounted' outside of the 'createStoreWithComponent' function");
 
   globalStoreLifeCycle.onUnmounted.push(cb);
 
@@ -26,7 +26,7 @@ export const onUnmounted = (cb: () => void) => {
 };
 
 export const onBeforeMount = (cb: () => void) => {
-  if (!globalStoreLifeCycle) throw new Error("can not use 'onBeforeMount' outside of the 'createStoreWithComponent' function");
+  if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onBeforeMount' outside of the 'createStoreWithComponent' function");
 
   globalStoreLifeCycle.onBeforeMount.push(cb);
 
@@ -34,7 +34,7 @@ export const onBeforeMount = (cb: () => void) => {
 };
 
 export const onBeforeUpdate = (cb: () => void) => {
-  if (!globalStoreLifeCycle) throw new Error("can not use 'onBeforeUpdate' outside of the 'createStoreWithComponent' function");
+  if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onBeforeUpdate' outside of the 'createStoreWithComponent' function");
 
   globalStoreLifeCycle.onBeforeUpdate.push(cb);
 
@@ -42,7 +42,7 @@ export const onBeforeUpdate = (cb: () => void) => {
 };
 
 export const onBeforeUnmount = (cb: () => void) => {
-  if (!globalStoreLifeCycle) throw new Error("can not use 'onBeforeUnmount' outside of the 'createStoreWithComponent' function");
+  if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onBeforeUnmount' outside of the 'createStoreWithComponent' function");
 
   globalStoreLifeCycle.onBeforeUnmount.push(cb);
 
