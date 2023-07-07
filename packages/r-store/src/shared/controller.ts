@@ -29,6 +29,7 @@ const catchError =
 export class Controller<T = any> {
   readonly _listeners = new Set<() => void>();
 
+  // TODO
   name: string;
 
   _safeGetState: () => T;
