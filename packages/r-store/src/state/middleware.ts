@@ -6,13 +6,13 @@ import { checkHasReactive, traverse } from "../shared/tools";
 
 import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions } from "./tools";
 
-import type { Setup } from "./createState";
+import type { Setup, UnWrapMiddleware } from "./createState";
 import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps } from "./tools";
 
-export const withPersist = <T extends Record<string, unknown>>(
-  setup: Setup<MaybeStateWithMiddleware<T>>,
-  options: WithPersistProps<T>
-): Setup<StateWithMiddleware<T>> => {
+export const withPersist = <T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<MaybeStateWithMiddleware<T, P>>,
+  options: WithPersistProps<UnWrapMiddleware<T>>
+): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> => {
   return () => {
     const _initialState = setup();
 
@@ -20,7 +20,7 @@ export const withPersist = <T extends Record<string, unknown>>(
       console.warn(`[reactivity-store/persist] you are using multiple of the 'withPersist' middleware, this is a unexpected usage`);
     }
 
-    const initialState = getFinalState(_initialState);
+    const initialState = getFinalState(_initialState) as UnWrapMiddleware<T>;
 
     if (__DEV__ && checkHasReactive(initialState)) {
       console.error(
@@ -53,7 +53,7 @@ export const withPersist = <T extends Record<string, unknown>>(
           re = options?.merge?.(initialState, cachedState) || Object.assign(initialState, cachedState);
         }
 
-        re = reactive(re) as T;
+        re = reactive(re) as UnWrapMiddleware<T>;
 
         new ReactiveEffect(
           () => traverse(re),
@@ -86,10 +86,18 @@ export const withPersist = <T extends Record<string, unknown>>(
   };
 };
 
-export const withActions = <T extends Record<string, unknown>, P extends Record<string, Function> = Record<string, Function>>(
-  setup: Setup<MaybeStateWithMiddleware<T>>,
-  options: WithActionsProps<T, P>
-): Setup<StateWithMiddleware<T & P>> => {
+// export function withActions<T extends StateWithMiddleware<T, L>, P extends Record<string, Function>, L extends Record<string, Function>>(
+//   setup: Setup<T>,
+//   options: WithActionsProps<UnWrapMiddleware<T>, P>
+// ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>>;
+// export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>>(
+//   setup: Setup<T>,
+//   options: WithActionsProps<UnWrapMiddleware<T>, P>
+// ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>>;
+export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
+  setup: Setup<MaybeStateWithMiddleware<T, L>>,
+  options: WithActionsProps<UnWrapMiddleware<T>, P>
+): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>> {
   return () => {
     const _initialState = setup();
 
@@ -103,7 +111,7 @@ export const withActions = <T extends Record<string, unknown>, P extends Record<
 
     const actions = getFinalActions(_initialState);
 
-    const reactiveState = reactive(initialState) as T;
+    const reactiveState = reactive(initialState) as UnWrapMiddleware<T>;
 
     const pendingGenerate = options.generateActions;
 
@@ -127,16 +135,16 @@ export const withActions = <T extends Record<string, unknown>, P extends Record<
         }
       });
       Object.keys(allActions).forEach((key) => {
-        if (typeof allActions[key] !== 'function') {
-          console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]}`)
+        if (typeof allActions[key] !== "function") {
+          console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]}`);
         }
-      })
+      });
     }
 
     return {
       ["$$__state__$$"]: reactiveState,
       ["$$__actions__$$"]: { ...actions, ...batchActions },
       ["$$__middleware__$$"]: middleware,
-    } as unknown as StateWithMiddleware<T & P>;
+    } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
   };
-};
+}

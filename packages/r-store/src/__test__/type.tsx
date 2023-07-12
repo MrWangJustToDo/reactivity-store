@@ -1,19 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, withActions, withPersist, ref } from "..";
 
-const useCount = createState(() => ({ count: { data: 1 } }));
+const useCount = createState(
+  withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => 'll' }) }),
+  {
+    withActions: (s: { count: { data: number; }; }) => ({ add: () => s.count.data++, del: () => 1 }),
+    withPersist: "1",
+  }
+);
+
+useCount((s) => s);
 
 const useCount_v2 = createState(
-  withActions(() => ({ count: 1, name: "haha" }), {
-    generateActions: (state) => {
-      return {
-        add: () => state.count++,
-        del: () => {
-          state.count--;
-        },
-      };
-    },
-  })
+  withActions(
+    withActions(() => ({ count: 1, name: "haha" }), {
+      generateActions: (state) => {
+        return {
+          add: () => state.count++,
+          del: () => {
+            state.count--;
+          },
+          kk: () => 99
+        };
+      },
+    }),
+    { generateActions: (s) => ({ ll: () => s.count++, add: () => 1, del: () => 1 }) }
+  )
 );
 
 const useCount_v3 = createState(
@@ -26,13 +38,18 @@ const useCount_v3 = createState(
       },
       { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
     ),
-    { key: "foo" }
-  )
+    { key: "foo", }
+  ),
+  {
+    withActions: (s: { count: number; }) => ({ ll: () => s.count++ }),
+    withPersist: '11'
+  }
 );
 
-// const { count, add, del } = useCount_v2();
+const { count, add, del, ll, kk } = useCount_v2(s => s);
 
-const { count, add, del } = useCount_v3();
+
+// const { count, add, del } = useCount_v3();
 
 const Time = createStoreWithComponent({
   setup: () => {

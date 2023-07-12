@@ -39,7 +39,7 @@ export class Controller<T = any> {
   // make the state change and component update
   _updateCount = 0;
 
-  constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly _onUpdate?: () => void) {
+  constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly _onUpdate?: (instance: Controller) => void) {
     this._safeGetState = catchError(_state);
     this._effect = new ReactiveEffect(this._safeGetState, this.notify);
   }
@@ -49,8 +49,8 @@ export class Controller<T = any> {
       if (__DEV__ && isServer) {
         console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
       }
-      this._onUpdate?.();
       this._updateCount++;
+      this._onUpdate?.(this);
       this._listeners.forEach((f) => f());
     }
   };
@@ -75,4 +75,12 @@ export class Controller<T = any> {
   getLifeCycle = () => {
     return this._lifeCycle;
   };
+
+  run() {
+    this._effect.run();
+  }
+
+  stop() {
+    this._effect.stop();
+  }
 }

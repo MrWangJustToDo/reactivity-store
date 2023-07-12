@@ -11,8 +11,10 @@ const useCountState_v2 = createState(withActions(() => ({ count: 1 }), { generat
 
 const useCountState_v3 = createState(withActions(() => ({ count: 1 }), { generateActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } } }));
 
+const useCountState_v4 = createState(() => ({ count: 1 }), { withActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } } });
+
 const App = () => {
-  const { count, add } = useCountState_v3();
+  const { count, add } = useCountState_v4();
 
   return React.createElement(React.StrictMode, null, React.createElement(
     "div",

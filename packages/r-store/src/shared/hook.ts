@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { toRaw } from "@vue/reactivity";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
@@ -7,7 +8,7 @@ import { isReact18 } from "./env";
 import { traverse } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
-import type { ShallowUnwrapRef } from "@vue/reactivity";
+import type { ShallowUnwrapRef} from "@vue/reactivity";
 
 /**
  * @internal
@@ -62,55 +63,43 @@ export const usePrevValue = <T>(v: T) => {
 // eslint-disable-next-line no-extra-boolean-cast
 const needUnmountEffect = isReact18 ? !Boolean(__DEV__) : true;
 
-/**
- * @internal
- */
-export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwrapRef<T>, lifeCycle: LifeCycle, actions: Record<string, unknown> = {}) => {
-  function useSelector(): ShallowUnwrapRef<T>;
-  function useSelector<P>(selector: (state: ShallowUnwrapRef<T>) => P): P;
-  function useSelector<P>(selector?: (state: ShallowUnwrapRef<T>) => P) {
+export const createHook = <T extends Object, C extends Record<string, Function>>(
+  finalState: ShallowUnwrapRef<T>,
+  initialState: T,
+  lifeCycle: LifeCycle,
+  actions: C = undefined
+) => {
+  function useSelector(): ShallowUnwrapRef<T> & C;
+  function useSelector<P>(selector: (state: ShallowUnwrapRef<T> & C) => P): P;
+  function useSelector<P>(selector?: (state: ShallowUnwrapRef<T> & C) => P) {
     const ref = useRef<P | ShallowUnwrapRef<T>>();
 
     const selectorRef = useSubscribeCallbackRef(selector);
 
     const getSelected = useCallbackRef(() => {
       if (selector) {
-        ref.current = selector({ ...state, ...actions });
+        ref.current = selector({ ...finalState, ...actions });
       } else {
-        ref.current = { ...state, ...actions };
+        ref.current = { ...finalState, ...actions };
       }
     });
 
     const prevSelector = usePrevValue(selector);
 
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(state), lifeCycle, getSelected), []);
-
-    if (__DEV__) {
-      useEffect(() => {
-        window.__store__ = window.__store__ || new Set();
-
-        const set = window.__store__;
-
-        set.add(ControllerInstance);
-
-        return () => {
-          set.delete(ControllerInstance);
-        };
-      }, [ControllerInstance]);
-    }
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(finalState as any), lifeCycle, getSelected), []);
 
     useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
     // initial
     useMemo(() => {
-      ControllerInstance.getEffect().run();
+      ControllerInstance.run();
       getSelected();
     }, [ControllerInstance, getSelected]);
 
     // rerun when the selector change
     useMemo(() => {
       if (prevSelector !== selector) {
-        ControllerInstance.getEffect().run();
+        ControllerInstance.run();
         getSelected();
       }
     }, [ControllerInstance, prevSelector, selector]);
@@ -118,11 +107,23 @@ export const createHook = <T extends Record<string, unknown>>(state: ShallowUnwr
     // clean effect
     // currently, the 18 version of `StrictMode` not work if the unmount logic run, so need disable it in the development mode
     if (needUnmountEffect) {
-      useEffect(() => () => ControllerInstance.getEffect().stop(), [ControllerInstance]);
+      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
     }
 
     return ref.current;
   }
 
-  return useSelector;
+  const typedUseSelector = useSelector as typeof useSelector & {
+    getState: () => T;
+    getLifeCycle: () => LifeCycle;
+    getFinalState: () => ShallowUnwrapRef<T>;
+  };
+
+  typedUseSelector.getState = () => toRaw(initialState);
+
+  typedUseSelector.getLifeCycle = () => lifeCycle;
+
+  typedUseSelector.getFinalState = () => finalState;
+
+  return typedUseSelector;
 };

@@ -6,18 +6,14 @@ import { wrapperBatchUpdate } from "../shared/batch";
  */
 export const persistKey = "reactivity-store/persist-";
 
-
 export type StorageState = {
   version: string;
   data: any;
 };
 
+export type StateWithMiddleware<T, P> = { ["$$__state__$$"]: T; ["$$__middleware__$$"]: Record<string, unknown>; ["$$__actions__$$"]: P };
 
-export type StateWithMiddleware<T> = { ["$$__state__$$"]: T; ["$$__middleware__$$"]: Record<string, unknown>; ["$$__actions__$$"]: Record<string, unknown> };
-
-
-export type MaybeStateWithMiddleware<T> = T | StateWithMiddleware<T>;
-
+export type MaybeStateWithMiddleware<T, P> = T | StateWithMiddleware<T, P>;
 
 export type WithPersistProps<T extends Record<string, unknown>> = {
   key: string;
@@ -28,7 +24,6 @@ export type WithPersistProps<T extends Record<string, unknown>> = {
   parse?: (s: string) => Partial<T>;
   merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
 };
-
 
 export type WithActionsProps<T, P> = {
   generateActions?: (state: T) => P;
@@ -49,7 +44,7 @@ export const debounce = <T extends Function>(cb: T, time): T => {
 /**
  * @internal
  */
-export const getBatchUpdateActions = <T extends Record<string, unknown>>(actions: ReturnType<typeof getFinalActions<T>>) => {
+export const getBatchUpdateActions = (actions: ReturnType<typeof getFinalActions>) => {
   return Object.keys(actions).reduce<typeof actions>((p, c) => {
     p[c] = wrapperBatchUpdate(actions[c] as () => void);
     return p;
@@ -59,7 +54,7 @@ export const getBatchUpdateActions = <T extends Record<string, unknown>>(actions
 /**
  * @internal
  */
-export const getFinalState = <T extends Record<string, unknown>>(state: MaybeStateWithMiddleware<T>) => {
+export const getFinalState = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
   if (state["$$__state__$$"]) return state["$$__state__$$"] as T;
 
   return state as T;
@@ -68,7 +63,7 @@ export const getFinalState = <T extends Record<string, unknown>>(state: MaybeSta
 /**
  * @internal
  */
-export const getFinalMiddleware = <T extends Record<string, unknown>>(state: MaybeStateWithMiddleware<T>) => {
+export const getFinalMiddleware = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
   if (state["$$__state__$$"]) return (state["$$__middleware__$$"] || {}) as Record<string, unknown>;
 
   return {} as Record<string, unknown>;
@@ -77,8 +72,8 @@ export const getFinalMiddleware = <T extends Record<string, unknown>>(state: May
 /**
  * @internal
  */
-export const getFinalActions = <T extends Record<string, unknown>>(state: MaybeStateWithMiddleware<T>) => {
-  if (state["$$__state__$$"]) return (state["$$__actions__$$"] || {}) as Record<string, unknown>;
+export const getFinalActions = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
+  if (state["$$__state__$$"]) return (state["$$__actions__$$"] || {}) as P;
 
-  return {} as Record<string, unknown>;
+  return {} as P;
 };

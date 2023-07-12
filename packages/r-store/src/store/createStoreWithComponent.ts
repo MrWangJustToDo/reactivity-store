@@ -17,10 +17,10 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 // TODO
 export function createStoreWithComponent<T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<never, T>
-): ({ children }: { children: (p: ShallowUnwrapRef<T>) => ReactNode }) => ReactElement;
+): ({ children }: { children?: (p: ShallowUnwrapRef<T>) => ReactNode }) => ReactElement;
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<P, T>
-): ({ children }: { children: (p: P & ShallowUnwrapRef<T>) => ReactNode } & P) => ReactElement;
+): ({ children }: { children?: (p: P & ShallowUnwrapRef<T>) => ReactNode } & P) => ReactElement;
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {
   const { setup, render } = props;
 

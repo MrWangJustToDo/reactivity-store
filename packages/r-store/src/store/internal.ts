@@ -1,11 +1,10 @@
-import { proxyRefs, toRaw } from "@vue/reactivity";
+import { proxyRefs } from "@vue/reactivity";
 
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
 
 import type { LifeCycle } from "../shared/lifeCycle";
-import type { ShallowUnwrapRef } from "@vue/reactivity";
 
 export type Creator<T extends Record<string, unknown>> = () => T;
 
@@ -27,30 +26,9 @@ export const createStoreWithLifeCycle = <T extends Record<string, unknown>>(crea
 
   const lifeCycleInstance = lifeCycle || createLifeCycle();
 
-  const useSelector = createHook(finalState, lifeCycleInstance);
+  const useSelector = createHook(finalState, state, lifeCycleInstance);
 
-  const updateStateWithoutReactiveUpdate = (cb: (state: T) => void) => {
-    lifeCycleInstance.canUpdateComponent = false;
-    cb(state);
-    lifeCycleInstance.canUpdateComponent = true;
-  };
-
-  const typedUseSelector = useSelector as typeof useSelector & {
-    getState: () => T;
-    getLifeCycle: () => LifeCycle;
-    getFinalState: () => ShallowUnwrapRef<T>;
-    updateStateWithoutReactiveUpdate: typeof updateStateWithoutReactiveUpdate;
-  };
-
-  typedUseSelector.getState = () => toRaw(state);
-
-  typedUseSelector.getFinalState = () => finalState;
-
-  typedUseSelector.getLifeCycle = () => lifeCycleInstance;
-
-  typedUseSelector.updateStateWithoutReactiveUpdate = updateStateWithoutReactiveUpdate;
-
-  return typedUseSelector;
+  return useSelector;
 };
 
 /**
