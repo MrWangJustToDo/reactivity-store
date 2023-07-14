@@ -2,9 +2,9 @@ import { Component, Fragment, createElement, useMemo } from "react";
 
 import { createLifeCycle } from "../shared/lifeCycle";
 
-import { createStoreWithLifeCycle, setGlobalStoreLifeCycle } from "./internal";
+import { internalCreateStore, setGlobalStoreLifeCycle } from "./_internal";
 
-import type { Creator } from "./internal";
+import type { Creator } from "./_internal";
 import type { LifeCycle } from "../shared/lifeCycle";
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 import type { ReactNode, ReactElement } from "react";
@@ -80,7 +80,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
 
       setGlobalStoreLifeCycle(lifeCycleInstance);
 
-      const useSelector = createStoreWithLifeCycle(setup, "createStoreWithComponent", lifeCycleInstance);
+      const useSelector = internalCreateStore(setup, "createStoreWithComponent", lifeCycleInstance);
 
       setGlobalStoreLifeCycle(null);
 

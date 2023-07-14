@@ -1,7 +1,7 @@
-import { createStoreWithLifeCycle } from "./internal";
+import { internalCreateStore } from "./_internal";
 
-import type { Creator} from "./internal";
+import type { Creator} from "./_internal";
 
 export const createStore = <T extends Record<string, unknown>>(creator: Creator<T>) => {
-  return createStoreWithLifeCycle(creator);
+  return internalCreateStore(creator);
 };

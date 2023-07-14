@@ -8,7 +8,7 @@ import { isReact18 } from "./env";
 import { traverse } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
-import type { ShallowUnwrapRef} from "@vue/reactivity";
+import type { ShallowUnwrapRef } from "@vue/reactivity";
 
 /**
  * @internal
@@ -63,7 +63,7 @@ export const usePrevValue = <T>(v: T) => {
 // eslint-disable-next-line no-extra-boolean-cast
 const needUnmountEffect = isReact18 ? !Boolean(__DEV__) : true;
 
-export const createHook = <T extends Object, C extends Record<string, Function>>(
+export const createHook = <T extends Record<string, unknown>, C extends Record<string, Function>>(
   finalState: ShallowUnwrapRef<T>,
   initialState: T,
   lifeCycle: LifeCycle,

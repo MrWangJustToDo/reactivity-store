@@ -6,7 +6,8 @@ import { checkHasReactive, traverse } from "../shared/tools";
 
 import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions } from "./tools";
 
-import type { Setup, UnWrapMiddleware } from "./createState";
+import type { UnWrapMiddleware } from "./_internal";
+import type { Setup } from "./createState";
 import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps } from "./tools";
 
 export const withPersist = <T extends Record<string, unknown>, P extends Record<string, Function>>(

@@ -29,3 +29,4 @@ export const useCount_3 = createStore(() => {
 
   return { count, d, add, del, addC };
 });
+

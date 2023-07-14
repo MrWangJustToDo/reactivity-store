@@ -1,5 +1,5 @@
 // vue like lifeCycle for react app;
-import { globalStoreLifeCycle } from "./internal";
+import { globalStoreLifeCycle } from "./_internal";
 
 export const onMounted = (cb: () => void) => {
   if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onMounted' outside of the 'createStoreWithComponent' function");
