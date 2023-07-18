@@ -17,6 +17,8 @@ export type LifeCycle = {
   hasHookInstall: boolean;
 
   canUpdateComponent: boolean;
+
+  syncUpdateComponent: boolean;
 }
 
 /**
@@ -31,4 +33,5 @@ export const createLifeCycle = (): LifeCycle => ({
   onUnmounted: [],
   hasHookInstall: false,
   canUpdateComponent: true,
+  syncUpdateComponent: false,
 });

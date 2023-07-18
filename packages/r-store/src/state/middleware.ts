@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ReactiveEffect, reactive } from "@vue/reactivity";
 
-import { isReact18, isServer } from "../shared/env";
+import { isServer } from "../shared/env";
 import { checkHasReactive, traverse } from "../shared/tools";
 
 import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions } from "./tools";
@@ -118,13 +118,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
 
     const allActions = pendingGenerate?.(reactiveState);
 
-    const batchActions = isReact18
-      ? options.automaticBatchAction === true
-        ? getBatchUpdateActions(allActions)
-        : allActions
-      : options.automaticBatchAction === undefined || options.automaticBatchAction === null || options.automaticBatchAction === true
-      ? getBatchUpdateActions(allActions)
-      : allActions;
+    const batchActions = options.automaticBatchAction === true ? getBatchUpdateActions(allActions) : allActions;
 
     middleware["withActions"] = true;
 

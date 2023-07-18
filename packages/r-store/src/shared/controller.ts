@@ -2,6 +2,7 @@ import { ReactiveEffect } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 
 import { isServer } from "./env";
+import { queueJob } from "./queue";
 
 import type { LifeCycle } from "./lifeCycle";
 
@@ -41,18 +42,24 @@ export class Controller<T = any> {
 
   constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly _onUpdate?: (instance: Controller) => void) {
     this._safeGetState = catchError(_state);
-    this._effect = new ReactiveEffect(this._safeGetState, this.notify);
+    this._effect = new ReactiveEffect(this._safeGetState, () => {
+      if (this._lifeCycle.canUpdateComponent) {
+        if (this._lifeCycle.syncUpdateComponent) {
+          this.notify();
+        } else {
+          queueJob(this.notify);
+        }
+      }
+    });
   }
 
   notify = () => {
-    if (this._lifeCycle.canUpdateComponent) {
-      if (__DEV__ && isServer) {
-        console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
-      }
-      this._updateCount++;
-      this._onUpdate?.(this);
-      this._listeners.forEach((f) => f());
+    if (__DEV__ && isServer) {
+      console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
     }
+    this._updateCount++;
+    this._onUpdate?.(this);
+    this._listeners.forEach((f) => f());
   };
 
   subscribe = (listener: () => void) => {
