@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, withActions, withPersist, ref } from "..";
+import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, withActions, withPersist, ref, createStore } from "..";
 
 const useCount = createState(
-  withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }),
-  {
-    withActions: (s: { count: { data: number; }; }) => ({ add: () => s.count.data++, del: () => 1 }),
-    withPersist: "1",
-  }
+  withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) })
+  // {
+  //   withActions: (s: { count: { data: number } }) => ({ add: () => s.count.data++, del: () => 1 }),
+  //   withPersist: "1",
+  // }
 );
+
+const useFf = createStore(() => {
+  const vvv = ref(0);
+
+  return { vvv };
+});
+
+useFf((s) => s.vvv);
 
 useCount((s) => s);
 
@@ -103,3 +111,12 @@ const Bar = <Time>{({ timeRef, updateCountRef }) => <div>123</div>}</Time>;
 const Baz = <Time children={({ timeRef, updateCountRef }) => <div></div>} />;
 
 const Bar2 = ({ name }: { name: string }) => <Time2>{({ timeRef, updateCountRef }) => 123}</Time2>;
+
+const useCountG = createState(
+  () => {
+    const data = { count: 0 };
+
+    return data;
+  },
+  { withActions: (state: { count: number }) => ({ add: () => state.count++, del: () => state.count-- }), withPersist: "foo" }
+);

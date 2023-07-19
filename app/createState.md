@@ -66,6 +66,17 @@ const useCount = createState(
   )
 );
 
+// or you can use the `option` api
+
+const useCount = createState(
+  () => {
+    const data = { count: 0 };
+
+    return { data };
+  },
+  { withPersist: "count" }
+);
+
 const App = () => {
   const data = useCount((state) => state.data);
 
@@ -97,6 +108,17 @@ const useCount = createState(
     },
     { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
   )
+);
+
+// or you can use the `option` api
+
+const useCount = createState(
+  () => {
+    const data = { count: 0 };
+
+    return data;
+  },
+  { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
 );
 
 const App = () => {
@@ -133,6 +155,17 @@ const useCount = createState(
     ),
     { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
   )
+);
+
+// or you can use the `option` api
+
+const useCount = createState(
+  () => {
+    const data = { count: 0 };
+
+    return data;
+  },
+  { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }), withPersist: "foo" }
 );
 
 const App = () => {

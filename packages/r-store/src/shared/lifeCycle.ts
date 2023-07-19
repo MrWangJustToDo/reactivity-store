@@ -1,6 +1,3 @@
-/**
- * @internal
- */
 export type LifeCycle = {
   onBeforeMount: Array<() => void>;
 

@@ -12,8 +12,11 @@ import type { MaybeStateWithMiddleware, StateWithMiddleware, WithActionsProps } 
 import type { ShallowUnwrapRef } from "@vue/reactivity";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type UnWrapMiddleware<T> = T extends StateWithMiddleware<infer Q, infer P1> ? UnWrapMiddleware<Q> : T;
+export type UnWrapMiddleware<T> = T extends StateWithMiddleware<infer Q, infer _> ? UnWrapMiddleware<Q> : T;
 
+/**
+ * @internal
+ */
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function internalCreateState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,

@@ -54,6 +54,9 @@ const { count, add } = useCount((state) => ({ count: state.count, add: state.add
 
 // you can also compose this two middleware
 
+// or you can use the `option` api with full type support, it is very simple to use
+const useCount = createState(() => ({ count: 0 }), { withActions: (state) => ({ add: () => state.count++ }), withPersist: "count" });
+
 // the createState have the same usage with createStore
 const App = () => {
   const count = useCount((state) => state.data);

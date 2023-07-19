@@ -87,14 +87,16 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
   };
 };
 
-// export function withActions<T extends StateWithMiddleware<T, L>, P extends Record<string, Function>, L extends Record<string, Function>>(
-//   setup: Setup<T>,
-//   options: WithActionsProps<UnWrapMiddleware<T>, P>
-// ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>>;
-// export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>>(
-//   setup: Setup<T>,
-//   options: WithActionsProps<UnWrapMiddleware<T>, P>
-// ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>>;
+export function withActions<
+  T extends StateWithMiddleware<Q, L>,
+  Q extends Record<string, unknown>,
+  P extends Record<string, Function>,
+  L extends Record<string, Function>
+>(setup: Setup<StateWithMiddleware<Q, L>>, options: WithActionsProps<Q, P>): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>>;
+export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<T>,
+  options: WithActionsProps<T, P>
+): Setup<StateWithMiddleware<T, P>>;
 export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,
   options: WithActionsProps<UnWrapMiddleware<T>, P>
