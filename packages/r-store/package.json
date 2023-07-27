@@ -1,6 +1,6 @@
 {
   "name": "reactivity-store",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "author": "MrWangJustToDo",
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app",
@@ -50,15 +50,6 @@
         "sourcemap": true
       }
     ]
-  },
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "types": "./index.d.ts",
-      "import": "./dist/esm/index.js",
-      "module": "./dist/esm/index.js",
-      "default": "./index.js"
-    }
   },
   "keywords": [
     "state-management, reactive, vue, react"

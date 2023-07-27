@@ -1,11 +1,11 @@
-import { proxyRefs, reactive } from "@vue/reactivity";
+import { proxyRefs, reactive, toRaw } from "@vue/reactivity";
 
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasReactive } from "../shared/tools";
 
 import { withActions, withPersist } from "./middleware";
-import { getFinalActions, getFinalMiddleware, getFinalState } from "./tools";
+import { getFinalActions, getFinalState } from "./tools";
 
 import type { Setup } from "./createState";
 import type { MaybeStateWithMiddleware, StateWithMiddleware, WithActionsProps } from "./tools";
@@ -45,10 +45,10 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const actions = getFinalActions(state);
 
-  const middleware = getFinalMiddleware(state);
+  const rawState = toRaw(initialState);
 
-  if (__DEV__ && !middleware["withPersist"] && !middleware["withActions"] && checkHasReactive(initialState)) {
-    console.error(`[reactivity-store] 'createState' expect receive a plain object but got a reactive object, this is a unexpected usage`);
+  if (__DEV__ && checkHasReactive(rawState)) {
+    console.error(`[reactivity-store] 'createState' expect receive a plain object but got a reactive object, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`)
   }
 
   const reactiveState = reactive(initialState);

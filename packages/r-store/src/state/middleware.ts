@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { ReactiveEffect, reactive } from "@vue/reactivity";
+import { ReactiveEffect, reactive, toRaw } from "@vue/reactivity";
 
 import { isServer } from "../shared/env";
 import { checkHasReactive, traverse } from "../shared/tools";
@@ -17,18 +17,20 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
   return () => {
     const _initialState = setup();
 
-    if (__DEV__ && _initialState["$$__state__$$"] && _initialState["$$__middleware__$$"] && _initialState["$$__middleware__$$"]["withPersist"]) {
-      console.warn(`[reactivity-store/persist] you are using multiple of the 'withPersist' middleware, this is a unexpected usage`);
+    let hasSet = false;
+
+    if (_initialState["$$__state__$$"] && _initialState["$$__middleware__$$"] && _initialState["$$__middleware__$$"]["withPersist"]) {
+      hasSet = true;
+      if (__DEV__) {
+        console.warn(`[reactivity-store/persist] you are using multiple of the 'withPersist' middleware, this is a unexpected usage`);
+      }
     }
 
     const initialState = getFinalState(_initialState) as UnWrapMiddleware<T>;
 
     if (__DEV__ && checkHasReactive(initialState)) {
       console.error(
-        `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object 
-          you may: 1. write 'withActions' in the 'withPersist'
-                   2. use 'reactiveApi' in the 'setup' function 
-        `
+        `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object, you may use 'reactiveApi' in the 'setup' function`
       );
     }
 
@@ -38,7 +40,7 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
 
     middleware["withPersist"] = true;
 
-    if (!isServer) {
+    if (!isServer && !hasSet) {
       try {
         const storage = options?.getStorage?.() || window.localStorage;
 
@@ -73,7 +75,7 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
           }, options.debounceTime || 40)
         ).run();
 
-        return { ["$$__state__$$"]: re, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
+        return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
       } catch (e) {
         if (__DEV__) {
           console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
@@ -128,7 +130,9 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
     if (__DEV__) {
       Object.keys(initialState).forEach((key) => {
         if (allActions[key]) {
-          console.error(`[reactivity-store/actions] there are duplicate key in the 'setup' and 'generateAction' returned value, this is a unexpected behavior`);
+          console.error(
+            `[reactivity-store/actions] there are duplicate key: [${key}] in the 'setup' and 'generateAction' returned value, this is a unexpected behavior.`
+          );
         }
       });
       Object.keys(allActions).forEach((key) => {
@@ -136,10 +140,17 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
           console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]}`);
         }
       });
+      Object.keys(actions).forEach((key) => {
+        if (allActions[key]) {
+          console.error(
+            `[reactivity-store/actions] there are duplicate key: [${key}] in the 'action' return from 'withActions',this is a unexpected behavior.`
+          );
+        }
+      });
     }
 
     return {
-      ["$$__state__$$"]: reactiveState,
+      ["$$__state__$$"]: toRaw(reactiveState),
       ["$$__actions__$$"]: { ...actions, ...batchActions },
       ["$$__middleware__$$"]: middleware,
     } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;

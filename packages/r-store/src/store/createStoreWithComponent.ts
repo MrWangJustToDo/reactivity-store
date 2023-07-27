@@ -92,7 +92,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
     if (__DEV__) {
       for (const key in props) {
         if (key in state) {
-          console.warn(`[reactivity-store] duplicate key ${key} in Component props and RStore state, please fix this usage`);
+          console.warn(`[reactivity-store] duplicate key: [${key}] in Component props and RStore state, this is a unexpected usage`);
         }
       }
     }
