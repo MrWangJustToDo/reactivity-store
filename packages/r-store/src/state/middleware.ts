@@ -10,83 +10,81 @@ import type { UnWrapMiddleware } from "./_internal";
 import type { Setup } from "./createState";
 import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps } from "./tools";
 
+// build in middleware
+
 export const withPersist = <T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
   options: WithPersistProps<UnWrapMiddleware<T>>
 ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> => {
-  return () => {
-    const _initialState = setup();
+  return createMiddleware(
+    () => {
+      const _initialState = setup();
 
-    let hasSet = false;
+      const initialState = getFinalState(_initialState) as UnWrapMiddleware<T>;
 
-    if (_initialState["$$__state__$$"] && _initialState["$$__middleware__$$"] && _initialState["$$__middleware__$$"]["withPersist"]) {
-      hasSet = true;
-      if (__DEV__) {
-        console.warn(`[reactivity-store/persist] you are using multiple of the 'withPersist' middleware, this is a unexpected usage`);
+      const middleware = getFinalMiddleware(_initialState);
+
+      const auctions = getFinalActions(_initialState);
+
+      let hasSet = false;
+
+      if (middleware["withPersist"]) hasSet = true;
+
+      if (__DEV__ && checkHasReactive(initialState)) {
+        console.error(
+          `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object, you may use 'reactiveApi' in the 'setup' function`
+        );
       }
-    }
 
-    const initialState = getFinalState(_initialState) as UnWrapMiddleware<T>;
+      if (!isServer && !hasSet) {
+        try {
+          const storage = options?.getStorage?.() || window.localStorage;
 
-    if (__DEV__ && checkHasReactive(initialState)) {
-      console.error(
-        `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object, you may use 'reactiveApi' in the 'setup' function`
-      );
-    }
+          const storageStateString = storage.getItem(persistKey + options.key) as string;
 
-    const middleware = getFinalMiddleware(_initialState);
+          const storageState = JSON.parse(storageStateString) as StorageState;
 
-    const auctions = getFinalActions(_initialState);
+          let re = initialState;
 
-    middleware["withPersist"] = true;
+          if (storageState?.version === (options.version || options.key) && storageState.data) {
+            const cachedState = options?.parse?.(storageState.data) || JSON.parse(storageState.data);
 
-    if (!isServer && !hasSet) {
-      try {
-        const storage = options?.getStorage?.() || window.localStorage;
+            re = options?.merge?.(initialState, cachedState) || Object.assign(initialState, cachedState);
+          }
 
-        const storageStateString = storage.getItem(persistKey + options.key) as string;
+          re = reactive(re) as UnWrapMiddleware<T>;
 
-        const storageState = JSON.parse(storageStateString) as StorageState;
+          new ReactiveEffect(
+            () => traverse(re),
+            debounce(() => {
+              try {
+                const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
 
-        let re = initialState;
+                const cache = { data: stringifyState, version: options.version || options.key };
 
-        if (storageState?.version === (options.version || options.key) && storageState.data) {
-          const cachedState = options?.parse?.(storageState.data) || JSON.parse(storageState.data);
-
-          re = options?.merge?.(initialState, cachedState) || Object.assign(initialState, cachedState);
-        }
-
-        re = reactive(re) as UnWrapMiddleware<T>;
-
-        new ReactiveEffect(
-          () => traverse(re),
-          debounce(() => {
-            try {
-              const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
-
-              const cache = { data: stringifyState, version: options.version || options.key };
-
-              storage.setItem(persistKey + options.key, JSON.stringify(cache));
-            } catch (e) {
-              if (__DEV__) {
-                console.error(`[reactivity-store/persist] cache newState error, error: ${e}`);
+                storage.setItem(persistKey + options.key, JSON.stringify(cache));
+              } catch (e) {
+                if (__DEV__) {
+                  console.error(`[reactivity-store/persist] cache newState error, error: ${e}`);
+                }
               }
-            }
-          }, options.debounceTime || 40)
-        ).run();
+            }, options.debounceTime || 40)
+          ).run();
 
-        return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
-      } catch (e) {
-        if (__DEV__) {
-          console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
+          return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
+        } catch (e) {
+          if (__DEV__) {
+            console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
+          }
+
+          return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
         }
-
+      } else {
         return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
       }
-    } else {
-      return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
-    }
-  };
+    },
+    { name: "withPersist" }
+  );
 };
 
 export function withActions<
@@ -103,56 +101,77 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
   setup: Setup<MaybeStateWithMiddleware<T, L>>,
   options: WithActionsProps<UnWrapMiddleware<T>, P>
 ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>> {
+  return createMiddleware(
+    () => {
+      const _initialState = setup();
+
+      const initialState = getFinalState(_initialState);
+
+      const middleware = getFinalMiddleware(_initialState);
+
+      const actions = getFinalActions(_initialState);
+
+      const reactiveState = reactive(initialState) as UnWrapMiddleware<T>;
+
+      const pendingGenerate = options.generateActions;
+
+      const allActions = pendingGenerate?.(reactiveState);
+
+      const batchActions = options.automaticBatchAction === true ? getBatchUpdateActions(allActions) : allActions;
+
+      // check duplicate key
+      if (__DEV__) {
+        Object.keys(initialState).forEach((key) => {
+          if (allActions[key]) {
+            console.error(
+              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'setup' and 'generateAction' returned value, this is a unexpected behavior.`
+            );
+          }
+        });
+        Object.keys(allActions).forEach((key) => {
+          if (typeof allActions[key] !== "function") {
+            console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]}`);
+          }
+        });
+        Object.keys(actions).forEach((key) => {
+          if (allActions[key]) {
+            console.error(
+              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'action' return from 'withActions',this is a unexpected behavior.`
+            );
+          }
+        });
+      }
+
+      return {
+        ["$$__state__$$"]: toRaw(reactiveState),
+        ["$$__actions__$$"]: { ...actions, ...batchActions },
+        ["$$__middleware__$$"]: middleware,
+      } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
+    },
+    { name: "withActions" }
+  );
+}
+
+export function createMiddleware<T>(setup: Setup<any>, options: { name: string }) {
   return () => {
-    const _initialState = setup();
+    const state = setup();
 
-    if (__DEV__ && _initialState["$$__state__$$"] && _initialState["$$__middleware__$$"] && _initialState["$$__middleware__$$"]["withActions"]) {
-      console.warn(`[reactivity-store/actions] you are using multiple of the 'withActions' middleware, this is a unexpected usage`);
+    const initialState = getFinalState(state);
+
+    const middleware = getFinalMiddleware(state);
+
+    const actions = getFinalActions(state);
+
+    if (__DEV__ && middleware[options.name]) {
+      console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is a unexpected usage`);
     }
 
-    const initialState = getFinalState(_initialState);
-
-    const middleware = getFinalMiddleware(_initialState);
-
-    const actions = getFinalActions(_initialState);
-
-    const reactiveState = reactive(initialState) as UnWrapMiddleware<T>;
-
-    const pendingGenerate = options.generateActions;
-
-    const allActions = pendingGenerate?.(reactiveState);
-
-    const batchActions = options.automaticBatchAction === true ? getBatchUpdateActions(allActions) : allActions;
-
-    middleware["withActions"] = true;
-
-    // check duplicate key
-    if (__DEV__) {
-      Object.keys(initialState).forEach((key) => {
-        if (allActions[key]) {
-          console.error(
-            `[reactivity-store/actions] there are duplicate key: [${key}] in the 'setup' and 'generateAction' returned value, this is a unexpected behavior.`
-          );
-        }
-      });
-      Object.keys(allActions).forEach((key) => {
-        if (typeof allActions[key] !== "function") {
-          console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]}`);
-        }
-      });
-      Object.keys(actions).forEach((key) => {
-        if (allActions[key]) {
-          console.error(
-            `[reactivity-store/actions] there are duplicate key: [${key}] in the 'action' return from 'withActions',this is a unexpected behavior.`
-          );
-        }
-      });
-    }
+    middleware[options.name] = true;
 
     return {
-      ["$$__state__$$"]: toRaw(reactiveState),
-      ["$$__actions__$$"]: { ...actions, ...batchActions },
+      ["$$__state__$$"]: initialState,
+      ["$$__actions__$$"]: actions,
       ["$$__middleware__$$"]: middleware,
-    } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
+    } as T;
   };
 }

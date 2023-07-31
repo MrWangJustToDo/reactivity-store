@@ -13,6 +13,7 @@ type UseSelector<T, C> = {
   (): ShallowUnwrapRef<T> & C;
   <P>(selector: (state: ShallowUnwrapRef<T> & C) => P): P;
   getState: () => T;
+  getActions: () => C;
   getLifeCycle: () => LifeCycle;
   getFinalState: () => ShallowUnwrapRef<T>;
 };

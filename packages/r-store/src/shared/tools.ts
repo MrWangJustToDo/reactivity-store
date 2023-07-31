@@ -74,7 +74,7 @@ export function checkHasReactive(value: unknown) {
  * @internal
  */
 export function checkHasMiddleware(value: unknown) {
-  if (value && value?.["$$__middleware__$$"]) {
+  if (value && value?.["$$__state__$$"] && value?.["$$__middleware__$$"]) {
     return true;
   }
 }

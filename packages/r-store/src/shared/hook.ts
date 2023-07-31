@@ -115,6 +115,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   const typedUseSelector = useSelector as typeof useSelector & {
     getState: () => T;
+    getActions: () => C;
+    subscribe: <P>(selector: (state: ShallowUnwrapRef<T>) => P, cb?: () => void) => () => void;
     getLifeCycle: () => LifeCycle;
     getFinalState: () => ShallowUnwrapRef<T>;
   };
@@ -122,6 +124,16 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.getState = () => toRaw(initialState);
 
   typedUseSelector.getLifeCycle = () => lifeCycle;
+
+  typedUseSelector.subscribe = (selector, cb) => {
+    const subscribeSelector = () => traverse(selector(finalState));
+
+    const controller = new Controller(subscribeSelector, lifeCycle, cb);
+
+    return () => controller.stop();
+  };
+
+  typedUseSelector.getActions = () => actions;
 
   typedUseSelector.getFinalState = () => finalState;
 
