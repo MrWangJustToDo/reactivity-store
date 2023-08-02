@@ -20,6 +20,8 @@ const useCount = createState(
   }
 );
 
+const useA = createState(() => ({a: 1}))
+
 const useFf = createStore(() => {
   const vvv = ref(0);
 

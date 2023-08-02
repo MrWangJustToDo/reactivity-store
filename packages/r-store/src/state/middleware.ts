@@ -56,22 +56,21 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
 
           re = reactive(re) as UnWrapMiddleware<T>;
 
-          new ReactiveEffect(
-            () => traverse(re),
-            debounce(() => {
-              try {
-                const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
+          const onUpdate = debounce(() => {
+            try {
+              const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
 
-                const cache = { data: stringifyState, version: options.version || options.key };
+              const cache = { data: stringifyState, version: options.version || options.key };
 
-                storage.setItem(persistKey + options.key, JSON.stringify(cache));
-              } catch (e) {
-                if (__DEV__) {
-                  console.error(`[reactivity-store/persist] cache newState error, error: ${e}`);
-                }
+              storage.setItem(persistKey + options.key, JSON.stringify(cache));
+            } catch (e) {
+              if (__DEV__) {
+                console.error(`[reactivity-store/persist] cache newState error, error: ${e}`);
               }
-            }, options.debounceTime || 40)
-          ).run();
+            }
+          }, options.debounceTime || 40);
+
+          new ReactiveEffect(() => traverse(re), onUpdate).run();
 
           return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
         } catch (e) {
@@ -181,7 +180,6 @@ export const withNamespace = <T extends Record<string, unknown>, P extends Recor
     { name: "withNamespace" }
   );
 };
-
 
 // function for help to build external middleware
 

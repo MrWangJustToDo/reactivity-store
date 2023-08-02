@@ -20,6 +20,7 @@ export type UnWrapMiddleware<T> = T extends StateWithMiddleware<infer Q, infer _
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function internalCreateState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,
+  name: string,
   option?: {
     withPersist?: string;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
@@ -55,7 +56,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (__DEV__ && checkHasReactive(rawState)) {
     console.error(
-      `[reactivity-store] 'createState' expect receive a plain object but got a reactive object, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`
+      `[reactivity-store] '${name}' expect receive a plain object but got a reactive object, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`
     );
   }
 
