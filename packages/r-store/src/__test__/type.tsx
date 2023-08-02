@@ -7,16 +7,13 @@ import {
   onMounted,
   withActions,
   withPersist,
-  withNamespace,
+  // withNamespace,
   ref,
   createStore,
 } from "..";
 
 const useCount = createState(
-  withNamespace(
-    withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }),
-    { namespace: "foo" }
-  ),
+  withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }),
   {
     withActions: (s: { count: { data: number } }) => ({ add: () => s.count.data++, del: () => 1 }),
     withPersist: "1",
@@ -35,7 +32,7 @@ const i = useCount((s) => s);
 
 const useCount_v2 = createState(
   withActions(
-    withNamespace(
+    // withNamespace(
       withActions(
         withActions(() => ({ count: 1, name: "haha" }), {
           generateActions: (state) => {
@@ -50,8 +47,8 @@ const useCount_v2 = createState(
         }),
         { generateActions: (s) => ({ ll: () => s.count++, add: () => 1, del: () => 1 }) }
       ),
-      { namespace: "kkk" }
-    ),
+    //   { namespace: "kkk" }
+    // ),
     { generateActions: (s) => ({ mm: () => s.count-- }) }
   ),
   { withActions: (s) => ({ gg: () => s.count++ }) }

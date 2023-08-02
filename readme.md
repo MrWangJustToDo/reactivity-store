@@ -109,3 +109,38 @@ const App = () => {
   );
 };
 ```
+
+### Pure hook api for `reactive` state;
+
+```tsx
+import { useReactiveEffect, useReactiveState } from "reactivity-store";
+
+const usePosition = () => {
+  // the `state` object will be a reactive object;
+  // so every change for this object will cause the component update automatic
+  // also support a function as the params
+  const state = useReactiveState({ x: 0, y: 0 });
+
+  const xPosition = useReactiveState({ x: 0 });
+
+  useReactiveEffect(() => {
+    const listener = (e: MouseEvent) => {
+      state.x = e.clientX;
+      state.y = e.clientY;
+    };
+
+    window.addEventListener("mousemove", listener);
+
+    // same behavior as `useEffect` 
+    return () => window.removeEventListener("mousemove", listener);
+  });
+
+  // when the component mount or the `state.x` has changed, the effect callback will be invoked
+  // because of the `xPosition` is a `state` which create by `useReactiveState`, so the change will cause component update automatic
+  useReactiveEffect(() => {
+    xPosition.x = state.x;
+  });
+
+  return { y: state.y, x: xPosition.x };
+};
+```
