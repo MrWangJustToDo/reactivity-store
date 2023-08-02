@@ -5,7 +5,7 @@ export { useReactiveState } from "./hook/useReactiveState";
 export { useReactiveEffect } from "./hook/useReactiveEffect";
 
 export { createState } from "./state/createState";
-export { withActions, withPersist, withNamespace } from "./state/middleware";
+export { withActions, withPersist, /* withNamespace */ } from "./state/middleware";
 
 export { wrapperBatchUpdate, getBatch, setBatch, resetBatch } from "./shared/batch";
 
