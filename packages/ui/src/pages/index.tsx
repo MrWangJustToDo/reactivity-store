@@ -1,12 +1,24 @@
 import { Inter } from "next/font/google";
+import { useReactiveEffect, useReactiveState } from "reactivity-store";
 
 import { useCount, useCount_2, useCount_3 } from "@/hooks/useCount";
+import { usePosition } from "@/hooks/usePosition";
 import { Count } from "@/store/Count";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { count, add, del } = useCount();
+
+  const { x, y } = usePosition();
+
+  const data_1 = useReactiveState({ count: 1 });
+
+  const data_2 = useReactiveState({ count: 9 });
+
+  useReactiveEffect(() => {
+    data_2.count = data_1.count;
+  });
 
   const {
     d: _count,
@@ -39,22 +51,19 @@ export default function Home() {
         </button>
       </div>
       <Count>{({ count }) => count + 1}</Count>
-      {/* <div className="w-[100px] h-[100px] border rounded-md border-purple-500">
-        <Count>
-          {({ count, del, add }) => (
-            <>
-              {count}
-              <br />
-              <button onClick={add} className="px-[10px] py-[4px] border">
-                add
-              </button>
-              <button onClick={del} className="px-[10px] py-[4px] border">
-                del
-              </button>
-            </>
-          )}
-        </Count>
-      </div> */}
+      {x}, {y}
+      <div className="w-[140px] h-[100px] border rounded-md border-purple-500">
+        data_1.count: {data_1.count}
+        <br />
+        <button onClick={() => data_1.count++} className="px-[10px] py-[4px] border">
+          add
+        </button>
+        <button onClick={() => data_1.count--} className="px-[10px] py-[4px] border">
+          del
+        </button>
+        <br />
+        data_2.data: {data_2.count}
+      </div>
     </main>
   );
 }

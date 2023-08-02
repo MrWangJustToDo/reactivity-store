@@ -30,9 +30,6 @@ const catchError =
 export class Controller<T = any> {
   readonly _listeners = new Set<() => void>();
 
-  // TODO
-  name: string;
-
   _safeGetState: () => T;
 
   _effect: ReactiveEffect<T>;
@@ -40,7 +37,7 @@ export class Controller<T = any> {
   // make the state change and component update
   _updateCount = 0;
 
-  constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly _onUpdate?: (instance: Controller) => void) {
+  constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly _namespace?: string, readonly _onUpdate?: (instance: Controller) => void) {
     this._safeGetState = catchError(_state);
     this._effect = new ReactiveEffect(this._safeGetState, () => {
       if (this._lifeCycle.canUpdateComponent) {

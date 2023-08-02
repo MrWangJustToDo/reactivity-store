@@ -4,11 +4,11 @@ import { ReactiveEffect, reactive, toRaw } from "@vue/reactivity";
 import { isServer } from "../shared/env";
 import { checkHasReactive, traverse } from "../shared/tools";
 
-import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions } from "./tools";
+import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions, getFinalNamespace } from "./tools";
 
 import type { UnWrapMiddleware } from "./_internal";
 import type { Setup } from "./createState";
-import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps } from "./tools";
+import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps, WithNamespaceProps } from "./tools";
 
 // build in middleware
 
@@ -25,6 +25,8 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
       const middleware = getFinalMiddleware(_initialState);
 
       const auctions = getFinalActions(_initialState);
+
+      const namespace = getFinalNamespace(_initialState);
 
       let hasSet = false;
 
@@ -71,16 +73,16 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
             }, options.debounceTime || 40)
           ).run();
 
-          return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
+          return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
         } catch (e) {
           if (__DEV__) {
             console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
           }
 
-          return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
+          return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
         }
       } else {
-        return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions };
+        return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
       }
     },
     { name: "withPersist" }
@@ -110,6 +112,8 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
       const middleware = getFinalMiddleware(_initialState);
 
       const actions = getFinalActions(_initialState);
+
+      const namespace = getFinalNamespace(_initialState);
 
       const reactiveState = reactive(initialState) as UnWrapMiddleware<T>;
 
@@ -146,11 +150,40 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         ["$$__state__$$"]: toRaw(reactiveState),
         ["$$__actions__$$"]: { ...actions, ...batchActions },
         ["$$__middleware__$$"]: middleware,
+        ["$$__namespace__$$"]: namespace,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
     },
     { name: "withActions" }
   );
 }
+
+export const withNamespace = <T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<MaybeStateWithMiddleware<T, P>>,
+  options: WithNamespaceProps
+): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> => {
+  return createMiddleware(
+    () => {
+      const _initialState = setup();
+
+      const initialState = getFinalState(_initialState);
+
+      const middleware = getFinalMiddleware(_initialState);
+
+      const actions = getFinalActions(_initialState);
+
+      return {
+        ["$$__state__$$"]: initialState,
+        ["$$__actions__$$"]: actions,
+        ["$$__middleware__$$"]: middleware,
+        ["$$__namespace__$$"]: options.namespace,
+      } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
+    },
+    { name: "withNamespace" }
+  );
+};
+
+
+// function for help to build external middleware
 
 export function createMiddleware<T>(setup: Setup<any>, options: { name: string }) {
   return () => {
@@ -162,6 +195,8 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
 
     const actions = getFinalActions(state);
 
+    const namespace = getFinalNamespace(state);
+
     if (__DEV__ && middleware[options.name]) {
       console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is a unexpected usage`);
     }
@@ -172,6 +207,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
       ["$$__state__$$"]: initialState,
       ["$$__actions__$$"]: actions,
       ["$$__middleware__$$"]: middleware,
+      ["$$__namespace__$$"]: namespace,
     } as T;
   };
 }

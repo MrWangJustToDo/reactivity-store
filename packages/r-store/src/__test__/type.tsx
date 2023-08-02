@@ -1,12 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createState, createStoreWithComponent, onBeforeUnmount, onBeforeUpdate, onMounted, withActions, withPersist, ref, createStore } from "..";
+import {
+  createState,
+  createStoreWithComponent,
+  onBeforeUnmount,
+  onBeforeUpdate,
+  onMounted,
+  withActions,
+  withPersist,
+  withNamespace,
+  ref,
+  createStore,
+} from "..";
 
 const useCount = createState(
-  withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) })
-  // {
-  //   withActions: (s: { count: { data: number } }) => ({ add: () => s.count.data++, del: () => 1 }),
-  //   withPersist: "1",
-  // }
+  withNamespace(
+    withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }),
+    { namespace: "foo" }
+  ),
+  {
+    withActions: (s: { count: { data: number } }) => ({ add: () => s.count.data++, del: () => 1 }),
+    withPersist: "1",
+  }
 );
 
 const useFf = createStore(() => {
@@ -15,25 +29,28 @@ const useFf = createStore(() => {
   return { vvv };
 });
 
-useFf((s) => s.vvv);
+const h = useFf((s) => s.vvv);
 
-useCount((s) => s);
+const i = useCount((s) => s);
 
 const useCount_v2 = createState(
   withActions(
-    withActions(
-      withActions(() => ({ count: 1, name: "haha" }), {
-        generateActions: (state) => {
-          return {
-            add: () => state.count++,
-            del: () => {
-              state.count--;
-            },
-            kk: () => 99,
-          };
-        },
-      }),
-      { generateActions: (s) => ({ ll: () => s.count++, add: () => 1, del: () => 1 }) }
+    withNamespace(
+      withActions(
+        withActions(() => ({ count: 1, name: "haha" }), {
+          generateActions: (state) => {
+            return {
+              add: () => state.count++,
+              del: () => {
+                state.count--;
+              },
+              kk: () => 99,
+            };
+          },
+        }),
+        { generateActions: (s) => ({ ll: () => s.count++, add: () => 1, del: () => 1 }) }
+      ),
+      { namespace: "kkk" }
     ),
     { generateActions: (s) => ({ mm: () => s.count-- }) }
   ),

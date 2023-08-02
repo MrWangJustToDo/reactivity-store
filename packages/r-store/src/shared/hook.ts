@@ -67,7 +67,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   finalState: ShallowUnwrapRef<T>,
   initialState: T,
   lifeCycle: LifeCycle,
-  actions: C = undefined
+  namespace: string,
+  actions: C = undefined,
 ) => {
   function useSelector(): ShallowUnwrapRef<T> & C;
   function useSelector<P>(selector: (state: ShallowUnwrapRef<T> & C) => P): P;
@@ -86,7 +87,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
     const prevSelector = usePrevValue(selector);
 
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(finalState as any), lifeCycle, getSelected), []);
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(finalState as any), lifeCycle, namespace, getSelected), []);
 
     useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
@@ -128,7 +129,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.subscribe = (selector, cb) => {
     const subscribeSelector = () => traverse(selector(finalState));
 
-    const controller = new Controller(subscribeSelector, lifeCycle, cb);
+    const controller = new Controller(subscribeSelector, lifeCycle, namespace, cb);
 
     return () => controller.stop();
   };

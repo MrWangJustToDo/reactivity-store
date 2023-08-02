@@ -11,7 +11,12 @@ export type StorageState = {
   data: any;
 };
 
-export type StateWithMiddleware<T, P> = { ["$$__state__$$"]: T; ["$$__middleware__$$"]: Record<string, unknown>; ["$$__actions__$$"]: P };
+export type StateWithMiddleware<T, P> = {
+  ["$$__state__$$"]: T;
+  ["$$__middleware__$$"]: Record<string, unknown>;
+  ["$$__actions__$$"]: P;
+  ["$$__namespace__$$"]: string;
+};
 
 export type MaybeStateWithMiddleware<T, P> = T | StateWithMiddleware<T, P>;
 
@@ -28,6 +33,10 @@ export type WithPersistProps<T extends Record<string, unknown>> = {
 export type WithActionsProps<T, P> = {
   generateActions?: (state: T) => P;
   automaticBatchAction?: boolean;
+};
+
+export type WithNamespaceProps = {
+  namespace: string;
 };
 
 /**
@@ -76,4 +85,13 @@ export const getFinalActions = <T extends Record<string, unknown>, P extends Rec
   if (state["$$__state__$$"]) return (state["$$__actions__$$"] || {}) as P;
 
   return {} as P;
+};
+
+/**
+ * @internal
+ */
+export const getFinalNamespace = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
+  if (state["$$__state__$$"]) return (state["$$__namespace__$$"] || "") as string;
+
+  return "";
 };
