@@ -1,10 +1,22 @@
 # RStore
 
 [![Deploy](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml/badge.svg)](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml)
+[![npm](https://img.shields.io/npm/v/reactivity-store)](https://www.npmjs.com/package/reactivity-store)
+[![Release](https://img.shields.io/github/v/release/MrWangJustToDo/r-store)](https://github.com/MrWangJustToDo/r-store)
 
 ## A React state-management, inspired by the `Vue` and `zustand`
 
 a React state-management power by Reactive api, which mean you can use Vue Reactive api in React app, any change of the state will make then UI update automatic, you do not need add any `set` function !
+
+## Install
+```bash
+# use pnpm
+pnpm add reactivity-store
+
+# or use npm/yarn
+```
+
+## Example
 
 ```tsx
 import { createStore, ref } from "reactivity-store";
@@ -144,3 +156,7 @@ const usePosition = () => {
   return { y: state.y, x: xPosition.x };
 };
 ```
+
+## License
+
+MIT

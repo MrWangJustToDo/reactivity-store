@@ -14,6 +14,8 @@ export const useReactiveEffect = (effectCallback: () => void | (() => void)) => 
       const clean = memoCallback();
       if (typeof clean === "function") {
         cleanCb = clean;
+      } else {
+        cleanCb = () => void 0;
       }
     };
 
