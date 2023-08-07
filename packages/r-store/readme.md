@@ -137,16 +137,18 @@ const usePosition = () => {
   // the `state` object will be a reactive object;
   // so every change for this object will cause the component auto update
   // also support a function as the params
-  const [state] = useReactiveState({ x: 0, y: 0 });
+  const [state, setState] = useReactiveState({ x: 0, y: 0 });
 
   // the second value is a `setState` function, this function expect receive a callback function which has the reactiveState as params
   // so we can update the state in the callback function
-  const [xPosition, setState] = useReactiveState({ x: 0 });
+  const [xPosition, setXPosition] = useReactiveState({ x: 0 });
 
   useReactiveEffect(() => {
     const listener = (e: MouseEvent) => {
-      state.x = e.clientX;
-      state.y = e.clientY;
+      setState((state) => {
+        state.x = e.clientX;
+        state.y = e.clientY;
+      })
     };
 
     window.addEventListener("mousemove", listener);
@@ -159,7 +161,7 @@ const usePosition = () => {
   // because of the `xPosition` is a `state` which create by `useReactiveState`, so the change will cause component auto update
   useReactiveEffect(() => {
     // update the state
-    setState((xPosition) => {
+    setXPosition((xPosition) => {
       xPosition.x = state.x;
     });
   });

@@ -28,7 +28,7 @@ export const internalCreateStore = <T extends Record<string, unknown>>(creator: 
 
   const lifeCycleInstance = lifeCycle || createLifeCycle();
 
-  const useSelector = createHook<T, NonNullable<unknown>>(reactiveState, rawState, lifeCycleInstance, "$$__ignore__$$");
+  const useSelector = createHook<T, NonNullable<unknown>>(reactiveState, rawState, lifeCycleInstance);
 
   return useSelector;
 };

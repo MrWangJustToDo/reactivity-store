@@ -67,10 +67,12 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   reactiveState: UnwrapNestedRefs<T>,
   initialState: T,
   lifeCycle: LifeCycle,
-  namespace: string,
+  namespace?: string,
   actions: C = undefined
 ) => {
   const readonlyState = __DEV__ ? readonly(initialState) : (reactiveState as DeepReadonly<UnwrapNestedRefs<T>>);
+
+  namespace = namespace || "$$__ignore__$$";
 
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
   function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;

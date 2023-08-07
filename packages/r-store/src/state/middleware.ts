@@ -170,6 +170,10 @@ export const withNamespace = <T extends Record<string, unknown>, P extends Recor
 
       const actions = getFinalActions(_initialState);
 
+      if (__DEV__ && options.namespace === "$$__ignore__$$") {
+        console.warn(`[reactivity-store/namespace] current namespace: ${options.namespace} is a internal namespace, try to use another one`);
+      }
+
       return {
         ["$$__state__$$"]: initialState,
         ["$$__actions__$$"]: actions,

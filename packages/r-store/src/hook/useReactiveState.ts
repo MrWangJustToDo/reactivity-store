@@ -20,5 +20,6 @@ export const useReactiveState = <T extends Record<string, unknown>>(initialState
     [useSelector]
   );
 
-  return [useSelector.getReadonlyState(), setState] as [DeepReadonly<UnwrapNestedRefs<T>>, typeof setState];
+  // make the state can be used in the `useReactiveEffect` hook
+  return [useSelector.getReactiveState(), setState] as [DeepReadonly<UnwrapNestedRefs<T>>, typeof setState];
 };
