@@ -6,12 +6,9 @@ export const Count = createStoreWithComponent({
   setup: () => {
     const count = ref(0);
 
-    new ReactiveEffect(
-      () => useCount_2.getFinalState().data.d.current.value,
-      () => {
-        count.value = useCount_2.getFinalState().data.d.current.value;
-      }
-    ).run();
+    useCount_2.subscribe((s) => s.data.d.current, () => {
+      count.value = useCount_2.getReadonlyState().data.d.current;
+    })
 
     const add = () => count.value++;
 

@@ -125,6 +125,7 @@ const App = () => {
   );
 };
 ```
+
 # v0.1.9 Update
 
 ### Pure hook api for `reactive` state;
@@ -137,7 +138,6 @@ const usePosition = () => {
   // so every change for this object will cause the component auto update
   // also support a function as the params
   const [state] = useReactiveState({ x: 0, y: 0 });
-
 
   // the second value is a `setState` function, this function expect receive a callback function which has the reactiveState as params
   // so we can update the state in the callback function
@@ -166,6 +166,17 @@ const usePosition = () => {
 
   return { y: state.y, x: xPosition.x };
 };
+```
+
+### Subscribe a state change
+
+```tsx
+import { createState } from "reactivity-store";
+
+const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }) });
+
+// you can use subscribe anywhere
+const unSubscribe = useCount.subscribe((s) => s.count, callback);
 ```
 
 ## License

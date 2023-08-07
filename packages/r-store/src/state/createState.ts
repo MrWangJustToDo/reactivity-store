@@ -17,6 +17,7 @@ type UseSelector<T, C> = {
   getLifeCycle: () => LifeCycle;
   getReactiveState: () => UnwrapNestedRefs<T>;
   getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+  subscribe: <P>(selector: (state: UnwrapNestedRefs<T>) => P, cb?: () => void) => () => void;
 };
 
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(

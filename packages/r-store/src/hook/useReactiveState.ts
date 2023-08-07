@@ -20,5 +20,5 @@ export const useReactiveState = <T extends Record<string, unknown>>(initialState
     [useSelector]
   );
 
-  return [useSelector.getReactiveState(), setState] as [DeepReadonly<UnwrapNestedRefs<T>>, typeof setState];
+  return [useSelector.getReadonlyState(), setState] as [DeepReadonly<UnwrapNestedRefs<T>>, typeof setState];
 };
