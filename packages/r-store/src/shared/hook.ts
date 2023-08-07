@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { toRaw } from "@vue/reactivity";
+import { readonly, toRaw } from "@vue/reactivity";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
@@ -8,7 +8,7 @@ import { isReact18 } from "./env";
 import { traverse } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
-import type { ShallowUnwrapRef } from "@vue/reactivity";
+import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 
 /**
  * @internal
@@ -64,30 +64,34 @@ export const usePrevValue = <T>(v: T) => {
 const needUnmountEffect = isReact18 ? !Boolean(__DEV__) : true;
 
 export const createHook = <T extends Record<string, unknown>, C extends Record<string, Function>>(
-  finalState: ShallowUnwrapRef<T>,
+  reactiveState: UnwrapNestedRefs<T>,
   initialState: T,
   lifeCycle: LifeCycle,
   namespace: string,
-  actions: C = undefined,
+  actions: C = undefined
 ) => {
-  function useSelector(): ShallowUnwrapRef<T> & C;
-  function useSelector<P>(selector: (state: ShallowUnwrapRef<T> & C) => P): P;
-  function useSelector<P>(selector?: (state: ShallowUnwrapRef<T> & C) => P) {
-    const ref = useRef<P | ShallowUnwrapRef<T>>();
+  const readonlyState = __DEV__ ? readonly(initialState) : (reactiveState as DeepReadonly<UnwrapNestedRefs<T>>);
+
+  function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
+  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
+    const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
     const selectorRef = useSubscribeCallbackRef(selector);
 
     const getSelected = useCallbackRef(() => {
+      // 0.1.9
+      // make the returned value as a readonly value, so the only way to change the state is in the `actions` middleware
       if (selector) {
-        ref.current = selector({ ...finalState, ...actions });
+        ref.current = selector({ ...readonlyState, ...actions });
       } else {
-        ref.current = { ...finalState, ...actions };
+        ref.current = { ...readonlyState, ...actions };
       }
     });
 
     const prevSelector = usePrevValue(selector);
 
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(finalState as any), lifeCycle, namespace, getSelected), []);
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, namespace, getSelected), []);
 
     useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
@@ -117,9 +121,10 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   const typedUseSelector = useSelector as typeof useSelector & {
     getState: () => T;
     getActions: () => C;
-    subscribe: <P>(selector: (state: ShallowUnwrapRef<T>) => P, cb?: () => void) => () => void;
+    subscribe: <P>(selector: (state: UnwrapNestedRefs<T>) => P, cb?: () => void) => () => void;
     getLifeCycle: () => LifeCycle;
-    getFinalState: () => ShallowUnwrapRef<T>;
+    getReactiveState: () => UnwrapNestedRefs<T>;
+    getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
   };
 
   typedUseSelector.getState = () => toRaw(initialState);
@@ -127,16 +132,20 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.getLifeCycle = () => lifeCycle;
 
   typedUseSelector.subscribe = (selector, cb) => {
-    const subscribeSelector = () => traverse(selector(finalState));
+    const subscribeSelector = () => traverse(selector(reactiveState));
 
     const controller = new Controller(subscribeSelector, lifeCycle, namespace, cb);
+
+    controller.run();
 
     return () => controller.stop();
   };
 
   typedUseSelector.getActions = () => actions;
 
-  typedUseSelector.getFinalState = () => finalState;
+  typedUseSelector.getReactiveState = () => reactiveState;
+
+  typedUseSelector.getReadonlyState = () => readonlyState;
 
   return typedUseSelector;
 };

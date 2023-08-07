@@ -1,15 +1,14 @@
-import { proxyRefs, reactive, toRaw } from "@vue/reactivity";
+import { reactive, toRaw } from "@vue/reactivity";
 
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
-import { checkHasReactive } from "../shared/tools";
+import { checkHasFunction, checkHasReactive } from "../shared/tools";
 
 import { withActions, withNamespace, withPersist } from "./middleware";
 import { getFinalActions, getFinalNamespace, getFinalState } from "./tools";
 
 import type { Setup } from "./createState";
 import type { MaybeStateWithMiddleware, StateWithMiddleware, WithActionsProps } from "./tools";
-import type { ShallowUnwrapRef } from "@vue/reactivity";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type UnWrapMiddleware<T> = T extends StateWithMiddleware<infer Q, infer _> ? UnWrapMiddleware<Q> : T;
@@ -46,7 +45,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   const state = creator();
 
   // handle withActions middleware;
-  const initialState = getFinalState(state);
+  const initialState = getFinalState(state) as T;
 
   const actions = getFinalActions(state);
 
@@ -60,11 +59,15 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     );
   }
 
+  if (__DEV__ && checkHasFunction(rawState)) {
+    console.error(
+      `[reactivity-store] '${name}' has a state with a function field, this is a unexpected usage. state should be only a plain object with data field`
+    );
+  }
+
   const reactiveState = reactive(initialState);
 
-  const finalState = proxyRefs(reactiveState);
-
-  const useSelector = createHook<T, P & L>(finalState as ShallowUnwrapRef<T>, initialState, lifeCycle, namespace, actions as P & L);
+  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, namespace, actions as P & L);
 
   return useSelector;
 }

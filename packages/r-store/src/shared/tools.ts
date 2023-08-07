@@ -1,5 +1,5 @@
 import { isProxy, isReactive, isRef, ReactiveFlags } from "@vue/reactivity";
-import { isArray, isMap, isObject, isPlainObject, isSet } from "@vue/shared";
+import { isArray, isFunction, isMap, isObject, isPlainObject, isSet } from "@vue/shared";
 
 /**
  * @internal
@@ -68,6 +68,45 @@ export function checkHasReactive(value: unknown) {
   traverse(value);
 
   return hasReactive;
+}
+
+/**
+ * @internal
+ */
+export function checkHasFunction(value: unknown) {
+  let hasFunction = false;
+
+  function traverse(value: unknown, seen?: Set<unknown>) {
+    if (!isObject(value)) return;
+    if (hasFunction) return;
+    if (isFunction(value)) {
+      hasFunction = true;
+      return;
+    }
+    seen = seen || new Set();
+    if (seen.has(value)) {
+      return;
+    }
+    seen.add(value);
+    if (isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        traverse(value[i], seen);
+      }
+    } else if (isSet(value) || isMap(value)) {
+      value.forEach((v: any) => {
+        traverse(v, seen);
+      });
+    } else if (isPlainObject(value)) {
+      for (const key in value) {
+        traverse((value as any)[key], seen);
+      }
+    }
+    return;
+  }
+
+  traverse(value);
+
+  return hasFunction;
 }
 
 /**

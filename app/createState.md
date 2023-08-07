@@ -4,15 +4,20 @@
 
 `RStore` also provide a `createState` function, this function have some difference for `createStore`
 
-1. `createStore` need a `creator` function as params, you can use `reactiveApi` in the `creator` function what export from `RStore`. `createState` also need a `setup` function as params, the different is `setup` function only need return a plain object not a reactive
+1. `createStore` need a `creator` function as params, you can use `reactiveApi` in the `creator` function what export from `RStore`. `createState` also need a `setup` function as params, the different is `setup` function only need return a plain object not a reactive, and we can define the change function in the middleware.
 
 2. `createState` support middleware, currently `createState` support two middleware: 1. `withPersist` middleware support automatic sync state to the `localStorage` or `getStorage` provider in the `withPersist` options params. 2. `withActions` middleware support you define action for current `state`, and also can be get the action from `selector`.
+
+## v0.1.9 Update
+
+the state which in the `selector` function is a readonly state, so the only way to change state is in the `action` middleware function.
 
 ## Simple Code Example
 
 ```tsx
 import { createState } from "reactivity-store";
 
+// a simple `createState` store, there are not any change function, so the state will never change
 const useCount = createState(() => {
   const data = { count: 0 };
 
@@ -26,7 +31,8 @@ const App = () => {
     <div>
       <p>React Reactive Count</p>
       <p>{data.count}</p>
-      <button onClick={() => data.count++}>Add</button>
+      {/* there are also have a escape hatch to change the state  */}
+      <button onClick={() => useCount.getReactiveState().data.count++}>Add</button>
     </div>
   );
 };
@@ -84,7 +90,8 @@ const App = () => {
     <div>
       <p>React Reactive Count</p>
       <p>{data.count}</p>
-      <button onClick={() => data.count++}>Add</button>
+      {/* also use escape hatch or you can define change function in the action middleware */}
+      <button onClick={() => useCount.getReactiveState().data.count++}>Add</button>
     </div>
   );
 };

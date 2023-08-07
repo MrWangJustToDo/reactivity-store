@@ -7,7 +7,7 @@ import {
   onMounted,
   withActions,
   withPersist,
-  // withNamespace,
+  withNamespace,
   ref,
   createStore,
 } from "..";
@@ -28,13 +28,13 @@ const useFf = createStore(() => {
   return { vvv };
 });
 
-const h = useFf((s) => s.vvv);
+const h = useFf((s) => s);
 
 const i = useCount((s) => s);
 
 const useCount_v2 = createState(
   withActions(
-    // withNamespace(
+    withNamespace(
       withActions(
         withActions(() => ({ count: 1, name: "haha" }), {
           generateActions: (state) => {
@@ -49,8 +49,8 @@ const useCount_v2 = createState(
         }),
         { generateActions: (s) => ({ ll: () => s.count++, add: () => 1, del: () => 1 }) }
       ),
-    //   { namespace: "kkk" }
-    // ),
+      { namespace: "kkk" }
+    ),
     { generateActions: (s) => ({ mm: () => s.count-- }) }
   ),
   { withActions: (s) => ({ gg: () => s.count++ }) }

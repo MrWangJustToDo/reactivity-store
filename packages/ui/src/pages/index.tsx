@@ -10,6 +10,8 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   const { count, add, del } = useCount();
 
+  // const data = useCount();
+
   const { x, y } = usePosition();
 
   const data_1 = useReactiveState({ count: 1 });

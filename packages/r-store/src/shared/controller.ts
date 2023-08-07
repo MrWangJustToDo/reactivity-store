@@ -17,7 +17,7 @@ const catchError =
       return res;
     } catch (e) {
       if (__DEV__) {
-        console.error(`[reactivity-store] have an error for current selector, ${(e as Error)?.message}`);
+        console.error(`[reactivity-store] have an error for current selector, ${(e as Error)?.message}, maybe you use the middleware with wrong usage`);
       }
       return null;
     }
@@ -51,6 +51,7 @@ export class Controller<T = any> {
   }
 
   notify = () => {
+    // TODO implement server side initialState
     if (__DEV__ && isServer) {
       console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
     }

@@ -15,7 +15,7 @@ const App = () => {
     { className: "react_container" },
     React.createElement("p", null, "React Reactive Count"),
     React.createElement("p", { style: { color: "red" } }, "count: " + count.count),
-    React.createElement("button", { className: "react_button", onClick: () => count.count++ }, "Add button")
+    React.createElement("button", { className: "react_button", onClick: () => useCountState.getReactiveState().data.count++ }, "Add button")
   );
 };
 

@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { internalCreateState } from "../state/_internal";
+
+import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 
 export const useReactiveState = <T extends Record<string, unknown>>(initialState: T | (() => T)) => {
   const [useSelector] = useState(() => {
@@ -11,5 +13,12 @@ export const useReactiveState = <T extends Record<string, unknown>>(initialState
   // subscribe reactive store update
   useSelector();
 
-  return useSelector.getFinalState();
+  const setState = useMemo(
+    () => (cb: (t: UnwrapNestedRefs<T>) => void) => {
+      cb(useSelector.getReactiveState());
+    },
+    [useSelector]
+  );
+
+  return [useSelector.getReactiveState(), setState] as [DeepReadonly<UnwrapNestedRefs<T>>, typeof setState];
 };

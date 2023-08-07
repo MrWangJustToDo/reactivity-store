@@ -87,7 +87,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
       return useSelector;
     }, []);
 
-    const state = useSelector.getFinalState();
+    const state = useSelector.getReadonlyState();
 
     if (__DEV__) {
       for (const key in props) {
