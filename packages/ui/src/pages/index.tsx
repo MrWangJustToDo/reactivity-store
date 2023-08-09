@@ -1,10 +1,14 @@
 import { Inter } from "next/font/google";
 import { useEffect } from "react";
-import { useReactiveEffect, useReactiveState } from "reactivity-store";
+import { createState, useReactiveEffect, useReactiveState } from "reactivity-store";
 
 import { useCount, useCount_2, useCount_3 } from "@/hooks/useCount";
 import { usePosition } from "@/hooks/usePosition";
 import { Count } from "@/store/Count";
+
+// const useC = createState(() => ({ c: <Count>{({ count }) => count + 1 + "-----"}</Count> }));
+
+const C = <Count>{({ count }) => count + 1 + "-----"}</Count>;
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,10 +20,13 @@ export default function Home() {
   const { x, y } = usePosition();
 
   useEffect(() => {
-    const unSubscribe = useCount.subscribe((s) => s.count, () => console.log('count update'))
+    const unSubscribe = useCount.subscribe(
+      (s) => s.count,
+      () => console.log("count update")
+    );
 
     return unSubscribe;
-  }, [])
+  }, []);
 
   const [data_1, setData_1] = useReactiveState({ count: 1 });
 
@@ -61,7 +68,9 @@ export default function Home() {
           del
         </button>
       </div>
-      <Count>{({ count }) => count + 1 + '-----'}</Count>
+      {/* {C} */}
+      <Count>{({ count }) => count + 1 + "-----"}</Count>
+      {C}
       {x}, {y}
       <div className="w-[140px] h-[100px] border rounded-md border-purple-500">
         data_1.count: {data_1.count}

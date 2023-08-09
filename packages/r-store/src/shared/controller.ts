@@ -44,7 +44,7 @@ export class Controller<T = any> {
         if (this._lifeCycle.syncUpdateComponent) {
           this.notify();
         } else {
-          queueJob(this.notify);
+          queueJob(this);
         }
       }
     });

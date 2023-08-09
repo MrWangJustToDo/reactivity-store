@@ -1,11 +1,9 @@
 import { isProxy, isReactive, isRef, ReactiveFlags } from "@vue/reactivity";
 import { isArray, isFunction, isMap, isObject, isPlainObject, isSet } from "@vue/shared";
+import { isValidElement } from "react";
 
-/**
- * @internal
- */
-export function traverse(value: unknown, seen?: Set<unknown>) {
-  if (!isObject(value) || (value as any)[ReactiveFlags.SKIP]) {
+function _traverse(value: unknown, seen?: Set<unknown>) {
+  if (!isObject(value) || (value as any)[ReactiveFlags.SKIP] || isValidElement(value)) {
     return value;
   }
   seen = seen || new Set();
@@ -29,6 +27,23 @@ export function traverse(value: unknown, seen?: Set<unknown>) {
     }
   }
   return value;
+}
+
+/**
+ * @internal
+ */
+export function traverse(value: unknown, seen?: Set<unknown>) {
+  if (__DEV__) {
+    const start = Date.now();
+    const re = _traverse(value, seen);
+    const end = Date.now();
+    if (end - start > 5) {
+      console.warn(`[reactivity-store] 'traverse' current data: ${re} take a lot of time`);
+    }
+    return re;
+  } else {
+    return _traverse(value, seen);
+  }
 }
 
 /**
