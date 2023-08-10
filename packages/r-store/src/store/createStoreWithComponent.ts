@@ -6,21 +6,21 @@ import { internalCreateStore, setGlobalStoreLifeCycle } from "./_internal";
 
 import type { Creator } from "./_internal";
 import type { LifeCycle } from "../shared/lifeCycle";
-import type { ShallowUnwrapRef } from "@vue/reactivity";
+import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 import type { ReactNode, ReactElement } from "react";
 
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
   setup: Creator<T>;
-  render?: (props: P & ShallowUnwrapRef<T>) => ReactNode;
+  render?: (props: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
 };
 
 // TODO
 export function createStoreWithComponent<T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<NonNullable<unknown>, T>
-): ({ children }: { children?: (p: ShallowUnwrapRef<T>) => ReactNode }) => ReactElement;
+): ({ children }: { children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode }) => ReactElement;
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<P, T>
-): ({ children }: { children?: (p: P & ShallowUnwrapRef<T>) => ReactNode } & P) => ReactElement;
+): ({ children }: { children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode } & P) => ReactElement;
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {
   const { setup, render } = props;
 
@@ -115,7 +115,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
     // subscribe reactivity-store update
     useSelector();
 
-    const renderedChildren = targetRender({ ...last, ...state } as P & ShallowUnwrapRef<T>) || null;
+    const renderedChildren = targetRender({ ...last, ...state } as P & DeepReadonly<UnwrapNestedRefs<T>>) || null;
 
     if (lifeCycleInstance.hasHookInstall) {
       return createElement(ForBeforeUnmount, {
