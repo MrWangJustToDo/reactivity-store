@@ -121,9 +121,13 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   }
 
   const typedUseSelector = useSelector as typeof useSelector & {
+    /**
+     * @deprecated
+     * use `getReactiveState` / `getReadonlyState` in stead
+     */
     getState: () => T;
     getActions: () => C;
-    subscribe: <P>(selector: (state: UnwrapNestedRefs<T>) => P, cb?: () => void) => () => void;
+    subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
@@ -134,7 +138,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.getLifeCycle = () => lifeCycle;
 
   typedUseSelector.subscribe = (selector, cb) => {
-    const subscribeSelector = () => traverse(selector(reactiveState));
+    const subscribeSelector = () => traverse(selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>));
 
     const controller = new Controller(subscribeSelector, lifeCycle, namespace, cb);
 

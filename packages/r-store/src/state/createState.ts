@@ -12,12 +12,16 @@ export type Setup<T> = () => T;
 type UseSelector<T, C> = {
   (): DeepReadonly<UnwrapNestedRefs<T>> & C;
   <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+  /**
+   * @deprecated
+   * use `getReactiveState` / `getReadonlyState` in stead
+   */
   getState: () => T;
   getActions: () => C;
   getLifeCycle: () => LifeCycle;
   getReactiveState: () => UnwrapNestedRefs<T>;
   getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
-  subscribe: <P>(selector: (state: UnwrapNestedRefs<T>) => P, cb?: () => void) => () => void;
+  subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
 };
 
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
