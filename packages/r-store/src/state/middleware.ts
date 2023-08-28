@@ -34,7 +34,8 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
 
       if (__DEV__ && checkHasReactive(initialState)) {
         console.error(
-          `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object, you may use 'reactiveApi' in the 'setup' function`
+          `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object %o, you may use 'reactiveApi' in the 'setup' function`,
+          initialState
         );
       }
 
@@ -65,7 +66,7 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
               storage.setItem(persistKey + options.key, JSON.stringify(cache));
             } catch (e) {
               if (__DEV__) {
-                console.error(`[reactivity-store/persist] cache newState error, error: ${e}`);
+                console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
               }
             }
           }, options.debounceTime || 40);
@@ -133,7 +134,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         });
         Object.keys(allActions).forEach((key) => {
           if (typeof allActions[key] !== "function") {
-            console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]}`);
+            console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]} in %o`, allActions);
           }
         });
         Object.keys(actions).forEach((key) => {

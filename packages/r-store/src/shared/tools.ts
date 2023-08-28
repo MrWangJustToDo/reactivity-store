@@ -38,7 +38,7 @@ export function traverse(value: unknown, seen?: Set<unknown>) {
     const re = _traverse(value, seen);
     const end = Date.now();
     if (end - start > 5) {
-      console.warn(`[reactivity-store] 'traverse' current data: ${re} take a lot of time`);
+      console.warn(`[reactivity-store] 'traverse' current data: %o take a lot of time`, re);
     }
     return re;
   } else {
@@ -92,7 +92,6 @@ export function checkHasFunction(value: unknown) {
   let hasFunction = false;
 
   function traverse(value: unknown, seen?: Set<unknown>) {
-    if (!isObject(value)) return;
     if (hasFunction) return;
     if (isFunction(value)) {
       hasFunction = true;

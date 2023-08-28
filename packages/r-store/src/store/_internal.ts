@@ -19,7 +19,7 @@ export const internalCreateStore = <T extends Record<string, unknown>>(creator: 
   }
 
   if (__DEV__ && !checkHasReactive(state)) {
-    console.error(`[reactivity-store] '${name}' expect receive a reactive object but got a plain object, this is a unexpected usage`);
+    console.error(`[reactivity-store] '${name}' expect receive a reactive object but got a plain object %o, this is a unexpected usage`, state);
   }
 
   const rawState = toRaw(state);

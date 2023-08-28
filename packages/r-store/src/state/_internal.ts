@@ -55,13 +55,15 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (__DEV__ && checkHasReactive(rawState)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a plain object but got a reactive object, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`
+      `[reactivity-store] '${name}' expect receive a plain object but got a reactive object %o, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`,
+      rawState
     );
   }
 
   if (__DEV__ && checkHasFunction(rawState)) {
     console.error(
-      `[reactivity-store] '${name}' has a state with a function field, this is a unexpected usage. state should be only a plain object with data field`
+      `[reactivity-store] '${name}' has a function field in state %o, this is a unexpected usage. state should be only a plain object with data field`,
+      rawState
     );
   }
 
