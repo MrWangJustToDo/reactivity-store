@@ -1,4 +1,5 @@
-import { createState, createStore, ref, withActions } from "reactivity-store";
+import { ref } from "reactivity-store";
+import { createState, createStore, withActions } from "reactivity-store/react";
 
 export const useCount = createState(
   withActions(() => ({ count: 0 }), { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) })
@@ -9,7 +10,7 @@ export const useVVV = createState(() => ({
   f: () => {
     void 0;
   },
-  gg: ref(0)
+  gg: ref(0),
 }));
 
 export const useCount_2 = createStore(() => {

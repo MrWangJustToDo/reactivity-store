@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import { useEffect } from "react";
-import { createState, useReactiveEffect, useReactiveState } from "reactivity-store";
+import { createState, useReactiveEffect, useReactiveState } from "reactivity-store/react";
 
 import { useCount, useCount_2, useCount_3, useVVV } from "@/hooks/useCount";
 import { usePosition } from "@/hooks/usePosition";

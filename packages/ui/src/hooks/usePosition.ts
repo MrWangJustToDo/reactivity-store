@@ -1,4 +1,4 @@
-import { useReactiveEffect, useReactiveState } from "reactivity-store";
+import { useReactiveEffect, useReactiveState } from "reactivity-store/react";
 
 export const usePosition = () => {
   const [state, setState] = useReactiveState({ x: 0, y: 0 });

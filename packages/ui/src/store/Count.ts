@@ -1,4 +1,5 @@
-import { createStoreWithComponent, onMounted, onUpdated, ReactiveEffect, ref } from "reactivity-store";
+import { ref } from "reactivity-store";
+import { createStoreWithComponent, onMounted, onUpdated, ReactiveEffect } from "reactivity-store/react";
 
 import { useCount_2 } from "@/hooks/useCount";
 
