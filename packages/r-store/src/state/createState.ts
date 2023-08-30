@@ -65,6 +65,7 @@ export function createState<T extends Record<string, unknown>, P extends Record<
     withPersist?: string;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
     withNamespace?: string;
+    withDeepSelector?: boolean;
   }
 ) {
   return internalCreateState<T, P, L>(setup, "createState", options);

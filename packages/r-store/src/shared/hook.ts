@@ -13,15 +13,15 @@ import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 /**
  * @internal
  */
-export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K) => {
-  const callbackRef = useRef(callback);
+export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSelector?: boolean) => {
+  const callbackRef = useRef<Function>();
 
-  callbackRef.current = callback;
+  callbackRef.current = typeof callback === 'function' ? callback : null;
 
   const memoCallback = useCallback((arg: T) => {
     if (callbackRef.current) {
       const re = callbackRef.current(arg);
-      traverse(re);
+      if (deepSelector) traverse(re);
       return re;
     } else {
       traverse(arg);
@@ -67,6 +67,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   reactiveState: UnwrapNestedRefs<T>,
   initialState: T,
   lifeCycle: LifeCycle,
+  deepSelector = true,
   namespace?: string,
   actions: C = undefined
 ) => {
@@ -79,7 +80,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
     const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
-    const selectorRef = useSubscribeCallbackRef(selector);
+    const selectorRef = useSubscribeCallbackRef(selector, deepSelector);
 
     const getSelected = useCallbackRef(() => {
       // 0.1.9

@@ -24,6 +24,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     withPersist?: string;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
     withNamespace?: string;
+    withDeepSelector?: boolean;
   }
 ) {
   let creator: any = setup;
@@ -55,7 +56,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (__DEV__ && checkHasReactive(rawState)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a plain object but got a reactive object %o, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`,
+      `[reactivity-store] '${name}' expect receive a plain object but got a reactive object/field %o, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`,
       rawState
     );
   }
@@ -69,7 +70,9 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const reactiveState = reactive(initialState);
 
-  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, namespace, actions as P & L);
+  const deepSelector = option?.withDeepSelector ?? true;
+
+  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, namespace, actions as P & L);
 
   return useSelector;
 }
