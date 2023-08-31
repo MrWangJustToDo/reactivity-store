@@ -6,7 +6,6 @@
   "engines": {
     "node": ">=10"
   },
-  "type": "module",
   "packageManager": "pnpm@8.6.1",
   "scripts": {
     "dev:packages": "ts-node ./scripts/rollupWatch.ts",
