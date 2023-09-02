@@ -1,6 +1,6 @@
 {
   "name": "reactivity-store",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "MrWangJustToDo",
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app just like zustand",
@@ -50,25 +50,6 @@
             "react-dom": "ReactDOM"
           },
           "name": "RStore",
-          "sourcemap": true
-        }
-      ]
-    },
-    {
-      "input": "./src/react.ts",
-      "pkgName": "react",
-      "output": [
-        {
-          "dir": "./dist",
-          "entryFileNames": "cjs/react.js",
-          "format": "cjs",
-          "multiple": true,
-          "sourcemap": true
-        },
-        {
-          "dir": "./dist",
-          "entryFileNames": "esm/react.js",
-          "format": "esm",
           "sourcemap": true
         }
       ]
