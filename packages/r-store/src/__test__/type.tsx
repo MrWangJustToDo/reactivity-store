@@ -13,14 +13,20 @@ import {
 } from "..";
 
 const useCount = createState(
-  withActions(() => ({ count: { data: 1 } }), { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }),
+  withPersist(
+    withActions(
+      withPersist(() => ({ count: { data: 1 } }), { key: "lllll" }),
+      { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }
+    ),
+    { key: "llllll" }
+  ),
   {
     withActions: (s: { count: { data: number } }) => ({ add: () => s.count.data++, del: () => 1 }),
     withPersist: "1",
   }
 );
 
-const useA = createState(() => ({a: 1}))
+const useA = createState(() => ({ a: 1 }));
 
 const useFf = createStore(() => {
   const vvv = ref(0);
@@ -34,22 +40,25 @@ const i = useCount((s) => s);
 
 const useCount_v2 = createState(
   withActions(
-    withNamespace(
-      withActions(
-        withActions(() => ({ count: 1, name: "haha" }), {
-          generateActions: (state) => {
-            return {
-              add: () => state.count++,
-              del: () => {
-                state.count--;
-              },
-              kk: () => 99,
-            };
-          },
-        }),
-        { generateActions: (s) => ({ ll: () => s.count++, add: () => 1, del: () => 1 }) }
+    withPersist(
+      withNamespace(
+        withActions(
+          withActions(() => ({ count: 1, name: "haha" }), {
+            generateActions: (state) => {
+              return {
+                add: () => state.count++,
+                del: () => {
+                  state.count--;
+                },
+                kk: () => 99,
+              };
+            },
+          }),
+          { generateActions: (s) => ({ ll: () => s.count++, add: () => 1, del: () => 1 }) }
+        ),
+        { namespace: "kkk" }
       ),
-      { namespace: "kkk" }
+      { key: "llllll" }
     ),
     { generateActions: (s) => ({ mm: () => s.count-- }) }
   ),

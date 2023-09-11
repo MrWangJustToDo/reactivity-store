@@ -181,9 +181,6 @@ const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add:
 const unSubscribe = useCount.subscribe((s) => s.count, callback);
 ```
 
-## TODO 
-make this package work for vue
-
 ## License
 
 MIT

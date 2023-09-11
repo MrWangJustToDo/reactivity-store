@@ -11,11 +11,18 @@ import type { Setup } from "./createState";
 import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps, WithNamespaceProps } from "./tools";
 
 // build in middleware
-
-export const withPersist = <T extends Record<string, unknown>, P extends Record<string, Function>>(
+export function withPersist<T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<StateWithMiddleware<T, P>>,
+  options: WithPersistProps<T>
+): Setup<StateWithMiddleware<T, P>>;
+export function withPersist<T extends Record<string, unknown>>(
+  setup: Setup<T>,
+  options: WithPersistProps<T>
+): Setup<StateWithMiddleware<T, {}>>;
+export function withPersist<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
   options: WithPersistProps<UnWrapMiddleware<T>>
-): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> => {
+): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> {
   return createMiddleware(
     () => {
       const _initialState = setup();
@@ -87,13 +94,13 @@ export const withPersist = <T extends Record<string, unknown>, P extends Record<
     },
     { name: "withPersist" }
   );
-};
+}
 
 export function withActions<
   T extends StateWithMiddleware<Q, L>,
   Q extends Record<string, unknown>,
   P extends Record<string, Function>,
-  L extends Record<string, Function>
+  L extends Record<string, Function>,
 >(setup: Setup<StateWithMiddleware<Q, L>>, options: WithActionsProps<Q, P>): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>>;
 export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<T>,
@@ -134,7 +141,10 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         });
         Object.keys(allActions).forEach((key) => {
           if (typeof allActions[key] !== "function") {
-            console.error(`[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]} in %o`, allActions);
+            console.error(
+              `[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]} in %o`,
+              allActions
+            );
           }
         });
         Object.keys(actions).forEach((key) => {

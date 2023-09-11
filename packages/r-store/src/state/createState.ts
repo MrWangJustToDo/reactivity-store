@@ -25,6 +25,10 @@ type UseSelector<T, C> = {
 };
 
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<StateWithMiddleware<T, P>>
+): UseSelector<T, P>;
+export function createState<T extends Record<string, unknown>>(setup: Setup<T>): UseSelector<T, {}>;
+export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>
 ): UseSelector<UnWrapMiddleware<T>, P>;
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
@@ -36,7 +40,7 @@ export function createState<
   T extends StateWithMiddleware<Q, L>,
   Q extends Record<string, unknown>,
   P extends Record<string, Function>,
-  L extends Record<string, Function>
+  L extends Record<string, Function>,
 >(
   setup: Setup<StateWithMiddleware<Q, L>>,
   options: { withActions: WithActionsProps<Q, P>["generateActions"]; withNamespace?: string }
@@ -49,7 +53,7 @@ export function createState<
   T extends StateWithMiddleware<Q, L>,
   Q extends Record<string, unknown>,
   P extends Record<string, Function>,
-  L extends Record<string, Function>
+  L extends Record<string, Function>,
 >(
   setup: Setup<StateWithMiddleware<Q, L>>,
   options: { withActions: WithActionsProps<Q, P>["generateActions"]; withPersist: string; withNamespace?: string }
