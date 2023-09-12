@@ -24,16 +24,18 @@ type UseSelector<T, C> = {
   subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
 };
 
-export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<StateWithMiddleware<T, P>>
-): UseSelector<T, P>;
+export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>): UseSelector<T, P>;
 export function createState<T extends Record<string, unknown>>(setup: Setup<T>): UseSelector<T, {}>;
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>
 ): UseSelector<UnWrapMiddleware<T>, P>;
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
-  options: { withPersist: string; withNamespace?: string }
+  options: { withNamespace?: string; withDeepSelector?: boolean }
+): UseSelector<UnWrapMiddleware<T>, P>;
+export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<MaybeStateWithMiddleware<T, P>>,
+  options: { withPersist: string; withNamespace?: string; withDeepSelector?: boolean }
 ): UseSelector<UnWrapMiddleware<T>, P>;
 
 export function createState<
@@ -43,11 +45,11 @@ export function createState<
   L extends Record<string, Function>,
 >(
   setup: Setup<StateWithMiddleware<Q, L>>,
-  options: { withActions: WithActionsProps<Q, P>["generateActions"]; withNamespace?: string }
+  options: { withActions: WithActionsProps<Q, P>["generateActions"]; withNamespace?: string; withDeepSelector?: boolean }
 ): UseSelector<UnWrapMiddleware<T>, P & L>;
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<T>,
-  options: { withActions: WithActionsProps<T, P>["generateActions"]; withNamespace?: string }
+  options: { withActions: WithActionsProps<T, P>["generateActions"]; withNamespace?: string; withDeepSelector?: boolean }
 ): UseSelector<UnWrapMiddleware<T>, P>;
 export function createState<
   T extends StateWithMiddleware<Q, L>,
@@ -56,11 +58,11 @@ export function createState<
   L extends Record<string, Function>,
 >(
   setup: Setup<StateWithMiddleware<Q, L>>,
-  options: { withActions: WithActionsProps<Q, P>["generateActions"]; withPersist: string; withNamespace?: string }
+  options: { withActions: WithActionsProps<Q, P>["generateActions"]; withPersist: string; withNamespace?: string; withDeepSelector?: boolean }
 ): UseSelector<UnWrapMiddleware<T>, P & L>;
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<T>,
-  options: { withPersist: string; withActions: WithActionsProps<T, P>["generateActions"]; withNamespace?: string }
+  options: { withPersist: string; withActions: WithActionsProps<T, P>["generateActions"]; withNamespace?: string; withDeepSelector?: boolean }
 ): UseSelector<T, P>;
 
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ReactiveEffect, reactive, toRaw } from "@vue/reactivity";
 
+import { checkHasKey, setDevMap } from "../shared/dev";
 import { isServer } from "../shared/env";
 import { checkHasReactive, traverse } from "../shared/tools";
 
@@ -15,10 +16,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
   setup: Setup<StateWithMiddleware<T, P>>,
   options: WithPersistProps<T>
 ): Setup<StateWithMiddleware<T, P>>;
-export function withPersist<T extends Record<string, unknown>>(
-  setup: Setup<T>,
-  options: WithPersistProps<T>
-): Setup<StateWithMiddleware<T, {}>>;
+export function withPersist<T extends Record<string, unknown>>(setup: Setup<T>, options: WithPersistProps<T>): Setup<StateWithMiddleware<T, {}>>;
 export function withPersist<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
   options: WithPersistProps<UnWrapMiddleware<T>>
@@ -182,7 +180,14 @@ export const withNamespace = <T extends Record<string, unknown>, P extends Recor
       const actions = getFinalActions(_initialState);
 
       if (__DEV__ && options.namespace === "$$__ignore__$$") {
-        console.warn(`[reactivity-store/namespace] current namespace: ${options.namespace} is a internal namespace, try to use another one`);
+        console.warn(`[reactivity-store/namespace] current namespace: '${options.namespace}' is a internal namespace, try to use another one`);
+      }
+
+      if (__DEV__ && options.namespace !== "$$__ignore__$$") {
+        if (checkHasKey(options.namespace)) {
+          console.warn(`[reactivity-store/middleware] you have duplicate namespace '${options.namespace}' for current store, this is a unexpected usage`);
+        }
+        setDevMap(options.namespace, initialState);
       }
 
       return {

@@ -1,4 +1,4 @@
-import { useReactiveEffect, useReactiveState } from "reactivity-store/react";
+import { useReactiveEffect, useReactiveState } from "reactivity-store";
 
 export const usePosition = () => {
   const [state, setState] = useReactiveState({ x: 0, y: 0 });
@@ -10,7 +10,7 @@ export const usePosition = () => {
       setState((state) => {
         state.x = e.clientX;
         state.y = e.clientY;
-      })
+      });
     };
 
     window.addEventListener("mousemove", listener);
@@ -21,7 +21,7 @@ export const usePosition = () => {
   useReactiveEffect(() => {
     setXPosition((xPosition) => {
       xPosition.x = state.x;
-    })
+    });
   });
 
   return { y: state.y, x: xPosition.x };
