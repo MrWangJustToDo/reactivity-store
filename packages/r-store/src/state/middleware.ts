@@ -7,16 +7,25 @@ import { checkHasReactive, traverse } from "../shared/tools";
 
 import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions, getFinalNamespace } from "./tools";
 
-import type { UnWrapMiddleware } from "./_internal";
 import type { Setup } from "./createState";
-import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps, WithNamespaceProps } from "./tools";
+import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps, WithNamespaceProps , UnWrapMiddleware } from "./tools";
 
 // build in middleware
+
+/**
+ * @public
+ */
 export function withPersist<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>,
   options: WithPersistProps<T>
 ): Setup<StateWithMiddleware<T, P>>;
+/**
+ * @public
+ */
 export function withPersist<T extends Record<string, unknown>>(setup: Setup<T>, options: WithPersistProps<T>): Setup<StateWithMiddleware<T, {}>>;
+/**
+ * @public
+ */
 export function withPersist<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
   options: WithPersistProps<UnWrapMiddleware<T>>
@@ -94,16 +103,25 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
   );
 }
 
+/**
+ * @public
+ */
 export function withActions<
   T extends StateWithMiddleware<Q, L>,
   Q extends Record<string, unknown>,
   P extends Record<string, Function>,
   L extends Record<string, Function>,
 >(setup: Setup<StateWithMiddleware<Q, L>>, options: WithActionsProps<Q, P>): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>>;
+/**
+ * @public
+ */
 export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<T>,
   options: WithActionsProps<T, P>
 ): Setup<StateWithMiddleware<T, P>>;
+/**
+ * @public
+ */
 export function withActions<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,
   options: WithActionsProps<UnWrapMiddleware<T>, P>
@@ -148,7 +166,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         Object.keys(actions).forEach((key) => {
           if (allActions[key]) {
             console.error(
-              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'action' return from 'withActions',this is a unexpected behavior.`
+              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'action' return from 'withActions', this is a unexpected behavior.`
             );
           }
         });
@@ -165,6 +183,9 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
   );
 }
 
+/**
+ * @public
+ */
 export const withNamespace = <T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
   options: WithNamespaceProps
@@ -203,6 +224,9 @@ export const withNamespace = <T extends Record<string, unknown>, P extends Recor
 
 // function for help to build external middleware
 
+/**
+ * @internal
+ */
 export function createMiddleware<T>(setup: Setup<any>, options: { name: string }) {
   return () => {
     const state = setup();

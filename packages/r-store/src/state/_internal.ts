@@ -8,10 +8,7 @@ import { withActions, withNamespace, withPersist } from "./middleware";
 import { getFinalActions, getFinalNamespace, getFinalState } from "./tools";
 
 import type { Setup } from "./createState";
-import type { MaybeStateWithMiddleware, StateWithMiddleware, WithActionsProps } from "./tools";
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type UnWrapMiddleware<T> = T extends StateWithMiddleware<infer Q, infer _> ? UnWrapMiddleware<Q> : T;
+import type { MaybeStateWithMiddleware, WithActionsProps , UnWrapMiddleware } from "./tools";
 
 /**
  * @internal

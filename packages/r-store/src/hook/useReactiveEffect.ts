@@ -4,6 +4,9 @@ import { Controller } from "../shared/controller";
 import { useCallbackRef } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 
+/**
+ * @public
+ */
 export const useReactiveEffect = (effectCallback: () => void | (() => void)) => {
   const memoCallback = useCallbackRef(effectCallback);
 

@@ -11,6 +11,9 @@ export type StorageState = {
   data: any;
 };
 
+/**
+ * @public
+ */
 export type StateWithMiddleware<T, P> = {
   ["$$__state__$$"]: T;
   ["$$__middleware__$$"]: Record<string, unknown>;
@@ -18,8 +21,20 @@ export type StateWithMiddleware<T, P> = {
   ["$$__namespace__$$"]: string;
 };
 
+/**
+ * @public
+ */
 export type MaybeStateWithMiddleware<T, P> = T | StateWithMiddleware<T, P>;
 
+/**
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type UnWrapMiddleware<T> = T extends StateWithMiddleware<infer Q, infer _> ? UnWrapMiddleware<Q> : T;
+
+/**
+ * @public
+ */
 export type WithPersistProps<T extends Record<string, unknown>> = {
   key: string;
   version?: string;
@@ -30,11 +45,17 @@ export type WithPersistProps<T extends Record<string, unknown>> = {
   merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
 };
 
+/**
+ * @public
+ */
 export type WithActionsProps<T, P> = {
   generateActions?: (state: T) => P;
   automaticBatchAction?: boolean;
 };
 
+/**
+ * @public
+ */
 export type WithNamespaceProps = {
   namespace: string;
 };

@@ -9,18 +9,30 @@ import type { LifeCycle } from "../shared/lifeCycle";
 import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 import type { ReactNode, ReactElement } from "react";
 
+/**
+ * @public
+ */
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
   setup: Creator<T>;
   render?: (props: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
 };
 
 // TODO
+/**
+ * @public
+ */
 export function createStoreWithComponent<T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<NonNullable<unknown>, T>
 ): ({ children }: { children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode }) => ReactElement;
+/**
+ * @public
+ */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<P, T>
 ): ({ children }: { children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode } & P) => ReactElement;
+/**
+ * @public
+ */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {
   const { setup, render } = props;
 

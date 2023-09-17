@@ -1,6 +1,9 @@
 // vue like lifeCycle for react app;
 import { globalStoreLifeCycle } from "./_internal";
 
+/**
+ * @public
+ */
 export const onMounted = (cb: () => void) => {
   if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onMounted' outside of the 'createStoreWithComponent' function");
 
@@ -9,6 +12,9 @@ export const onMounted = (cb: () => void) => {
   globalStoreLifeCycle.hasHookInstall = true;
 };
 
+/**
+ * @public
+ */
 export const onUpdated = (cb: () => void) => {
   if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onUpdated' outside of the 'createStoreWithComponent' function");
 
@@ -17,6 +23,9 @@ export const onUpdated = (cb: () => void) => {
   globalStoreLifeCycle.hasHookInstall = true;
 };
 
+/**
+ * @public
+ */
 export const onUnmounted = (cb: () => void) => {
   if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onUnmounted' outside of the 'createStoreWithComponent' function");
 
@@ -25,6 +34,9 @@ export const onUnmounted = (cb: () => void) => {
   globalStoreLifeCycle.hasHookInstall = true;
 };
 
+/**
+ * @public
+ */
 export const onBeforeMount = (cb: () => void) => {
   if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onBeforeMount' outside of the 'createStoreWithComponent' function");
 
@@ -33,6 +45,9 @@ export const onBeforeMount = (cb: () => void) => {
   globalStoreLifeCycle.hasHookInstall = true;
 };
 
+/**
+ * @public
+ */
 export const onBeforeUpdate = (cb: () => void) => {
   if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onBeforeUpdate' outside of the 'createStoreWithComponent' function");
 
@@ -41,6 +56,9 @@ export const onBeforeUpdate = (cb: () => void) => {
   globalStoreLifeCycle.hasHookInstall = true;
 };
 
+/**
+ * @public
+ */
 export const onBeforeUnmount = (cb: () => void) => {
   if (!globalStoreLifeCycle) throw new Error("[reactivity-store] can not use 'onBeforeUnmount' outside of the 'createStoreWithComponent' function");
 

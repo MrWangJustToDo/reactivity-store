@@ -4,6 +4,9 @@ import { internalCreateState } from "../state/_internal";
 
 import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 
+/**
+ * @public
+ */
 export const useReactiveState = <T extends Record<string, unknown>>(initialState: T | (() => T)) => {
   const [useSelector] = useState(() => {
     const setup = typeof initialState === "function" ? initialState : () => initialState;

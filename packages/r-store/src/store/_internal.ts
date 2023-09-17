@@ -6,6 +6,9 @@ import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
 
 import type { LifeCycle } from "../shared/lifeCycle";
 
+/**
+ * @public
+ */
 export type Creator<T extends Record<string, unknown>> = () => T;
 
 /**
