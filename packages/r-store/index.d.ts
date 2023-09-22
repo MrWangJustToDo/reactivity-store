@@ -107,6 +107,8 @@ export declare type Creator<T extends Record<string, unknown>> = () => T;
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 export declare const getBatch: () => (cb: () => void) => void;
 
@@ -162,11 +164,15 @@ export declare const onUpdated: (cb: () => void) => void;
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 export declare const resetBatch: () => void;
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 export declare const setBatch: (batch: (cb: () => void) => void) => void;
 
@@ -222,8 +228,8 @@ export declare type UseSelectorWithState<T, C> = {
  * @public
  */
 export declare type UseSelectorWithStore<T> = {
-    (): DeepReadonly<UnwrapNestedRefs<T>> | UnwrapNestedRefs<T>;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> | UnwrapNestedRefs<T>) => P): P;
+    (): DeepReadonly<UnwrapNestedRefs<T>>;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
     /**
      * @deprecated
      * use `getReactiveState` / `getReadonlyState` in stead
@@ -238,7 +244,7 @@ export declare type UseSelectorWithStore<T> = {
 /**
  * @public
  */
-export declare const version = "0.2.3";
+export declare const version = "0.2.4";
 
 /**
  * @public
@@ -295,6 +301,8 @@ export declare type WithPersistProps<T extends Record<string, unknown>> = {
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 export declare const wrapperBatchUpdate: <T extends Function>(cb: T) => T;
 

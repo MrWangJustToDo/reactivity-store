@@ -7,6 +7,8 @@ const batchObject: { current: (cb: () => void) => void } = { current: unstable_b
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 export const setBatch = (batch: (cb: () => void) => void) => {
   batchObject.current = batch;
@@ -14,6 +16,8 @@ export const setBatch = (batch: (cb: () => void) => void) => {
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 export const getBatch = () => {
   return batchObject.current;
@@ -21,6 +25,8 @@ export const getBatch = () => {
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 export const resetBatch = () => {
   batchObject.current = unstable_batchedUpdates;
@@ -28,6 +34,8 @@ export const resetBatch = () => {
 
 /**
  * @public
+ * @deprecated
+ * no need to use this function
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const wrapperBatchUpdate = <T extends Function>(cb: T): T => {

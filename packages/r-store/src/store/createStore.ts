@@ -11,8 +11,8 @@ export type { Creator} from "./_internal";
  * @public
  */
 export type UseSelectorWithStore<T> = {
-  (): DeepReadonly<UnwrapNestedRefs<T>> | UnwrapNestedRefs<T>;
-  <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> | UnwrapNestedRefs<T>) => P): P;
+  (): DeepReadonly<UnwrapNestedRefs<T>>;
+  <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
   /**
    * @deprecated
    * use `getReactiveState` / `getReadonlyState` in stead
