@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Controller } from "./controller";
+import { delDevController, setDevController } from "./dev";
 import { isReact18 } from "./env";
 import { traverse } from "./tools";
 
@@ -16,7 +17,7 @@ import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSelector?: boolean) => {
   const callbackRef = useRef<Function>();
 
-  callbackRef.current = typeof callback === 'function' ? callback : null;
+  callbackRef.current = typeof callback === "function" ? callback : null;
 
   const memoCallback = useCallback((arg: T) => {
     if (callbackRef.current) {
@@ -111,6 +112,15 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         getSelected();
       }
     }, [ControllerInstance, prevSelector, selector]);
+
+    if (__DEV__) {
+      useEffect(() => {
+        setDevController(ControllerInstance, initialState);
+        return () => {
+          delDevController(ControllerInstance, initialState);
+        };
+      }, []);
+    }
 
     // clean effect
     // currently, the 18 version of `StrictMode` not work if the unmount logic run, so need disable it in the development mode

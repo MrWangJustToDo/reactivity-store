@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { ReactiveEffect, reactive, toRaw } from "@vue/reactivity";
 
-import { checkHasKey, setDevMap } from "../shared/dev";
+import { checkHasKey, setNamespaceMap } from "../shared/dev";
 import { isServer } from "../shared/env";
 import { checkHasReactive, traverse } from "../shared/tools";
 
 import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions, getFinalNamespace } from "./tools";
 
 import type { Setup } from "./createState";
-import type { MaybeStateWithMiddleware, StateWithMiddleware, StorageState, WithActionsProps, WithPersistProps, WithNamespaceProps , UnWrapMiddleware } from "./tools";
+import type {
+  MaybeStateWithMiddleware,
+  StateWithMiddleware,
+  StorageState,
+  WithActionsProps,
+  WithPersistProps,
+  WithNamespaceProps,
+  UnWrapMiddleware,
+} from "./tools";
 
 // build in middleware
 
@@ -71,6 +79,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           re = reactive(re) as UnWrapMiddleware<T>;
 
+          let effectInstance: ReactiveEffect | null = null;
+
           const onUpdate = debounce(() => {
             try {
               const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
@@ -82,10 +92,14 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
               if (__DEV__) {
                 console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
               }
+              
+              effectInstance?.stop();
             }
           }, options.debounceTime || 40);
 
-          new ReactiveEffect(() => traverse(re), onUpdate).run();
+          effectInstance = new ReactiveEffect(() => traverse(re), onUpdate);
+
+          effectInstance.run();
 
           return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
         } catch (e) {
@@ -208,7 +222,7 @@ export const withNamespace = <T extends Record<string, unknown>, P extends Recor
         if (checkHasKey(options.namespace)) {
           console.warn(`[reactivity-store/middleware] you have duplicate namespace '${options.namespace}' for current store, this is a unexpected usage`);
         }
-        setDevMap(options.namespace, initialState);
+        setNamespaceMap(options.namespace, initialState);
       }
 
       return {
