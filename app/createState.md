@@ -44,6 +44,7 @@ const App = () => {
   import Create from '@theme/components/createState.vue'
   import CreateStorageMiddleware from '@theme/components/createStateWithStorageMiddleware.vue'
   import CreateActionsMiddleware from '@theme/components/createStateWithActionsMiddleware.vue'
+  import DeepSelectorMiddleware from '@theme/components/createStateWithDeepSelectorMiddleware.vue'
   import CreateAllMiddleware from '@theme/components/createStateWithAllMiddleware.vue'
 </script>
 
@@ -191,3 +192,76 @@ const App = () => {
 ## Online Example
 
 <CreateAllMiddleware />
+
+## Code Example with deepSelector
+
+```tsx
+import { createState, withActions, withPersist } from "reactivity-store";
+
+const useCount = createState(
+  withActions(
+    () => {
+      const data = { re: { count: 0 } };
+
+      return data;
+    },
+    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
+  ),
+  {
+    // make the selector support deep selector
+    /**
+     * state is `{a: {b: '1'}}`
+     * select is `const re = (state) => state.a;`
+     * if `withDeepSelector` is true, when the `re.b` state change, the selector will also be trigger
+     * if `withDeepSelector` is false, when the `re.b` state change, the selector will not be trigger
+     *
+     * the default value for the `withDeepSelector` is true
+     */
+    withDeepSelector: true;
+  }
+);
+
+const App = () => {
+  // the `withDeepSelector` option is true, the selector will be trigger when the `re.count` state change, so the component will update normally
+  const { re, add } = useCount((state) => ({ re: state.re, add: state.add }));
+
+  return (
+    <div>
+      <p>React Reactive Count</p>
+      <p>{re.count}</p>
+      <button onClick={add}>Add</button>
+    </div>
+  );
+};
+
+const useCount_2 = createState(
+  withActions(
+    () => {
+      const data = { re: { count: 0 } };
+
+      return data;
+    },
+    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
+  ),
+  {
+    withDeepSelector: false;
+  }
+);
+
+const App = () => {
+  //the `withDeepSelector` option is false, the selector will not be trigger when the `re.count` state change, so the component will not update
+  const { re, add } = useCount_2((state) => ({ re: state.re, add: state.add }));
+
+  return (
+    <div>
+      <p>React Reactive Count</p>
+      <p>{re.count}</p>
+      <button onClick={add}>Add</button>
+    </div>
+  );
+};
+
+```
+## Online Example
+
+<DeepSelectorMiddleware />

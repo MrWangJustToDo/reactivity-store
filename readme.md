@@ -126,7 +126,7 @@ const App = () => {
 };
 ```
 
-# v0.1.9 Update
+# v0.1.9 update
 
 ### Pure hook api for `reactive` state;
 
@@ -179,6 +179,77 @@ const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add:
 
 // you can use subscribe anywhere
 const unSubscribe = useCount.subscribe((s) => s.count, callback);
+```
+
+# v0.2.4 update
+
+### `createState` support `withDeepSelector` option
+
+```tsx
+import { createState, withActions, withPersist } from "reactivity-store";
+
+const useCount = createState(
+  withActions(
+    () => {
+      const data = { re: { count: 0 } };
+
+      return data;
+    },
+    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
+  ),
+  {
+    // make the selector support deep selector
+    /**
+     * state is `{a: {b: '1'}}`
+     * select is `const re = (state) => state.a;`
+     * if `withDeepSelector` is true, when the `re.b` state change, the selector will also be trigger
+     * if `withDeepSelector` is false, when the `re.b` state change, the selector will not be trigger
+     *
+     * the default value for the `withDeepSelector` is true
+     */
+    withDeepSelector: true;
+  }
+);
+
+const App = () => {
+  // the `withDeepSelector` option is true, the selector will be trigger when the `re.count` state change, so the component will update normally
+  const { re, add } = useCount((state) => ({ re: state.re, add: state.add }));
+
+  return (
+    <div>
+      <p>React Reactive Count</p>
+      <p>{re.count}</p>
+      <button onClick={add}>Add</button>
+    </div>
+  );
+};
+
+const useCount_2 = createState(
+  withActions(
+    () => {
+      const data = { re: { count: 0 } };
+
+      return data;
+    },
+    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
+  ),
+  {
+    withDeepSelector: false;
+  }
+);
+
+const App = () => {
+  //the `withDeepSelector` option is false, the selector will not be trigger when the `re.count` state change, so the component will not update
+  const { re, add } = useCount_2((state) => ({ re: state.re, add: state.add }));
+
+  return (
+    <div>
+      <p>React Reactive Count</p>
+      <p>{re.count}</p>
+      <button onClick={add}>Add</button>
+    </div>
+  );
+};
 ```
 
 ## License

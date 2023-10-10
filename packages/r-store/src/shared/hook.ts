@@ -14,12 +14,27 @@ import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 /**
  * @internal
  */
+export const useCallbackRef = <T extends Function>(callback: T) => {
+  const callbackRef = useRef(callback);
+
+  callbackRef.current = callback;
+
+  const memoCallback = useCallback((...args: any) => {
+    return callbackRef.current?.call(null, ...args);
+  }, []) as unknown as T;
+
+  return memoCallback;
+};
+
+/**
+ * @internal
+ */
 export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSelector?: boolean) => {
   const callbackRef = useRef<Function>();
 
   callbackRef.current = typeof callback === "function" ? callback : null;
 
-  const memoCallback = useCallback((arg: T) => {
+  const memoCallback = useCallbackRef((arg: T) => {
     if (callbackRef.current) {
       const re = callbackRef.current(arg);
       if (deepSelector) traverse(re);
@@ -28,22 +43,7 @@ export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSel
       traverse(arg);
       return arg;
     }
-  }, []);
-
-  return memoCallback;
-};
-
-/**
- * @internal
- */
-export const useCallbackRef = <T extends Function>(callback: T) => {
-  const callbackRef = useRef(callback);
-
-  callbackRef.current = callback;
-
-  const memoCallback = useCallback(() => {
-    return callbackRef.current();
-  }, []) as unknown as T;
+  });
 
   return memoCallback;
 };
@@ -77,11 +77,14 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   namespace = namespace || "$$__ignore__$$";
 
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
-  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
-  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
+  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, useDeepSelector?: boolean): P;
+  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, useDeepSelector?: boolean) {
     const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
-    const selectorRef = useSubscribeCallbackRef(selector, deepSelector);
+    // for now only support `useDeepSelector` in the `createState`
+    const _deepSelector = typeof useDeepSelector === "boolean" && actions ? useDeepSelector : deepSelector;
+
+    const selectorRef = useSubscribeCallbackRef(selector, _deepSelector);
 
     const getSelected = useCallbackRef(() => {
       // 0.1.9

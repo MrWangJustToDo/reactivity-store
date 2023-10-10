@@ -211,7 +211,7 @@ export declare const useReactiveState: <T extends Record<string, unknown>>(initi
  */
 export declare type UseSelectorWithState<T, C> = {
     (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, deepSelector?: boolean): P;
     /**
      * @deprecated
      * use `getReactiveState` / `getReadonlyState` in stead
