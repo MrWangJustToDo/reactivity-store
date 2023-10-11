@@ -34,6 +34,10 @@ export class Controller<T = any> {
 
   _effect: ReactiveEffect<T>;
 
+  _devSelector: any;
+
+  _devActions: any;
+
   // make the state change and component update
   _updateCount = 0;
 

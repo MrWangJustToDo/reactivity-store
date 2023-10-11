@@ -84,6 +84,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     // for now only support `useDeepSelector` in the `createState`
     const _deepSelector = typeof useDeepSelector === "boolean" && actions ? useDeepSelector : deepSelector;
 
+    const _prevDeepSelector = usePrevValue(_deepSelector);
+
     const selectorRef = useSubscribeCallbackRef(selector, _deepSelector);
 
     const getSelected = useCallbackRef(() => {
@@ -108,15 +110,19 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       getSelected();
     }, [ControllerInstance, getSelected]);
 
-    // rerun when the selector change
+    // rerun when the selector/deepSelector change
     useMemo(() => {
-      if (prevSelector !== selector) {
+      if (prevSelector !== selector || _prevDeepSelector !== _deepSelector) {
         ControllerInstance.run();
         getSelected();
       }
-    }, [ControllerInstance, prevSelector, selector]);
+    }, [ControllerInstance, prevSelector, selector, _prevDeepSelector, _deepSelector]);
 
     if (__DEV__) {
+      ControllerInstance._devSelector = selector;
+      
+      ControllerInstance._devActions = actions;
+
       useEffect(() => {
         setDevController(ControllerInstance, initialState);
         return () => {

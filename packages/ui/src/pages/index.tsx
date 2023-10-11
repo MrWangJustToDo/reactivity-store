@@ -14,6 +14,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { count, add, del } = useCount();
+  useCount(s => s.count);
 
   // const data = useCount();
 
