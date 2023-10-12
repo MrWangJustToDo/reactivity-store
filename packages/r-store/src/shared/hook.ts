@@ -77,16 +77,12 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   namespace = namespace || "$$__ignore__$$";
 
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
-  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, useDeepSelector?: boolean): P;
-  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, useDeepSelector?: boolean) {
+  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
     const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
     // for now only support `useDeepSelector` in the `createState`
-    const _deepSelector = typeof useDeepSelector === "boolean" && actions ? useDeepSelector : deepSelector;
-
-    const _prevDeepSelector = usePrevValue(_deepSelector);
-
-    const selectorRef = useSubscribeCallbackRef(selector, _deepSelector);
+    const selectorRef = useSubscribeCallbackRef(selector, deepSelector);
 
     const getSelected = useCallbackRef(() => {
       // 0.1.9
@@ -110,17 +106,17 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       getSelected();
     }, [ControllerInstance, getSelected]);
 
-    // rerun when the selector/deepSelector change
+    // rerun when the 'selector' change
     useMemo(() => {
-      if (prevSelector !== selector || _prevDeepSelector !== _deepSelector) {
+      if (prevSelector !== selector) {
         ControllerInstance.run();
         getSelected();
       }
-    }, [ControllerInstance, prevSelector, selector, _prevDeepSelector, _deepSelector]);
+    }, [ControllerInstance, prevSelector, selector]);
 
     if (__DEV__) {
       ControllerInstance._devSelector = selector;
-      
+
       ControllerInstance._devActions = actions;
 
       useEffect(() => {
@@ -151,6 +147,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+    useDeepSelector: typeof useSelector;
   };
 
   typedUseSelector.getState = () => toRaw(initialState);
@@ -172,6 +169,57 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.getReactiveState = () => reactiveState;
 
   typedUseSelector.getReadonlyState = () => readonlyState;
+
+  typedUseSelector.useDeepSelector = <P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
+    const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
+
+    const selectorRef = useSubscribeCallbackRef(selector, true);
+
+    const getSelected = useCallbackRef(() => {
+      if (selector) {
+        ref.current = selector({ ...readonlyState, ...actions });
+      } else {
+        ref.current = { ...readonlyState, ...actions };
+      }
+    });
+
+    const prevSelector = usePrevValue(selector);
+
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, namespace, getSelected), []);
+
+    useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
+
+    useMemo(() => {
+      ControllerInstance.run();
+      getSelected();
+    }, [ControllerInstance, getSelected]);
+
+    useMemo(() => {
+      if (prevSelector !== selector) {
+        ControllerInstance.run();
+        getSelected();
+      }
+    }, [ControllerInstance, prevSelector, selector]);
+
+    if (__DEV__) {
+      ControllerInstance._devSelector = selector;
+
+      ControllerInstance._devActions = actions;
+
+      useEffect(() => {
+        setDevController(ControllerInstance, initialState);
+        return () => {
+          delDevController(ControllerInstance, initialState);
+        };
+      }, []);
+    }
+
+    if (needUnmountEffect) {
+      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
+    }
+
+    return ref.current;
+  };
 
   return typedUseSelector;
 };

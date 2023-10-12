@@ -20,7 +20,7 @@ export type Setup<T> = () => T;
  */
 export type UseSelectorWithState<T, C> = {
   (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-  <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, deepSelector?: boolean): P;
+  <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
   /**
    * @deprecated
    * use `getReactiveState` / `getReadonlyState` in stead
@@ -31,6 +31,10 @@ export type UseSelectorWithState<T, C> = {
   getReactiveState: () => UnwrapNestedRefs<T>;
   getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
   subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
+  useDeepSelector: {
+    (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+  };
 };
 
 /**
