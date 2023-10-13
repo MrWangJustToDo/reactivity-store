@@ -87,12 +87,16 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
               const cache = { data: stringifyState, version: options.version || options.key };
 
+              if (__DEV__ && options.devLog) {
+                console.log(`[reactivity-store/persist] state changed, try to cache newState: %o`, cache)
+              }
+
               storage.setItem(persistKey + options.key, JSON.stringify(cache));
             } catch (e) {
               if (__DEV__) {
                 console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
               }
-              
+
               effectInstance?.stop();
             }
           }, options.debounceTime || 40);

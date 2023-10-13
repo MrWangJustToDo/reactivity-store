@@ -35,6 +35,10 @@ export type UseSelectorWithState<T, C> = {
     (): DeepReadonly<UnwrapNestedRefs<T>> & C;
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
   };
+  useShallowSelector: {
+    (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+  };
 };
 
 /**

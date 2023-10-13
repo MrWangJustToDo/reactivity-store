@@ -148,6 +148,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
     useDeepSelector: typeof useSelector;
+    useShallowSelector: typeof useSelector;
   };
 
   typedUseSelector.getState = () => toRaw(initialState);
@@ -174,6 +175,57 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
     const selectorRef = useSubscribeCallbackRef(selector, true);
+
+    const getSelected = useCallbackRef(() => {
+      if (selector) {
+        ref.current = selector({ ...readonlyState, ...actions });
+      } else {
+        ref.current = { ...readonlyState, ...actions };
+      }
+    });
+
+    const prevSelector = usePrevValue(selector);
+
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, namespace, getSelected), []);
+
+    useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
+
+    useMemo(() => {
+      ControllerInstance.run();
+      getSelected();
+    }, [ControllerInstance, getSelected]);
+
+    useMemo(() => {
+      if (prevSelector !== selector) {
+        ControllerInstance.run();
+        getSelected();
+      }
+    }, [ControllerInstance, prevSelector, selector]);
+
+    if (__DEV__) {
+      ControllerInstance._devSelector = selector;
+
+      ControllerInstance._devActions = actions;
+
+      useEffect(() => {
+        setDevController(ControllerInstance, initialState);
+        return () => {
+          delDevController(ControllerInstance, initialState);
+        };
+      }, []);
+    }
+
+    if (needUnmountEffect) {
+      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
+    }
+
+    return ref.current;
+  };
+
+  typedUseSelector.useShallowSelector = <P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
+    const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
+
+    const selectorRef = useSubscribeCallbackRef(selector, false);
 
     const getSelected = useCallbackRef(() => {
       if (selector) {

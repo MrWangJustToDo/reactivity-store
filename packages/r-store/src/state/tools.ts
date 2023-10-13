@@ -43,6 +43,7 @@ export type WithPersistProps<T extends Record<string, unknown>> = {
   stringify?: (s: T) => string;
   parse?: (s: string) => Partial<T>;
   merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
+  devLog?: boolean;
 };
 
 /**

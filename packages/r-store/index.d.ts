@@ -226,6 +226,10 @@ export declare type UseSelectorWithState<T, C> = {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
     };
+    useShallowSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+    };
 };
 
 /**
@@ -301,6 +305,7 @@ export declare type WithPersistProps<T extends Record<string, unknown>> = {
     stringify?: (s: T) => string;
     parse?: (s: string) => Partial<T>;
     merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
+    devLog?: boolean;
 };
 
 /**

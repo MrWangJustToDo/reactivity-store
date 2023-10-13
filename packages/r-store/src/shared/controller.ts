@@ -7,7 +7,7 @@ import { queueJob } from "./queue";
 import type { LifeCycle } from "./lifeCycle";
 
 const catchError =
-  <T>(cb: () => T) =>
+  <T>(cb: () => T, instance: Controller) =>
   () => {
     try {
       const res = cb();
@@ -17,7 +17,7 @@ const catchError =
       return res;
     } catch (e) {
       if (__DEV__) {
-        console.error(`[reactivity-store] have an error for current selector, ${(e as Error)?.message}, maybe you use the middleware with wrong usage`);
+        console.error(`[reactivity-store] have an error for current selector, ${(e as Error)?.message}, maybe you use the middleware with wrong usage, %o`, instance);
       }
       return null;
     }
@@ -42,7 +42,7 @@ export class Controller<T = any> {
   _updateCount = 0;
 
   constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly _namespace?: string, readonly _onUpdate?: (instance: Controller) => void) {
-    this._safeGetState = catchError(_state);
+    this._safeGetState = catchError(_state, this);
     this._effect = new ReactiveEffect(this._safeGetState, () => {
       if (this._lifeCycle.canUpdateComponent) {
         if (this._lifeCycle.syncUpdateComponent) {

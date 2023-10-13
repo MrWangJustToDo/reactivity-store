@@ -5,7 +5,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
 
-const useCountState = createState(withPersist(() => ({ data: { count: 1 } }), { key: 'count' }));
+const useCountState = createState(withPersist(() => ({ data: { count: 1 } }), { key: 'count', devLog: true }));
 
 const App = () => {
   const count = useCountState((state) => state.data);
