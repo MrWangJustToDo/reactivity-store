@@ -142,6 +142,32 @@ const App = () => {
 };
 ```
 
+::: details Click to show zustand code with same logic
+
+```tsx
+// r-store
+import { createState } from "reactivity-store";
+const useCount = createState(
+  () => {
+    const data = { count: 0 };
+
+    return data;
+  },
+  { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
+);
+
+// zustand
+import { create } from "zustand";
+const useCount = create(
+  (set, get) => ({
+    data: { count: 0 },
+    add: () => set((state) => ({ data: { count: state.data.count + 1 } })),
+    del: () => set((state) => ({ data: { count: state.data.count - 1 } })),
+  })
+)
+```
+:::
+
 ## Online Example
 
 <CreateActionsMiddleware />
@@ -262,6 +288,7 @@ const App = () => {
 };
 
 ```
+
 ## Online Example
 
 <DeepSelectorMiddleware />

@@ -58,6 +58,31 @@ const App = () => {
 };
 ```
 
+::: details Click to show zustand code with same logic
+
+```tsx
+// r-store
+import { createStore, ref } from "reactivity-store";
+const useCount = createStore(() => {
+  const reactiveCount = ref(0);
+
+  const changeCount = (c: number) => {
+    reactiveCount.value = c;
+  };
+
+  return { reactiveCount, changeCount };
+});
+
+// zustand
+import { create } from "zustand";
+const useCount = create((set, get) => ({
+  reactiveCount: 0,
+  changeCount: (c: number) => set({ reactiveCount: c }),
+}));
+```
+
+:::
+
 <!-- ::: warning
 I recommend provide a memo select to the hook which pick the state if we do not need all of the store state, like:
 
