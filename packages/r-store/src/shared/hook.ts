@@ -119,6 +119,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       ControllerInstance._devActions = actions;
 
+      ControllerInstance._devWithDeep = deepSelector;
+
       useEffect(() => {
         setDevController(ControllerInstance, initialState);
         return () => {
@@ -207,6 +209,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       ControllerInstance._devActions = actions;
 
+      ControllerInstance._devWithDeep = "useDeepSelector";
+
       useEffect(() => {
         setDevController(ControllerInstance, initialState);
         return () => {
@@ -257,6 +261,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       ControllerInstance._devSelector = selector;
 
       ControllerInstance._devActions = actions;
+
+      ControllerInstance._devWithDeep = "useShallowSelector";
 
       useEffect(() => {
         setDevController(ControllerInstance, initialState);

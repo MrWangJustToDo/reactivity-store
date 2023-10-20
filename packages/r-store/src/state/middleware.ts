@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { ReactiveEffect, reactive, toRaw } from "@vue/reactivity";
+import { reactive, toRaw } from "@vue/reactivity";
 
-import { checkHasKey, setNamespaceMap } from "../shared/dev";
+import { Controller } from "../shared/controller";
+import { checkHasKey, setDevController, setNamespaceMap } from "../shared/dev";
 import { isServer } from "../shared/env";
+import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasReactive, traverse } from "../shared/tools";
 
 import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions, getFinalNamespace } from "./tools";
@@ -79,16 +81,14 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           re = reactive(re) as UnWrapMiddleware<T>;
 
-          let effectInstance: ReactiveEffect | null = null;
-
-          const onUpdate = debounce(() => {
+          const onUpdate = debounce((instance: Controller) => {
             try {
               const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
 
               const cache = { data: stringifyState, version: options.version || options.key };
 
               if (__DEV__ && options.devLog) {
-                console.log(`[reactivity-store/persist] state changed, try to cache newState: %o`, cache)
+                console.log(`[reactivity-store/persist] state changed, try to cache newState: %o`, cache);
               }
 
               storage.setItem(persistKey + options.key, JSON.stringify(cache));
@@ -97,13 +97,17 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
                 console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
               }
 
-              effectInstance?.stop();
+              instance?.stop();
             }
           }, options.debounceTime || 40);
 
-          effectInstance = new ReactiveEffect(() => traverse(re), onUpdate);
+          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), "$$__persist__$$", onUpdate);
 
-          effectInstance.run();
+          ControllerInstance.run();
+
+          if (__DEV__) {
+            setDevController(ControllerInstance, initialState);
+          }
 
           return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
         } catch (e) {
@@ -218,11 +222,11 @@ export const withNamespace = <T extends Record<string, unknown>, P extends Recor
 
       const actions = getFinalActions(_initialState);
 
-      if (__DEV__ && options.namespace === "$$__ignore__$$") {
+      if (__DEV__ && (options.namespace === "$$__ignore__$$" || options.namespace === "$$__persist__$$")) {
         console.warn(`[reactivity-store/namespace] current namespace: '${options.namespace}' is a internal namespace, try to use another one`);
       }
 
-      if (__DEV__ && options.namespace !== "$$__ignore__$$") {
+      if (__DEV__ && options.namespace !== "$$__ignore__$$" && options.namespace !== "$$__persist__$$") {
         if (checkHasKey(options.namespace)) {
           console.warn(`[reactivity-store/middleware] you have duplicate namespace '${options.namespace}' for current store, this is a unexpected usage`);
         }

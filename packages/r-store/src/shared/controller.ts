@@ -38,6 +38,8 @@ export class Controller<T = any> {
 
   _devActions: any;
 
+  _devWithDeep: any;
+
   // make the state change and component update
   _updateCount = 0;
 
