@@ -70,6 +70,7 @@
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.37.0",
+    "@redux-devtools/extension": "^3.2.5",
     "@types/use-sync-external-store": "^0.0.3"
   }
 }

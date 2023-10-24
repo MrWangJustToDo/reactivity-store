@@ -21,10 +21,6 @@ export type UseSelectorWithStore<T> = {
   getReactiveState: () => UnwrapNestedRefs<T>;
   getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
   subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
-  useDeepSelector: {
-    (): DeepReadonly<UnwrapNestedRefs<T>>;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
-  };
   useShallowSelector: {
     (): DeepReadonly<UnwrapNestedRefs<T>>;
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;

@@ -14,10 +14,16 @@ const catchError =
       if (isPromise(res)) {
         throw new Error(`[reactivity-store] selector should be a pure function, but current is a async function`);
       }
+      if (__DEV__) {
+        instance._devState = res;
+      }
       return res;
     } catch (e) {
       if (__DEV__) {
-        console.error(`[reactivity-store] have an error for current selector, ${(e as Error)?.message}, maybe you use the middleware with wrong usage, %o`, instance);
+        console.error(
+          `[reactivity-store] have an error for current selector, ${(e as Error)?.message}, maybe you use the middleware with wrong usage, %o`,
+          instance
+        );
       }
       return null;
     }
@@ -40,10 +46,17 @@ export class Controller<T = any> {
 
   _devWithDeep: any;
 
+  _devState: any;
+
   // make the state change and component update
   _updateCount = 0;
 
-  constructor(readonly _state: () => T, readonly _lifeCycle: LifeCycle, readonly _namespace?: string, readonly _onUpdate?: (instance: Controller) => void) {
+  constructor(
+    readonly _state: () => T,
+    readonly _lifeCycle: LifeCycle,
+    readonly _namespace?: string,
+    readonly _onUpdate?: (instance: Controller) => void
+  ) {
     this._safeGetState = catchError(_state, this);
     this._effect = new ReactiveEffect(this._safeGetState, () => {
       if (this._lifeCycle.canUpdateComponent) {

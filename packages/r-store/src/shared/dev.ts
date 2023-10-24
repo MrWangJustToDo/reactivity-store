@@ -14,6 +14,15 @@ export const setNamespaceMap = (key: string, value: unknown) => {
 /**
  * @internal
  */
+export const getReduxStore = () => {
+  return Object.fromEntries(
+    Object.entries(namespaceMap).map(([key, store]) => [key, store])
+  );
+};
+
+/**
+ * @internal
+ */
 export const checkHasKey = (key: string) => {
   return key in namespaceMap;
 };

@@ -84,7 +84,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     // for now only support `useDeepSelector` in the `createState`
     const selectorRef = useSubscribeCallbackRef(selector, deepSelector);
 
-    const getSelected = useCallbackRef(() => {
+    const getSelected = useCallbackRef((i?: Controller) => {
+      if (deepSelector) i?.run?.();
       // 0.1.9
       // make the returned value as a readonly value, so the only way to change the state is in the `actions` middleware
       if (selector) {
@@ -160,7 +161,10 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.subscribe = (selector, cb) => {
     const subscribeSelector = () => traverse(selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>));
 
-    const controller = new Controller(subscribeSelector, lifeCycle, namespace, cb);
+    const controller = new Controller(subscribeSelector, lifeCycle, namespace, (i) => {
+      i?.run?.();
+      cb();
+    });
 
     controller.run();
 
@@ -178,7 +182,9 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
     const selectorRef = useSubscribeCallbackRef(selector, true);
 
-    const getSelected = useCallbackRef(() => {
+    const getSelected = useCallbackRef((i?: Controller) => {
+      // 对于deepSelector  需要每次更新重新计算所有依赖
+      i?.run?.();
       if (selector) {
         ref.current = selector({ ...readonlyState, ...actions });
       } else {

@@ -247,12 +247,16 @@ export declare type UseSelectorWithStore<T> = {
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
     subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
+    useShallowSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+    };
 };
 
 /**
  * @public
  */
-export declare const version = "0.2.4";
+export declare const version = "0.2.5";
 
 /**
  * @public
@@ -275,13 +279,19 @@ export declare type WithActionsProps<T, P> = {
 /**
  * @public
  */
-export declare const withNamespace: <T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<MaybeStateWithMiddleware<T, P>>, options: WithNamespaceProps) => Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>>;
+export declare function withNamespace<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithNamespaceProps): Setup<StateWithMiddleware<T, P>>;
+
+/**
+ * @public
+ */
+export declare function withNamespace<T extends Record<string, unknown>>(setup: Setup<T>, options: WithNamespaceProps): Setup<StateWithMiddleware<T, {}>>;
 
 /**
  * @public
  */
 export declare type WithNamespaceProps = {
     namespace: string;
+    reduxDevTool?: boolean;
 };
 
 /**
