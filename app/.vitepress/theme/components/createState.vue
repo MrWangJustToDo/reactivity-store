@@ -5,7 +5,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
 
-const useCountState = createState(withNamespace(() => ({ data: { count: 1 } }), { namespace: "count", reduxDevTool: true }));
+const useCountState = createState(withNamespace(() => ({ data: { count: 1 } }), { namespace: "count" }));
 
 const App = () => {
   const count = useCountState((state) => state.data);

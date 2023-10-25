@@ -291,7 +291,6 @@ export declare function withNamespace<T extends Record<string, unknown>>(setup: 
  */
 export declare type WithNamespaceProps = {
     namespace: string;
-    reduxDevTool?: boolean;
 };
 
 /**

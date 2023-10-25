@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { isServer } from "./env";
 
 import type { Controller } from "./controller";
@@ -15,9 +16,7 @@ export const setNamespaceMap = (key: string, value: unknown) => {
  * @internal
  */
 export const getReduxStore = () => {
-  return Object.fromEntries(
-    Object.entries(namespaceMap).map(([key, store]) => [key, store])
-  );
+  return Object.fromEntries(Object.entries(namespaceMap).map(([key, store]) => [key, store]));
 };
 
 /**
@@ -75,3 +74,24 @@ export const delDevController = (controller: Controller, state: any) => {
     }
   }
 };
+
+/**
+ * @internal
+ */
+// export const connectDevTool = (name: string, actions: Record<string, Function>, state: any) => {
+//   if (window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
+//     const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name });
+//     devTools.init(state);
+//     const action = { type: "name/anonymous" };
+//     return Object.keys(actions).reduce((p, c) => {
+//       p[c] = (...args) => {
+//         const re = actions[c](...args);
+//         devTools.send({ ...action, args },  JSON.parse(JSON.stringify(state)));
+//         return re;
+//       };
+//       return p;
+//     }, {})
+//   } else {
+//     return actions;
+//   }
+// };

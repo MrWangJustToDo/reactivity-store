@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { createState, withActions } from "reactivity-store";
+import { createState, withActions, withNamespace } from "reactivity-store";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
@@ -11,7 +11,7 @@ const useCountState_v2 = createState(withActions(() => ({ count: 1 }), { generat
 
 const useCountState_v3 = createState(withActions(() => ({ count: 1 }), { generateActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } } }));
 
-const useCountState_v4 = createState(() => ({ count: 1 }), { withActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } } });
+const useCountState_v4 = createState(() => ({ count: 1 }), { withActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } }, withNamespace: 'count_4' });
 
 const App = () => {
   const { count, add } = useCountState_v4();

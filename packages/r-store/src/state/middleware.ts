@@ -2,7 +2,7 @@
 import { reactive, toRaw } from "@vue/reactivity";
 
 import { Controller } from "../shared/controller";
-import { checkHasKey, getReduxStore, setDevController, setNamespaceMap } from "../shared/dev";
+import { checkHasKey, setDevController, setNamespaceMap } from "../shared/dev";
 import { isServer } from "../shared/env";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasReactive, traverse } from "../shared/tools";
@@ -244,19 +244,9 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         }
         setNamespaceMap(options.namespace, initialState);
 
-        if (!alreadyHasNameSpace && !isServer && options.reduxDevTool && initialState) {
-          if (window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
-            const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: options.namespace });
-            devTools.init(getReduxStore());
-            // const devToolsMiddleware = (action: any) => {
-            //   devTools.send(action, initialState);
-            //   return action;
-            // };
-            // middleware["withReduxDevTool"] = devToolsMiddleware;
-          } else {
-            //
-          }
-        }
+        // if (!alreadyHasNameSpace && !isServer && options.reduxDevTool && initialState) {
+        //   actions = connectDevTool(options.namespace, actions, initialState) as P;
+        // }
       }
 
       return {

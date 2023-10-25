@@ -59,7 +59,7 @@ export type WithActionsProps<T, P> = {
  */
 export type WithNamespaceProps = {
   namespace: string;
-  reduxDevTool?: boolean;
+  // reduxDevTool?: boolean;
 };
 
 /**
