@@ -81,7 +81,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
     const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
-    // for now only support `useDeepSelector` in the `createState`
     const selectorRef = useSubscribeCallbackRef(selector, deepSelector);
 
     const getSelected = useCallbackRef((i?: Controller) => {

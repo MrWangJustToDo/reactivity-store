@@ -2,7 +2,7 @@ import { reactive, toRaw } from "@vue/reactivity";
 
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
-import { checkHasFunction, checkHasReactive } from "../shared/tools";
+import { checkHasFunction, checkHasReactive, checkHasSameField } from "../shared/tools";
 
 import { withActions, withNamespace, withPersist } from "./middleware";
 import { getFinalActions, getFinalNamespace, getFinalState } from "./tools";
@@ -63,6 +63,11 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
       `[reactivity-store] '${name}' has a function field in state %o, this is a unexpected usage. state should be only a plain object with data field`,
       rawState
     );
+  }
+
+  if (__DEV__) {
+    const sameField = checkHasSameField(rawState, actions);
+    sameField.forEach((key) => console.warn(`[reactivity-store] duplicate key: [${key}] in 'state' and 'actions' from createState, this is a unexpected usage`));
   }
 
   const reactiveState = reactive(initialState);

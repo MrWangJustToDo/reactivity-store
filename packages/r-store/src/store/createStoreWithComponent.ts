@@ -1,6 +1,7 @@
 import { Component, Fragment, createElement, useMemo } from "react";
 
 import { createLifeCycle } from "../shared/lifeCycle";
+import { checkHasSameField } from "../shared/tools";
 
 import { internalCreateStore, setGlobalStoreLifeCycle } from "./_internal";
 
@@ -102,11 +103,8 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
     const state = useSelector.getReadonlyState();
 
     if (__DEV__) {
-      for (const key in props) {
-        if (key in state) {
-          console.warn(`[reactivity-store] duplicate key: [${key}] in Component props and RStore state, this is a unexpected usage`);
-        }
-      }
+      const sameField = checkHasSameField(state, props);
+      sameField.forEach((key) => console.warn(`[reactivity-store] duplicate key: [${key}] in Component props and RStore state, this is a unexpected usage`));
     }
 
     const lifeCycleInstance = useSelector.getLifeCycle();

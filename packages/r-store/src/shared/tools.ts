@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { isProxy, isReactive, isRef, ReactiveFlags } from "@vue/reactivity";
 import { isArray, isFunction, isMap, isObject, isPlainObject, isSet } from "@vue/shared";
 import { isValidElement } from "react";
@@ -121,6 +122,13 @@ export function checkHasFunction(value: unknown) {
   traverse(value);
 
   return hasFunction;
+}
+
+/**
+ * @internal
+ */
+export function checkHasSameField(source: Record<string, unknown>, target: Record<string, unknown>) {
+  return Object.keys(source).filter((key) => key in target);
 }
 
 /**
