@@ -75,23 +75,44 @@ export const delDevController = (controller: Controller, state: any) => {
   }
 };
 
+// cache state which has connect to devtool
+const devToolMap: Record<string, any> = {};
+
 /**
  * @internal
  */
-// export const connectDevTool = (name: string, actions: Record<string, Function>, state: any) => {
-//   if (window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
-//     const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name });
-//     devTools.init(state);
-//     const action = { type: "name/anonymous" };
-//     return Object.keys(actions).reduce((p, c) => {
-//       p[c] = (...args) => {
-//         const re = actions[c](...args);
-//         devTools.send({ ...action, args },  JSON.parse(JSON.stringify(state)));
-//         return re;
-//       };
-//       return p;
-//     }, {})
-//   } else {
-//     return actions;
-//   }
-// };
+export const connectDevTool = (name: string, actions: Record<string, Function>, state: any) => {
+  if (window && window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
+    if (devToolMap[name] && devToolMap[name] !== state) {
+      console.warn(`[reactivity-store/middleware] can not connect the devtool with same 'namespace' but with different state object!`);
+      return actions;
+    }
+    const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name });
+    // make the state in the devtool as a immutable object
+    devToolMap[name] = JSON.parse(JSON.stringify(state));
+    const obj = { ...devToolMap };
+    try {
+      Object.freeze(obj);
+    } catch {
+      void 0;
+    }
+    devTools.init(obj);
+    const action = { type: "name/anonymous" };
+    return Object.keys(actions).reduce((p, c) => {
+      p[c] = (...args) => {
+        const re = actions[c](...args);
+        const nextObj = { ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) };
+        try {
+          Object.freeze(nextObj);
+        } catch {
+          void 0;
+        }
+        devTools.send({ ...action, $payload: args }, nextObj);
+        return re;
+      };
+      return p;
+    }, {});
+  } else {
+    return actions;
+  }
+};

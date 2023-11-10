@@ -188,7 +188,10 @@ export declare type StateWithMiddleware<T, P> = {
     ["$$__state__$$"]: T;
     ["$$__middleware__$$"]: Record<string, unknown>;
     ["$$__actions__$$"]: P;
-    ["$$__namespace__$$"]: string;
+    ["$$__namespace__$$"]: {
+        namespace?: string;
+        reduxDevTool?: boolean;
+    };
 };
 
 /**
@@ -256,7 +259,7 @@ export declare type UseSelectorWithStore<T> = {
 /**
  * @public
  */
-export declare const version = "0.2.5";
+export declare const version = "0.2.6";
 
 /**
  * @public
@@ -291,6 +294,7 @@ export declare function withNamespace<T extends Record<string, unknown>>(setup: 
  */
 export declare type WithNamespaceProps = {
     namespace: string;
+    reduxDevTool?: boolean;
 };
 
 /**

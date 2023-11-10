@@ -18,7 +18,7 @@ export type StateWithMiddleware<T, P> = {
   ["$$__state__$$"]: T;
   ["$$__middleware__$$"]: Record<string, unknown>;
   ["$$__actions__$$"]: P;
-  ["$$__namespace__$$"]: string;
+  ["$$__namespace__$$"]: { namespace?: string; reduxDevTool?: boolean };
 };
 
 /**
@@ -59,7 +59,7 @@ export type WithActionsProps<T, P> = {
  */
 export type WithNamespaceProps = {
   namespace: string;
-  // reduxDevTool?: boolean;
+  reduxDevTool?: boolean;
 };
 
 /**
@@ -114,7 +114,7 @@ export const getFinalActions = <T extends Record<string, unknown>, P extends Rec
  * @internal
  */
 export const getFinalNamespace = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
-  if (state["$$__state__$$"]) return (state["$$__namespace__$$"] || "") as string;
+  if (state["$$__state__$$"]) return (state["$$__namespace__$$"] || {}) as { namespace?: string; reduxDevTool?: boolean };
 
-  return "";
+  return {} as { namespace?: string; reduxDevTool?: boolean };
 };

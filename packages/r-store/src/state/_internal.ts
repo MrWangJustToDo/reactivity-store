@@ -1,5 +1,7 @@
 import { reactive, toRaw } from "@vue/reactivity";
 
+import { connectDevTool } from "../shared/dev";
+import { isServer } from "../shared/env";
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasFunction, checkHasReactive, checkHasSameField } from "../shared/tools";
@@ -45,7 +47,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   // handle withActions middleware;
   const initialState = getFinalState(state) as T;
 
-  const actions = getFinalActions(state);
+  let actions = getFinalActions(state);
 
   const namespace = getFinalNamespace(state);
 
@@ -70,11 +72,15 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     sameField.forEach((key) => console.warn(`[reactivity-store] duplicate key: [${key}] in 'state' and 'actions' from createState, this is a unexpected usage`));
   }
 
+  if (__DEV__ && namespace.reduxDevTool && !isServer) {
+    actions = connectDevTool(namespace.namespace, actions, rawState) as P;
+  }
+
   const reactiveState = reactive(initialState);
 
   const deepSelector = option?.withDeepSelector ?? true;
 
-  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, namespace, actions as P & L);
+  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, namespace.namespace, actions as P & L);
 
   return useSelector;
 }

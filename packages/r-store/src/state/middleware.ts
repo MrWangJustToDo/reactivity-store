@@ -233,6 +233,8 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
 
       const actions = getFinalActions(_initialState);
 
+      const namespace = getFinalNamespace(_initialState);
+
       if (__DEV__ && (options.namespace === "$$__ignore__$$" || options.namespace === "$$__persist__$$")) {
         console.warn(`[reactivity-store/namespace] current namespace: '${options.namespace}' is a internal namespace, try to use another one`);
       }
@@ -244,16 +246,13 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         }
         setNamespaceMap(options.namespace, initialState);
 
-        // if (!alreadyHasNameSpace && !isServer && options.reduxDevTool && initialState) {
-        //   actions = connectDevTool(options.namespace, actions, initialState) as P;
-        // }
       }
 
       return {
         ["$$__state__$$"]: initialState,
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
-        ["$$__namespace__$$"]: options.namespace,
+        ["$$__namespace__$$"]: { ...namespace, ...options },
       };
     },
     { name: "withNamespace" }
