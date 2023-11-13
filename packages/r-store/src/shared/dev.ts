@@ -78,18 +78,25 @@ export const delDevController = (controller: Controller, state: any) => {
 // cache state which has connect to devtool
 const devToolMap: Record<string, any> = {};
 
+const globalName = '__reactivity-store__';
+
+let globalDevTools = null;
+
 /**
  * @internal
  */
 export const connectDevTool = (name: string, actions: Record<string, Function>, state: any) => {
   if (window && window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
     if (devToolMap[name] && devToolMap[name] !== state) {
-      console.warn(`[reactivity-store/middleware] can not connect the devtool with same 'namespace' but with different state object!`);
+      console.warn(`[reactivity-store/middleware] can not connect the devtool with same namespace ${name} but with different state object!`);
       return actions;
     }
-    const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name });
-    // make the state in the devtool as a immutable object
-    devToolMap[name] = JSON.parse(JSON.stringify(state));
+    const devTools = globalDevTools || window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
+
+    globalDevTools = devTools;
+
+    devToolMap[name] = state;
+
     const obj = { ...devToolMap };
     try {
       Object.freeze(obj);
@@ -97,7 +104,7 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
       void 0;
     }
     devTools.init(obj);
-    const action = { type: "name/anonymous" };
+    const action = { type: `action/change-${name}` };
     return Object.keys(actions).reduce((p, c) => {
       p[c] = (...args) => {
         const re = actions[c](...args);
