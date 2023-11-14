@@ -10,7 +10,7 @@ import { withActions, withNamespace, withPersist } from "./middleware";
 import { getFinalActions, getFinalNamespace, getFinalState } from "./tools";
 
 import type { Setup } from "./createState";
-import type { MaybeStateWithMiddleware, WithActionsProps , UnWrapMiddleware } from "./tools";
+import type { MaybeStateWithMiddleware, WithActionsProps, UnWrapMiddleware } from "./tools";
 
 /**
  * @internal
@@ -37,7 +37,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   }
 
   if (option?.withNamespace) {
-    creator = withNamespace(creator, { namespace: option.withNamespace });
+    creator = withNamespace(creator, { namespace: option.withNamespace, reduxDevTool: true });
   }
 
   const lifeCycle = createLifeCycle();
@@ -69,7 +69,9 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (__DEV__) {
     const sameField = checkHasSameField(rawState, actions);
-    sameField.forEach((key) => console.warn(`[reactivity-store] duplicate key: [${key}] in 'state' and 'actions' from createState, this is a unexpected usage`));
+    sameField.forEach((key) =>
+      console.warn(`[reactivity-store] duplicate key: [${key}] in 'state' and 'actions' from createState, this is a unexpected usage`)
+    );
   }
 
   if (__DEV__ && namespace.reduxDevTool && !isServer) {
