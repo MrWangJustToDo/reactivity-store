@@ -12,6 +12,7 @@
     "dev:ui": "cd packages/ui && pnpm run dev",
     "build:packages": "ts-node ./scripts/rollupBuild.ts",
     "build:type": "cd packages/r-store && pnpm run type-gen && cd ../../ && ts-node ./scripts/clearTemp.ts",
+    "build": "pnpm run build:packages && pnpm run build:type",
     "lint": "eslint --cache --ext ts,tsx .",
     "lint:fix": "pnpm run lint --fix",
     "prettier": "prettier --ignore-path .prettierignore --write .",

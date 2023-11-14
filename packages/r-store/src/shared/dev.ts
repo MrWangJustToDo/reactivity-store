@@ -71,7 +71,7 @@ export const delDevController = (controller: Controller, state: any) => {
 // cache state which has connect to devtool
 const devToolMap: Record<string, any> = {};
 
-const globalName = "__reactivity-store__";
+const globalName = "__reactivity-store-redux-devtools__";
 
 let globalDevTools = null;
 

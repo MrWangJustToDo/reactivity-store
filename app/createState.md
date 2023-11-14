@@ -12,6 +12,12 @@
 
 the state which in the `selector` function is a readonly state, so the only way to change state is in the `action` middleware function.
 
+## v0.2.4 update
+new middleware `withDeepSelector` for `createState` support config the selector behavior
+
+## v0.2.6 update
+new middleware `withNamespace` for `createState` support `reduxDevTools`
+
 ## Simple Code Example
 
 ```tsx

@@ -148,7 +148,7 @@ const usePosition = () => {
       setState((state) => {
         state.x = e.clientX;
         state.y = e.clientY;
-      })
+      });
     };
 
     window.addEventListener("mousemove", listener);
@@ -250,6 +250,49 @@ const App = () => {
     </div>
   );
 };
+```
+
+# v0.2.6 update
+
+### `createState` support `withNameSpace` option for `reduxDevTools` in develop mode
+
+```tsx
+import { createState, withActions, withNameSpace } from "reactivity-store";
+
+const useCount = createState(
+  withActions(
+    withNameSpace(
+      () => {
+        const data = { re: { count: 0 } };
+
+        return data;
+      },
+      {
+        namespace: "useCount",
+        reduxDevTool: true,
+      }
+    ),
+    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
+  )
+);
+```
+
+or
+
+```tsx
+import { createState } from "reactivity-store";
+
+const useCount = createState(
+  () => {
+    const data = { re: { count: 0 } };
+
+    return data;
+  },
+  {
+    withNamespace: "useCount",
+    withActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }),
+  }
+);
 ```
 
 ## License
