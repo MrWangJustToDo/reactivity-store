@@ -102,9 +102,11 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
       p[c] = (...args) => {
         const re = actions[c](...args);
         try {
+          const len = actions[c].length || 0;
+
           const nextObj = { ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) };
 
-          devTools.send({ ...action, $payload: args }, nextObj);
+          devTools.send({ ...action, $payload: args.slice(0, len) }, nextObj);
         } catch (e) {
           console.log(e);
 
