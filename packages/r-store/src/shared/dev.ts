@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { isPromise } from "@vue/shared";
+
 import { isServer } from "./env";
 
 import type { Controller } from "./controller";
@@ -73,7 +75,18 @@ const devToolMap: Record<string, any> = {};
 
 const globalName = "__reactivity-store-redux-devtools__";
 
+const defaultAction = { type: "unknown", getUpdatedState: () => null };
+
+const pendingAction = new Set();
+
+let globalAction: { type: string; $payload?: any; getUpdatedState: () => any } = defaultAction;
+
 let globalDevTools = null;
+
+/**
+ * @internal
+ */
+export const getDevToolInstance = () => globalDevTools || window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
 
 /**
  * @internal
@@ -96,21 +109,24 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 
     devTools.init(obj);
 
-    const action = { type: `action/change-${name}` };
+    const action = { type: name };
 
     return Object.keys(actions).reduce((p, c) => {
       p[c] = (...args) => {
+        const len = actions[c].length || 0;
+
+        globalAction = { ...action, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }) };
+
         const re = actions[c](...args);
-        try {
-          const len = actions[c].length || 0;
 
-          const nextObj = { ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) };
-
-          devTools.send({ ...action, $payload: args.slice(0, len) }, nextObj);
-        } catch (e) {
-          console.log(e);
-
-          void 0;
+        if (isPromise(re)) {
+          re.finally(() => {
+            sendToDevTools(true);
+            globalAction = defaultAction;
+          });
+        } else {
+          sendToDevTools(false);
+          globalAction = defaultAction;
         }
         return re;
       };
@@ -118,5 +134,19 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
     }, {});
   } else {
     return actions;
+  }
+};
+
+/**
+ * @internal
+ */
+export const sendToDevTools = (asyncAction: boolean) => {
+  const { getUpdatedState, type, ...action } = globalAction;
+  try {
+    getDevToolInstance().send({ ...action, type: asyncAction ? `asyncAction/change-${type}` : `syncAction/change-${type}` }, getUpdatedState());
+  } catch (e) {
+    console.log(e);
+  } finally {
+    pendingAction.delete(globalAction);
   }
 };

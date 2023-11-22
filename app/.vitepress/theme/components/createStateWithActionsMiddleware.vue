@@ -11,7 +11,7 @@ const useCountState_v2 = createState(withActions(() => ({ count: 1 }), { generat
 
 const useCountState_v3 = createState(withActions(() => ({ count: 1 }), { generateActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } } }));
 
-const useCountState_v4 = createState(withNamespace(() => ({ count: 1 }), { namespace: 'foo_2', reduxDevTool: true }), { withActions: (state) => { return { add: (v) => { console.log(v); state.count++ }, del: () => state.count-- } }, withNamespace: 'count_4' });
+const useCountState_v4 = createState(withNamespace(() => ({ count: 1 }), { namespace: 'foo_2', reduxDevTool: true }), { withActions: (state) => { return { add: async (v) => { console.log(v); state.count++ }, del: async () => state.count-- } }, withNamespace: 'count_4' });
 
 const App = () => {
   const { count, add } = useCountState_v4();

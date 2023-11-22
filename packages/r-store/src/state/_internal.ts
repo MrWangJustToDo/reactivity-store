@@ -53,6 +53,8 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const rawState = toRaw(initialState);
 
+  const reduxDevTool = __DEV__ && namespace.reduxDevTool && !isServer;
+
   if (__DEV__ && checkHasReactive(rawState)) {
     console.error(
       `[reactivity-store] '${name}' expect receive a plain object but got a reactive object/field %o, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`,
@@ -74,7 +76,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     );
   }
 
-  if (__DEV__ && namespace.reduxDevTool && !isServer) {
+  if (reduxDevTool) {
     actions = connectDevTool(namespace.namespace, actions, rawState) as P;
   }
 
