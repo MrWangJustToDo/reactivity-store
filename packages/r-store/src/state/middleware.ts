@@ -239,13 +239,12 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         console.warn(`[reactivity-store/namespace] current namespace: '${options.namespace}' is a internal namespace, try to use another one`);
       }
 
-      if (__DEV__ && options.namespace !== "$$__ignore__$$" && options.namespace !== "$$__persist__$$") {
+      if (__DEV__ && !isServer && options.namespace !== "$$__ignore__$$" && options.namespace !== "$$__persist__$$") {
         const alreadyHasNameSpace = checkHasKey(options.namespace);
         if (alreadyHasNameSpace) {
           console.warn(`[reactivity-store/middleware] you have duplicate namespace '${options.namespace}' for current store, this is a unexpected usage`);
         }
         setNamespaceMap(options.namespace, initialState);
-
       }
 
       return {
