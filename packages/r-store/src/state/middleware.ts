@@ -3,7 +3,7 @@ import { reactive, toRaw } from "@vue/reactivity";
 
 import { Controller } from "../shared/controller";
 import { checkHasKey, setDevController, setNamespaceMap } from "../shared/dev";
-import { isServer } from "../shared/env";
+import { InternalNameSpace, isServer } from "../shared/env";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasReactive, traverse } from "../shared/tools";
 
@@ -235,11 +235,22 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
 
       const namespace = getFinalNamespace(_initialState);
 
-      if (__DEV__ && (options.namespace === "$$__ignore__$$" || options.namespace === "$$__persist__$$")) {
+      if (
+        __DEV__ &&
+        (options.namespace === InternalNameSpace.$$__ignore__$$ ||
+          options.namespace === InternalNameSpace.$$__persist__$$ ||
+          options.namespace === InternalNameSpace.$$__subscribe__$$)
+      ) {
         console.warn(`[reactivity-store/namespace] current namespace: '${options.namespace}' is a internal namespace, try to use another one`);
       }
 
-      if (__DEV__ && !isServer && options.namespace !== "$$__ignore__$$" && options.namespace !== "$$__persist__$$") {
+      if (
+        __DEV__ &&
+        !isServer &&
+        options.namespace !== InternalNameSpace.$$__ignore__$$ &&
+        options.namespace !== InternalNameSpace.$$__persist__$$ &&
+        options.namespace !== InternalNameSpace.$$__subscribe__$$
+      ) {
         const alreadyHasNameSpace = checkHasKey(options.namespace);
         if (alreadyHasNameSpace) {
           console.warn(`[reactivity-store/middleware] you have duplicate namespace '${options.namespace}' for current store, this is a unexpected usage`);

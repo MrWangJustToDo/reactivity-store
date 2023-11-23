@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Controller } from "./controller";
 import { delDevController, setDevController } from "./dev";
-import { isReact18 } from "./env";
+import { InternalNameSpace, isReact18 } from "./env";
 import { traverse } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -74,7 +74,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 ) => {
   const readonlyState = __DEV__ ? readonly(initialState) : (reactiveState as DeepReadonly<UnwrapNestedRefs<T>>);
 
-  namespace = namespace || "$$__ignore__$$";
+  namespace = namespace || InternalNameSpace.$$__ignore__$$;
 
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
   function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
@@ -160,7 +160,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.subscribe = (selector, cb) => {
     const subscribeSelector = () => traverse(selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>));
 
-    const controller = new Controller(subscribeSelector, lifeCycle, namespace, (i) => {
+    const controller = new Controller(subscribeSelector, lifeCycle, InternalNameSpace.$$__subscribe__$$, (i) => {
       i?.run?.();
       cb();
     });

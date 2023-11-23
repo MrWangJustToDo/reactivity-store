@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import { Controller } from "../shared/controller";
+import { InternalNameSpace } from "../shared/env";
 import { useCallbackRef } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 
@@ -22,7 +23,7 @@ export const useReactiveEffect = (effectCallback: () => void | (() => void)) => 
       }
     };
 
-    const controller = new Controller(subscribe, createLifeCycle(), "$$__ignore__$$", () => {
+    const controller = new Controller(subscribe, createLifeCycle(), InternalNameSpace.$$__subscribe__$$, () => {
       // run the effect when the subscribed state change
       cleanCb();
       controller.run();
