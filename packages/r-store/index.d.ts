@@ -259,7 +259,7 @@ export declare type UseSelectorWithStore<T> = {
 /**
  * @public
  */
-export declare const version = "0.2.8";
+export declare const version = "0.2.9";
 
 /**
  * @public

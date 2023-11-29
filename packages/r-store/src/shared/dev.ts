@@ -75,11 +75,7 @@ const devToolMap: Record<string, any> = {};
 
 const globalName = "__reactivity-store-redux-devtools__";
 
-const defaultAction = { type: "unknown", getUpdatedState: () => null };
-
-const pendingAction = new Set();
-
-let globalAction: { type: string; $payload?: any; getUpdatedState: () => any } = defaultAction;
+type Action = { type: string; $payload?: any; getUpdatedState: () => any };
 
 let globalDevTools = null;
 
@@ -109,24 +105,18 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 
     devTools.init(obj);
 
-    const action = { type: name };
-
     return Object.keys(actions).reduce((p, c) => {
       p[c] = (...args) => {
         const len = actions[c].length || 0;
-
-        globalAction = { ...action, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }) };
 
         const re = actions[c](...args);
 
         if (isPromise(re)) {
           re.finally(() => {
-            sendToDevTools(true);
-            globalAction = defaultAction;
+            sendToDevTools({type: `asyncAction/change-${name}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
           });
         } else {
-          sendToDevTools(false);
-          globalAction = defaultAction;
+          sendToDevTools({type: `syncAction/change-${name}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
         }
         return re;
       };
@@ -140,13 +130,12 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 /**
  * @internal
  */
-export const sendToDevTools = (asyncAction: boolean) => {
-  const { getUpdatedState, type, ...action } = globalAction;
+export const sendToDevTools = (action: Action) => {
+  const { getUpdatedState, ...rest } = action;
   try {
-    getDevToolInstance().send({ ...action, type: asyncAction ? `asyncAction/change-${type}` : `syncAction/change-${type}` }, getUpdatedState());
+    const state = getUpdatedState();
+    getDevToolInstance().send(rest, state);
   } catch (e) {
     console.log(e);
-  } finally {
-    pendingAction.delete(globalAction);
   }
 };
