@@ -24,5 +24,6 @@ export const useReactiveState = <T extends Record<string, unknown>>(initialState
   );
 
   // make the state can be used in the `useReactiveEffect` hook
+  // use getReactiveState to make effect can track deps
   return [useSelector.getReactiveState(), setState] as [DeepReadonly<UnwrapNestedRefs<T>>, typeof setState];
 };

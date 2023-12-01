@@ -111,12 +111,14 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 
         const re = actions[c](...args);
 
+        const action = actions[c];
+
         if (isPromise(re)) {
           re.finally(() => {
-            sendToDevTools({type: `asyncAction/change-${name}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
+            sendToDevTools({type: `asyncAction-${name}/${action.name || 'anonymous'}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
           });
         } else {
-          sendToDevTools({type: `syncAction/change-${name}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
+          sendToDevTools({type: `syncAction-${name}/${action.name || 'anonymous'}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
         }
         return re;
       };

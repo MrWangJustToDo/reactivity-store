@@ -14,7 +14,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { count, add, del } = useCount();
-  useCount(s => s.count);
+  useCount((s) => s.count);
 
   // const data = useCount();
 
@@ -71,7 +71,7 @@ export default function Home() {
       </div>
       {/* {C} */}
       <Count>{({ count }) => count + 1 + "-----"}</Count>
-      {C}
+      {count % 2 === 0 ? C : null}
       {x}, {y}
       <div className="w-[140px] h-[100px] border rounded-md border-purple-500">
         data_1.count: {data_1.count}

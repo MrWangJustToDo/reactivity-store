@@ -1,4 +1,5 @@
-import { Component, Fragment, createElement, useMemo } from "react";
+import { effectScope } from "@vue/reactivity";
+import { Component, Fragment, createElement, useMemo, useEffect } from "react";
 
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasSameField } from "../shared/tools";
@@ -88,16 +89,18 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
   }
 
   const ComponentWithState = (props: P & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
-    const useSelector = useMemo(() => {
+    const { useSelector, scope } = useMemo(() => {
       const lifeCycleInstance = createLifeCycle();
 
       setGlobalStoreLifeCycle(lifeCycleInstance);
 
-      const useSelector = internalCreateStore(setup, "createStoreWithComponent", lifeCycleInstance);
+      const scope = effectScope();
+
+      const useSelector = scope.run(() => internalCreateStore(setup, "createStoreWithComponent", lifeCycleInstance));
 
       setGlobalStoreLifeCycle(null);
 
-      return useSelector;
+      return { useSelector, scope };
     }, []);
 
     const state = useSelector.getReadonlyState();
@@ -124,6 +127,8 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
 
     // subscribe reactivity-store update
     useSelector();
+
+    useEffect(() => scope.stop.bind(scope), []);
 
     const renderedChildren = targetRender({ ...last, ...state } as P & DeepReadonly<UnwrapNestedRefs<T>>) || null;
 
