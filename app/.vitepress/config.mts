@@ -29,6 +29,10 @@ export default defineConfig({
         ],
       },
       {
+        text: "Example",
+        items: [{ text: "TodoList", link: "/todoList" }],
+      },
+      {
         text: "TODO",
       },
       // {

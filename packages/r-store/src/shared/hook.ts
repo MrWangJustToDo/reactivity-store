@@ -84,7 +84,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     const selectorRef = useSubscribeCallbackRef(selector, deepSelector);
 
     const getSelected = useCallbackRef((i?: Controller) => {
-      if (deepSelector) i?.run?.();
+      i?.run?.();
       // 0.1.9
       // make the returned value as a readonly value, so the only way to change the state is in the `actions` middleware
       if (selector) {
@@ -236,7 +236,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
     const selectorRef = useSubscribeCallbackRef(selector, false);
 
-    const getSelected = useCallbackRef(() => {
+    const getSelected = useCallbackRef((i?: Controller) => {
+      i?.run?.();
       if (selector) {
         ref.current = selector({ ...readonlyState, ...actions });
       } else {
