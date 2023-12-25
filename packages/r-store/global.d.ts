@@ -9,7 +9,6 @@ declare global {
   }
 
   interface Window {
-    __store__: Set<any>
     __REDUX_DEVTOOLS_EXTENSION__: any
   }
 }

@@ -21,9 +21,9 @@ export const checkHasKey = (key: string) => {
   return key in namespaceMap;
 };
 
-if (!isServer) {
+if (__DEV__ && !isServer) {
   try {
-    if (__DEV__ && globalThis["@reactivity-store"]) {
+    if (globalThis["@reactivity-store"]) {
       console.error(`[reactivity-store] you are using multiple version of reactivity-store, this is a unexpected usage`);
     }
     globalThis["@reactivity-store"] = new WeakMap();

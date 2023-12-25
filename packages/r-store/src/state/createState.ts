@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // `createState` provider
+
 import { internalCreateState } from "./_internal";
 
 import type { MaybeStateWithMiddleware, StateWithMiddleware, UnWrapMiddleware, WithActionsProps } from "./tools";
 import type { LifeCycle } from "../shared/lifeCycle";
 import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
-
-export type { LifeCycle } from "../shared/lifeCycle";
 
 export type { MaybeStateWithMiddleware, StateWithMiddleware, UnWrapMiddleware, WithActionsProps, WithNamespaceProps, WithPersistProps } from "./tools";
 

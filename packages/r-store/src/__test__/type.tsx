@@ -158,16 +158,16 @@ const useHH1 = createState(
     ),
     { generateActions: (s) => ({ del: () => s.data.pop() }) }
   ),
-  // {
-  //   // withActions: (state) => ({ add: () => state.data.push(100) }),
-  //   // withNamespace: "1111",
-  // }
   {
-    withActions: (s) => ({add: () => s.data.push(199)}),
-    withPersist: '111',
-    withDeepSelector: true,
-    withNamespace: '2222'
+    // withActions: (state) => ({ add: () => state.data.push(100) }),
+    // withNamespace: "1111",
   }
+  // {
+  //   withActions: (s) => ({add: () => s.data.push(199)}),
+  //   withPersist: '111',
+  //   withDeepSelector: true,
+  //   withNamespace: '2222'
+  // }
 );
 
 useHH1.getActions()
