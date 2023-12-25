@@ -21,7 +21,7 @@ const useCount = createState(
     { key: "llllll" }
   ),
   {
-    withActions: (s: { count: { data: number } }) => ({ add: () => s.count.data++, del: () => 1 }),
+    withActions: (s) => ({ add: () => s.count.data++, del: () => 1 }),
     withPersist: "1",
   }
 );
@@ -78,7 +78,7 @@ const useCount_v3 = createState(
     { key: "foo" }
   ),
   {
-    withActions: (s: { count: number }) => ({ ll: () => s.count++ }),
+    withActions: (s) => ({ ll: () => s.count++ }),
     withPersist: "11",
   }
 );
@@ -143,5 +143,44 @@ const useCountG = createState(
 
     return data;
   },
-  { withActions: (state: { count: number }) => ({ add: () => state.count++, del: () => state.count-- }), withPersist: "foo" }
+  { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }), withPersist: "foo" }
 );
+
+useCountG.getActions();
+
+useCountG.getReactiveState().count;
+
+const useHH1 = createState(
+  withActions(
+    withNamespace(
+      withNamespace(() => ({ data: [] as number[] }), { namespace: "122" }),
+      { namespace: "111" }
+    ),
+    { generateActions: (s) => ({ del: () => s.data.pop() }) }
+  ),
+  // {
+  //   // withActions: (state) => ({ add: () => state.data.push(100) }),
+  //   // withNamespace: "1111",
+  // }
+  {
+    withActions: (s) => ({add: () => s.data.push(199)}),
+    withPersist: '111',
+    withDeepSelector: true,
+    withNamespace: '2222'
+  }
+);
+
+useHH1.getActions()
+
+useHH1.getReactiveState()
+
+const useHH2 = createState(() => ({ data: [] as number[] }), {
+  withActions: (state) => ({ add: () => state.data.push(100) }),
+  withPersist: "foo",
+  withDeepSelector: true,
+  withNamespace: "1111",
+});
+
+useHH2.getActions()
+
+useHH2.getReactiveState()

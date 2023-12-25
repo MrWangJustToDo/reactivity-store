@@ -1,6 +1,6 @@
 {
   "name": "reactivity-store",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "MrWangJustToDo",
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app just like zustand",
@@ -17,13 +17,13 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MrWangJustToDo/r-store.git",
+    "url": "git+https://github.com/MrWangJustToDo/reactivity-store.git",
     "directory": "packages/r-store"
   },
   "scripts": {
     "type-gen": "api-extractor run --local --verbose"
   },
-  "homepage": "https://mrwangjusttodo.github.io/r-store",
+  "homepage": "https://mrwangjusttodo.github.io/reactivity-store",
   "buildOptions": [
     {
       "input": "./src/index.ts",
@@ -69,7 +69,7 @@
     "react-dom": "^17.0.2 || ^18.2.0"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.37.0",
+    "@microsoft/api-extractor": "^7.39.0",
     "@redux-devtools/extension": "^3.2.5",
     "@types/use-sync-external-store": "^0.0.3"
   }
