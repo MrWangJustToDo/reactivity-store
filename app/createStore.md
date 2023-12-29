@@ -61,7 +61,9 @@ const App = () => {
 ::: details Click to show zustand code with same logic
 
 ```tsx
-// r-store
+// ==== r-store ====
+
+// 1. use createStore
 import { createStore, ref } from "reactivity-store";
 const useCount = createStore(() => {
   const reactiveCount = ref(0);
@@ -72,8 +74,11 @@ const useCount = createStore(() => {
 
   return { reactiveCount, changeCount };
 });
+// 2. use createState
+import { createState } from "reactivity-store";
+const useCount = createState(() => ({ reactiveCount: 0 }), { withActions: (s) => ({ changeCount: (c: number) => (s.reactiveCount = c) }) });
 
-// zustand
+// ==== zustand ====
 import { create } from "zustand";
 const useCount = create((set, get) => ({
   reactiveCount: 0,
