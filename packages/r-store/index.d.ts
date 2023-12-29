@@ -151,7 +151,7 @@ export declare const getBatch: () => (cb: () => void) => void;
 /**
  * @public
  */
-export declare type LifeCycle = {
+declare type LifeCycle = {
     onBeforeMount: Array<() => void>;
     onMounted: Array<() => void>;
     onBeforeUpdate: Array<() => void>;
@@ -243,7 +243,7 @@ export declare const useReactiveEffect: (effectCallback: () => void | (() => voi
 /**
  * @public
  */
-export declare const useReactiveState: <T extends Record<string, unknown>>(initialState: T | (() => T)) => [DeepReadonly<UnwrapNestedRefs<T>>, (cb: (t: UnwrapNestedRefs<T>) => void) => void];
+export declare const useReactiveState: <T extends Record<string, unknown>>(initialState: T | (() => T)) => [DeepReadonly<UnwrapNestedRefs<T>>, (payload: UnwrapNestedRefs<T> | ((t: UnwrapNestedRefs<T>) => void)) => void];
 
 /**
  * @public

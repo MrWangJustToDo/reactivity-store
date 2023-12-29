@@ -17,8 +17,17 @@ export const useReactiveState = <T extends Record<string, unknown>>(initialState
   useSelector();
 
   const setState = useMemo(
-    () => (cb: (t: UnwrapNestedRefs<T>) => void) => {
-      cb(useSelector.getReactiveState());
+    () => (payload: UnwrapNestedRefs<T> | ((t: UnwrapNestedRefs<T>) => void)) => {
+      if (typeof payload === "function") {
+        payload(useSelector.getReactiveState());
+      } else {
+        const reactiveObj = useSelector.getReactiveState();
+        Object.keys(payload).forEach((key) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          reactiveObj[key] = payload[key];
+        });
+      }
     },
     [useSelector]
   );

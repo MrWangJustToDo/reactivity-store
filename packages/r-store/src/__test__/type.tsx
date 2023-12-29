@@ -10,6 +10,8 @@ import {
   withNamespace,
   ref,
   createStore,
+  useReactiveState,
+  useReactiveEffect,
 } from "..";
 
 const useCount = createState(
@@ -160,7 +162,7 @@ const useHH1 = createState(
   ),
   {
     // withActions: (state) => ({ add: () => state.data.push(100) }),
-    // withNamespace: "1111",
+    withNamespace: "1111",
   }
   // {
   //   withActions: (s) => ({add: () => s.data.push(199)}),
@@ -170,9 +172,9 @@ const useHH1 = createState(
   // }
 );
 
-useHH1.getActions()
+useHH1.getActions();
 
-useHH1.getReactiveState()
+useHH1.getReactiveState();
 
 const useHH2 = createState(() => ({ data: [] as number[] }), {
   withActions: (state) => ({ add: () => state.data.push(100) }),
@@ -181,6 +183,28 @@ const useHH2 = createState(() => ({ data: [] as number[] }), {
   withNamespace: "1111",
 });
 
-useHH2.getActions()
+useHH2.getActions();
 
-useHH2.getReactiveState()
+useHH2.getReactiveState();
+
+const usePosition = () => {
+  const [state, setState] = useReactiveState({ x: 0, y: 0 });
+
+  const [xPosition, setXPosition] = useReactiveState({ x: 0 });
+
+  useReactiveEffect(() => {
+    const listener = (e: MouseEvent) => {
+      setState({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener("mousemove", listener);
+
+    return () => window.removeEventListener("mousemove", listener);
+  });
+
+  useReactiveEffect(() => {
+    setXPosition({ x: state.x });
+  });
+
+  return { y: state.y, x: xPosition.x };
+};

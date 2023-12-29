@@ -159,10 +159,12 @@ const usePosition = () => {
 
   // when the component mount or the `state.x` has changed, the effect callback will be invoked
   // because of the `xPosition` is a `state` which create by `useReactiveState`, so the change will cause component auto update
+  // no need deps for reactive hook
   useReactiveEffect(() => {
     // update the state
-    setXPosition((xPosition) => {
-      xPosition.x = state.x;
+    // callback / object
+    setXPosition({
+      x = state.x;
     });
   });
 
