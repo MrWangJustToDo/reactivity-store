@@ -1,4 +1,5 @@
 import { reactive, toRaw } from "@vue/reactivity";
+import { isPromise } from "@vue/shared";
 
 import { connectDevTool } from "../shared/dev";
 import { isServer } from "../shared/env";
@@ -46,6 +47,13 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   // handle withActions middleware;
   const initialState = getFinalState(state) as T;
+
+  if (__DEV__ && isPromise(initialState)) {
+    console.error(
+      `[reactivity-store] '${name}' expect receive a plain object but got a promise %o, this is a unexpected usage. should not return a promise in this 'setup' function`,
+      initialState
+    );
+  }
 
   let actions = getFinalActions(state);
 

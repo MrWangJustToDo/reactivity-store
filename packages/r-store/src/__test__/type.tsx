@@ -153,16 +153,22 @@ useCountG.getActions();
 useCountG.getReactiveState().count;
 
 const useHH1 = createState(
-  withActions(
-    withNamespace(
-      withNamespace(() => ({ data: [] as number[] }), { namespace: "122" }),
-      { namespace: "111" }
+  withActions(withNamespace(
+    withActions(
+      withActions(
+        // withNamespace(
+        () => ({ data: [] as number[] }),
+        // { namespace: "111" }
+        // ),
+        { generateActions: (s) => ({ del: () => s.data.pop() }) }
+      ),
+      { generateActions: (state) => ({ ff: () => state.data.push(9999) }) }
     ),
-    { generateActions: (s) => ({ del: () => s.data.pop() }) }
-  ),
+    { namespace: "hhh" }
+  ), {generateActions: (s) => ({lll: () => s.data.sort()}), automaticBatchAction: true}),
   {
-    // withActions: (state) => ({ add: () => state.data.push(100) }),
-    withNamespace: "1111",
+    withActions: (state) => ({ add: () => state.data.push(100), kkkk: () => state.data.sort() }),
+    // withNamespace: "1111",
   }
   // {
   //   withActions: (s) => ({add: () => s.data.push(199)}),
@@ -190,7 +196,7 @@ useHH2.getReactiveState();
 const usePosition = () => {
   const [state, setState] = useReactiveState({ x: 0, y: 0 });
 
-  const [xPosition, setXPosition] = useReactiveState({ x: 0 });
+  const [xPosition, setXPosition] = useReactiveState(() => ({ x: 0 }));
 
   useReactiveEffect(() => {
     const listener = (e: MouseEvent) => {
