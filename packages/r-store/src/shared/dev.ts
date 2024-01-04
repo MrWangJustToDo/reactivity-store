@@ -23,9 +23,9 @@ export const checkHasKey = (key: string) => {
 
 if (__DEV__ && !isServer) {
   try {
-    if (globalThis["@reactivity-store"]) {
-      console.error(`[reactivity-store] you are using multiple version of reactivity-store, this is a unexpected usage`);
-    }
+    // if (globalThis["@reactivity-store"]) {
+    //   console.error(`[reactivity-store] you are using multiple version of reactivity-store, this is a unexpected usage`);
+    // }
     globalThis["@reactivity-store"] = new WeakMap();
   } catch {
     void 0;
@@ -89,11 +89,11 @@ export const getDevToolInstance = () => globalDevTools || window.__REDUX_DEVTOOL
  */
 export const connectDevTool = (name: string, actions: Record<string, Function>, state: any) => {
   if (window && window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
-    if (devToolMap[name] && devToolMap[name] !== state) {
-      console.warn(`[reactivity-store/middleware] can not connect the devtool with same namespace ${name} but with different state object!`);
+    // if (devToolMap[name] && devToolMap[name] !== state) {
+    //   console.warn(`[reactivity-store/middleware] can not connect the devtool with same namespace ${name} but with different state object!`);
 
-      return actions;
-    }
+    //   return actions;
+    // }
 
     const devTools = globalDevTools || window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
 

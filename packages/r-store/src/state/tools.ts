@@ -19,6 +19,7 @@ export type StateWithMiddleware<T, P> = {
   ["$$__middleware__$$"]: Record<string, unknown>;
   ["$$__actions__$$"]: P;
   ["$$__namespace__$$"]: { namespace?: string; reduxDevTool?: boolean };
+  ["$$__deepSelector__$$"]: { deepSelector?: boolean };
 };
 
 /**
@@ -60,6 +61,13 @@ export type WithActionsProps<T, P> = {
 export type WithNamespaceProps = {
   namespace: string;
   reduxDevTool?: boolean;
+};
+
+/**
+ * @public
+ */
+export type WithDeepSelectorProps = {
+  deepSelector?: boolean;
 };
 
 /**
@@ -117,4 +125,13 @@ export const getFinalNamespace = <T extends Record<string, unknown>, P extends R
   if (state["$$__state__$$"]) return (state["$$__namespace__$$"] || {}) as { namespace?: string; reduxDevTool?: boolean };
 
   return {} as { namespace?: string; reduxDevTool?: boolean };
+};
+
+/**
+ * @internal
+ */
+export const getFinalDeepSelector = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
+  if (state["$$__state__$$"]) return (state["$$__deepSelector__$$"] || {}) as { deepSelector?: boolean };
+
+  return {} as { deepSelector?: boolean };
 };

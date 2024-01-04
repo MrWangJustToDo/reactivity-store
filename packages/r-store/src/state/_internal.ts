@@ -7,8 +7,8 @@ import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasFunction, checkHasReactive, checkHasSameField } from "../shared/tools";
 
-import { withActions, withNamespace, withPersist } from "./middleware";
-import { getFinalActions, getFinalNamespace, getFinalState } from "./tools";
+import { withActions, withDeepSelector, withNamespace, withPersist } from "./middleware";
+import { getFinalActions, getFinalDeepSelector, getFinalNamespace, getFinalState } from "./tools";
 
 import type { Setup } from "./createState";
 import type { MaybeStateWithMiddleware, WithActionsProps, UnWrapMiddleware } from "./tools";
@@ -41,6 +41,10 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     creator = withNamespace(creator, { namespace: option.withNamespace, reduxDevTool: true });
   }
 
+  if (typeof option?.withDeepSelector !== "undefined") {
+    creator = withDeepSelector(creator, { deepSelector: option.withDeepSelector });
+  }
+
   const lifeCycle = createLifeCycle();
 
   const state = creator();
@@ -57,11 +61,13 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   let actions = getFinalActions(state);
 
-  const namespace = getFinalNamespace(state);
+  const namespaceOptions = getFinalNamespace(state);
+
+  const deepSelectorOptions = getFinalDeepSelector(state);
 
   const rawState = toRaw(initialState);
 
-  const reduxDevTool = __DEV__ && namespace.reduxDevTool && !isServer;
+  const reduxDevTool = __DEV__ && namespaceOptions.reduxDevTool && !isServer;
 
   if (__DEV__ && checkHasReactive(rawState)) {
     console.error(
@@ -85,14 +91,14 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   }
 
   if (reduxDevTool) {
-    actions = connectDevTool(namespace.namespace, actions, rawState) as P;
+    actions = connectDevTool(namespaceOptions.namespace, actions, rawState) as P;
   }
 
   const reactiveState = reactive(initialState);
 
-  const deepSelector = option?.withDeepSelector ?? true;
+  const deepSelector = deepSelectorOptions?.deepSelector ?? true;
 
-  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, namespace.namespace, actions as P & L);
+  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, namespaceOptions.namespace, actions as P & L);
 
   return useSelector;
 }

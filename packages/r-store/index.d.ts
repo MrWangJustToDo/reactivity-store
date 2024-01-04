@@ -228,6 +228,9 @@ export declare type StateWithMiddleware<T, P> = {
         namespace?: string;
         reduxDevTool?: boolean;
     };
+    ["$$__deepSelector__$$"]: {
+        deepSelector?: boolean;
+    };
 };
 
 /**
@@ -313,6 +316,23 @@ export declare function withActions<T extends Record<string, unknown>, P extends
 export declare type WithActionsProps<T, P> = {
     generateActions?: (state: T) => P;
     automaticBatchAction?: boolean;
+};
+
+/**
+ * @public
+ */
+export declare function withDeepSelector<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithDeepSelectorProps): Setup<StateWithMiddleware<T, P>>;
+
+/**
+ * @public
+ */
+export declare function withDeepSelector<T extends Record<string, unknown>>(setup: Setup<T>, options: WithDeepSelectorProps): Setup<StateWithMiddleware<T, {}>>;
+
+/**
+ * @public
+ */
+declare type WithDeepSelectorProps = {
+    deepSelector?: boolean;
 };
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "reactivity-store",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "MrWangJustToDo",
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app just like zustand",

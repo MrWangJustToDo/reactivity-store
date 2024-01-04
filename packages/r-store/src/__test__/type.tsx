@@ -12,13 +12,17 @@ import {
   createStore,
   useReactiveState,
   useReactiveEffect,
+  withDeepSelector,
 } from "..";
 
 const useCount = createState(
   withPersist(
-    withActions(
-      withPersist(() => ({ count: { data: 1 } }), { key: "lllll" }),
-      { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }
+    withDeepSelector(
+      withActions(
+        withPersist(() => ({ count: { data: 1 } }), { key: "lllll" }),
+        { generateActions: (s) => ({ del: () => s.count.data--, kk: () => "ll" }) }
+      ),
+      { deepSelector: true }
     ),
     { key: "llllll" }
   ),
@@ -153,19 +157,22 @@ useCountG.getActions();
 useCountG.getReactiveState().count;
 
 const useHH1 = createState(
-  withActions(withNamespace(
-    withActions(
+  withActions(
+    withNamespace(
       withActions(
-        // withNamespace(
-        () => ({ data: [] as number[] }),
-        // { namespace: "111" }
-        // ),
-        { generateActions: (s) => ({ del: () => s.data.pop() }) }
+        withActions(
+          // withNamespace(
+          () => ({ data: [] as number[] }),
+          // { namespace: "111" }
+          // ),
+          { generateActions: (s) => ({ del: () => s.data.pop() }) }
+        ),
+        { generateActions: (state) => ({ ff: () => state.data.push(9999) }) }
       ),
-      { generateActions: (state) => ({ ff: () => state.data.push(9999) }) }
+      { namespace: "hhh" }
     ),
-    { namespace: "hhh" }
-  ), {generateActions: (s) => ({lll: () => s.data.sort()}), automaticBatchAction: true}),
+    { generateActions: (s) => ({ lll: () => s.data.sort() }), automaticBatchAction: true }
+  ),
   {
     withActions: (state) => ({ add: () => state.data.push(100), kkkk: () => state.data.sort() }),
     // withNamespace: "1111",

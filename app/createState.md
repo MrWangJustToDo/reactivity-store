@@ -18,6 +18,12 @@ new middleware `withDeepSelector` for `createState` support config the selector 
 ## v0.2.6 update
 new middleware `withNamespace` for `createState` support `reduxDevTools`
 
+## All build in middleware for `createState`
+1. `withPersist(setup, options)`  make the state auto sync to storage when some data change
+2. `withActions(setup, options)`  add actions for current state, then you can get the action in the `selector` function
+3. `withNamespace(setup, options)`  make the state and change action tracked by `reduxDevTools`, you need install `redux-devtools-extension` on your browser first
+4. `withDeepSelector(setup, options)`  make the selector support deep selector, when the deep state change, the selector will also be trigger, the default value for the `withDeepSelector` is `true`
+
 ## Simple Code Example
 
 ```tsx

@@ -7,16 +7,28 @@ import { InternalNameSpace, isServer } from "../shared/env";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasReactive, traverse } from "../shared/tools";
 
-import { getFinalActions, getFinalMiddleware, getFinalState, persistKey, debounce, getBatchUpdateActions, getFinalNamespace } from "./tools";
+import {
+  getFinalActions,
+  getFinalMiddleware,
+  getFinalState,
+  persistKey,
+  debounce,
+  getBatchUpdateActions,
+  getFinalNamespace,
+  getFinalDeepSelector,
+} from "./tools";
 
 import type { Setup } from "./createState";
 import type {
   MaybeStateWithMiddleware,
   StateWithMiddleware,
   StorageState,
+
   WithActionsProps,
   WithPersistProps,
   WithNamespaceProps,
+  WithDeepSelectorProps,
+
   UnWrapMiddleware,
 } from "./tools";
 
@@ -51,6 +63,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
       const auctions = getFinalActions(_initialState);
 
       const namespace = getFinalNamespace(_initialState);
+
+      const deepSelector = getFinalDeepSelector(_initialState);
 
       let hasSet = false;
 
@@ -109,16 +123,34 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             setDevController(ControllerInstance, initialState);
           }
 
-          return { ["$$__state__$$"]: toRaw(re), ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
+          return {
+            ["$$__state__$$"]: toRaw(re),
+            ["$$__middleware__$$"]: middleware,
+            ["$$__actions__$$"]: auctions,
+            ["$$__namespace__$$"]: namespace,
+            ["$$__deepSelector__$$"]: deepSelector,
+          };
         } catch (e) {
           if (__DEV__) {
             console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
           }
 
-          return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
+          return {
+            ["$$__state__$$"]: initialState,
+            ["$$__middleware__$$"]: middleware,
+            ["$$__actions__$$"]: auctions,
+            ["$$__namespace__$$"]: namespace,
+            ["$$__deepSelector__$$"]: deepSelector,
+          };
         }
       } else {
-        return { ["$$__state__$$"]: initialState, ["$$__middleware__$$"]: middleware, ["$$__actions__$$"]: auctions, ["$$__namespace__$$"]: namespace };
+        return {
+          ["$$__state__$$"]: initialState,
+          ["$$__middleware__$$"]: middleware,
+          ["$$__actions__$$"]: auctions,
+          ["$$__namespace__$$"]: namespace,
+          ["$$__deepSelector__$$"]: deepSelector,
+        };
       }
     },
     { name: "withPersist" }
@@ -160,6 +192,8 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
 
       const namespace = getFinalNamespace(_initialState);
 
+      const deepSelector = getFinalDeepSelector(_initialState);
+
       const reactiveState = reactive(initialState) as UnWrapMiddleware<T>;
 
       const pendingGenerate = options.generateActions;
@@ -199,6 +233,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         ["$$__actions__$$"]: { ...actions, ...batchActions },
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,
+        ["$$__deepSelector__$$"]: deepSelector,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
     },
     { name: "withActions" }
@@ -235,6 +270,8 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
 
       const namespace = getFinalNamespace(_initialState);
 
+      const deepSelector = getFinalDeepSelector(_initialState);
+
       if (
         __DEV__ &&
         (options.namespace === InternalNameSpace.$$__ignore__$$ ||
@@ -263,9 +300,54 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: { ...namespace, ...options },
+        ["$$__deepSelector__$$"]: deepSelector,
       };
     },
     { name: "withNamespace" }
+  );
+}
+
+/**
+ * @public
+ */
+export function withDeepSelector<T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<StateWithMiddleware<T, P>>,
+  options: WithDeepSelectorProps
+): Setup<StateWithMiddleware<T, P>>;
+/**
+ * @public
+ */
+export function withDeepSelector<T extends Record<string, unknown>>(setup: Setup<T>, options: WithDeepSelectorProps): Setup<StateWithMiddleware<T, {}>>;
+/**
+ * @public
+ */
+export function withDeepSelector<T extends Record<string, unknown>, P extends Record<string, Function>>(
+  setup: Setup<MaybeStateWithMiddleware<T, P>>,
+  options: WithDeepSelectorProps
+): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> {
+  return createMiddleware(
+    () => {
+      const _initialState = setup();
+
+      const initialState = getFinalState(_initialState);
+
+      const middleware = getFinalMiddleware(_initialState);
+
+      const actions = getFinalActions(_initialState);
+
+      const namespace = getFinalNamespace(_initialState);
+
+      const deepSelector = getFinalDeepSelector(_initialState);
+
+      return {
+        ["$$__state__$$"]: initialState,
+        ["$$__actions__$$"]: actions,
+        ["$$__middleware__$$"]: middleware,
+        ["$$__namespace__$$"]: namespace,
+        ["$$__deepSelector__$$"]: { ...deepSelector, ...options },
+      };
+    },
+    { name: "withDeepSelector" }
   );
 }
 
@@ -286,6 +368,8 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
 
     const namespace = getFinalNamespace(state);
 
+    const deepSelector = getFinalDeepSelector(state);
+
     if (__DEV__ && middleware[options.name]) {
       console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is a unexpected usage`);
     }
@@ -297,6 +381,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
       ["$$__actions__$$"]: actions,
       ["$$__middleware__$$"]: middleware,
       ["$$__namespace__$$"]: namespace,
+      ["$$__deepSelector__$$"]: deepSelector,
     } as T;
   };
 }
