@@ -213,18 +213,19 @@ onBeforeUnmount(() => {
   left: -13px;
   top: 8px;
   cursor: pointer;
-  color: #e6e6e6;
+  color: #4d4d4d;
+  opacity: 0.4;
   user-select: none;
 }
 
 .list .allCheck.checked {
-  color: #4d4d4d;
+  opacity: 1;
 }
 
 .listItems .msg {
   position: relative;
   height: 48px;
-  background-color: #fff;
+  background-color: var(--vp-c-bg);
   z-index: 10;
   box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.15);
   color: rgb(119, 119, 119);
@@ -279,7 +280,7 @@ onBeforeUnmount(() => {
   position: relative;
   font-size: 18px;
   width: 550px;
-  background-color: #fff;
+  background-color: var(--vp-c-bg);
   z-index: 10;
   box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.15);
   min-height: 60px;
@@ -292,7 +293,7 @@ onBeforeUnmount(() => {
   height: 40px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #fff;
+  background-color: var(--vp-c-bg);
   box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.15);
 }
 
