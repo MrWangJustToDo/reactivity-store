@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { wrapperBatchUpdate } from "../shared/batch";
 
+import type { Setup } from "./createState";
+
 /**
  * @internal
  */
@@ -135,3 +137,38 @@ export const getFinalDeepSelector = <T extends Record<string, unknown>, P extend
 
   return {} as { deepSelector?: boolean };
 };
+
+// function for help to build external middleware
+
+/**
+ * @internal
+ */
+export function createMiddleware<T>(setup: Setup<any>, options: { name: string }) {
+  return () => {
+    const state = setup();
+
+    const initialState = getFinalState(state);
+
+    const middleware = getFinalMiddleware(state);
+
+    const actions = getFinalActions(state);
+
+    const namespace = getFinalNamespace(state);
+
+    const deepSelector = getFinalDeepSelector(state);
+
+    if (__DEV__ && middleware[options.name]) {
+      console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is a unexpected usage`);
+    }
+
+    middleware[options.name] = true;
+
+    return {
+      ["$$__state__$$"]: initialState,
+      ["$$__actions__$$"]: actions,
+      ["$$__middleware__$$"]: middleware,
+      ["$$__namespace__$$"]: namespace,
+      ["$$__deepSelector__$$"]: deepSelector,
+    } as T;
+  };
+}
