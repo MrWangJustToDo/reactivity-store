@@ -58,7 +58,7 @@ const App = () => {
 };
 ```
 
-::: details Click to show zustand code with same logic
+::: details Click to show `zustand` code with same logic
 
 ```tsx
 // ==== r-store ====

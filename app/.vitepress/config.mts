@@ -2,7 +2,7 @@ import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "RStore",
+  title: "Reactivity Store",
   base: "/reactivity-store/",
   description: "A React state-management tool power by Reactive api",
   themeConfig: {

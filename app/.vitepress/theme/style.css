@@ -117,3 +117,39 @@
 .dark .vp-doc .custom-block a {
   transition: color 0.25s;
 }
+
+.my-container {
+  border: 1px solid rgba(240, 240, 240, .8);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.my-title {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.my-text {
+  font-size: 0.95em;
+}
+
+.my-button {
+  background-color: #fafafa;
+  transition: background-color .5s;
+  padding: 5px 12px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  font-size: 0.8em;
+  color: black;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.my-button.large {
+  font-size: 1.2em
+}
+
+.my-button:hover {
+  background-color: #eee;
+}

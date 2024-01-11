@@ -56,15 +56,15 @@ const Time = createStoreWithComponent({
 const App = () => {
   return React.createElement(React.StrictMode, null, React.createElement(
     "div",
-    { className: "react_container" },
+    { className: "my-container" },
     React.createElement(Time, {
       children: ({ timeRef, updateCountRef }) => {
         return React.createElement(
           React.Fragment,
           null,
-          React.createElement("p", null, "React Reactive Time"),
-          React.createElement("p", null, "Time: ", React.createElement("span", { style: { color: "red" } }, timeRef)),
-          React.createElement("p", null, "Update count: ", React.createElement("span", { style: { color: "red" } }, updateCountRef))
+          React.createElement("p", { className: 'my-title' }, "React Reactive Time"),
+          React.createElement("p", { className: 'my-text' }, "Time: ", React.createElement("span", { style: { color: 'red' } }, timeRef)),
+          React.createElement("p", { className: 'my-text' }, "Update count: ", React.createElement("span", { style: { color: "red" } }, updateCountRef))
         );
       },
     })
@@ -87,12 +87,3 @@ vue_OnBeforeUnmount(() => {
 <template>
   <div ref="divRef"></div>
 </template>
-
-<style>
-.react_container {
-  padding: 20px;
-  overflow: hidden;
-  border-radius: 4px;
-  background-color: RGBA(100, 100, 100, 0.4);
-}
-</style>

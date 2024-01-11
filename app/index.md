@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "RStore"
+  name: "Reactivity-store"
   text: "A React state-management tool power by Reactive api"
-  tagline: use RStore to build your React app
+  tagline: Simple to use reactivity-store in your project
   actions:
     - theme: brand
       text: Get Started

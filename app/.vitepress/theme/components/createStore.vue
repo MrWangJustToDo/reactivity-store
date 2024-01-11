@@ -22,10 +22,10 @@ const App = () => {
 
   return React.createElement(
     "div",
-    { className: "react_container" },
-    React.createElement("p", null, "React Reactive Count"),
-    React.createElement("p", { style: { color: "red" } }, "count: " + reactiveCount.count),
-    React.createElement("button", { className: "react_button", onClick: () => changeCount(reactiveCount.count + 1) }, "Add button")
+    { className: "my-container" },
+    React.createElement("p", { className: 'my-title' }, "React Reactive Count"),
+    React.createElement("p", { className: 'my-text' }, "Count: " + reactiveCount.count),
+    React.createElement("button", { className: "my-button", onClick: () => changeCount(reactiveCount.count + 1) }, "Add Count")
   );
 };
 
@@ -45,18 +45,3 @@ onBeforeUnmount(() => {
 <template>
   <div ref="divRef"></div>
 </template>
-
-<style>
-.react_container {
-  padding: 20px;
-  overflow: hidden;
-  border-radius: 4px;
-  background-color: RGBA(100, 100, 100, 0.4);
-}
-
-.react_button {
-  border: 1px solid rgba(100, 100, 100, 0.8);
-  padding: 6px 10px;
-  border-radius: 4px;
-}
-</style>

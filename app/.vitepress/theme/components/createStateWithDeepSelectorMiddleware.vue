@@ -16,10 +16,10 @@ const App_1 = () => {
 
   return React.createElement(React.StrictMode, null, React.createElement(
     "div",
-    { className: "react_container" },
-    React.createElement("p", null, "React Reactive Count with DeepSelector, the component will update when the button click"),
-    React.createElement("p", { style: { color: "red" } }, "count: " + data.count),
-    React.createElement("button", { className: "react_button", onClick: () => add() }, "Add button")
+    { className: "my-container" },
+    React.createElement("p", { className: 'my-title' }, "React Reactive Count with DeepSelector, the component will update when the button click"),
+    React.createElement("p", { className: 'my-text' }, "Count: " + data.count),
+    React.createElement("button", { className: "my-button", onClick: () => add() }, "Add Count (work)")
   ));
 };
 
@@ -28,10 +28,10 @@ const App_2 = () => {
 
   return React.createElement(React.StrictMode, null, React.createElement(
     "div",
-    { className: "react_container" },
-    React.createElement("p", null, "React Reactive Count without DeepSelector, the component will never update when the button click"),
-    React.createElement("p", { style: { color: "red" } }, "count: " + data.count),
-    React.createElement("button", { className: "react_button", onClick: () => add() }, "Add button")
+    { className: "my-container" },
+    React.createElement("p", { className: 'my-title' }, "React Reactive Count without DeepSelector, the component will never update when the button click"),
+    React.createElement("p", { className: 'my-text' }, "Count: " + data.count),
+    React.createElement("button", { className: "my-button", onClick: () => add() }, "Add Count (not work)")
   ));
 };
 
@@ -54,20 +54,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div ref="divRef_1"></div>
+  <br />
   <div ref="divRef_2"></div>
 </template>
-
-<style>
-.react_container {
-  padding: 20px;
-  overflow: hidden;
-  border-radius: 4px;
-  background-color: RGBA(100, 100, 100, 0.4);
-}
-
-.react_button {
-  border: 1px solid rgba(100, 100, 100, 0.8);
-  padding: 6px 10px;
-  border-radius: 4px;
-}
-</style>
