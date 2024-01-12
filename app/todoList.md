@@ -17,7 +17,7 @@ const useTodo = createStore(() => {
   const hasSomeItemDone = computed(() => data.value.some(todo => todo.done));
 
   const addTodo = (text: string) => {
-    data.value.push({ id: data.value.length + Math.random(), text, done: false, edit: false });
+    data.value = data.value.concat({ id: data.value.length + Math.random(), text, done: false, edit: false });
   }
 
   const removeTodo = (id: number) => {
