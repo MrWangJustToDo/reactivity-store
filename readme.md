@@ -84,6 +84,15 @@ const App = () => {
     </div>
   );
 };
+
+// all build in middleware
+withPersist; // support auto cache the state to the `Storage`
+withActions; // support define the action for the state
+withNameSpace; // support define the namespace for the state, and support reduxDevTools in develop mode
+withDeepSelector; // support deep selector for the state, can be used for performance optimization
+
+// TODO
+withComputed; // support define the computed value for the state
 ```
 
 ### `createStoreWithComponent` support lifeCycle
