@@ -11,8 +11,12 @@ const useCountState_1 = createState(withActions(() => ({ data: { count: 1 } }), 
 
 const useCountState_2 = createState(withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) }), { withDeepSelector: false });
 
+// const useCountState_3 = createState(() => ({ count: 1 }), { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }), withDeepSelector: false });
+
 const App_1 = () => {
   const { data, add } = useCountState_1((state) => ({ data: state.data, add: state.add }));
+
+  // const { count, add } = useCountState_3(s => s);
 
   return React.createElement(React.StrictMode, null, React.createElement(
     "div",

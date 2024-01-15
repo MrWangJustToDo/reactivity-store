@@ -30,6 +30,28 @@ function _traverse(value: unknown, seen?: Set<unknown>) {
   return value;
 }
 
+export function traverseShallow(value: unknown) {
+  if (!isObject(value) || (value as any)[ReactiveFlags.SKIP] || isValidElement(value)) {
+    return value;
+  }
+  if (isRef(value)) {
+    value.value;
+  } else if (isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      value[i];
+    }
+  } else if (isSet(value) || isMap(value)) {
+    value.forEach((v: any) => {
+      v;
+    });
+  } else if (isPlainObject(value)) {
+    for (const key in value) {
+      value[key];
+    }
+  }
+  return value;
+}
+
 /**
  * @internal
  */

@@ -6,7 +6,7 @@ import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { Controller } from "./controller";
 import { delDevController, setDevController } from "./dev";
 import { InternalNameSpace, isReact18 } from "./env";
-import { traverse } from "./tools";
+import { traverse, traverseShallow } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
 import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
@@ -37,7 +37,12 @@ export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSel
   const memoCallback = useCallbackRef((arg: T) => {
     if (callbackRef.current) {
       const re = callbackRef.current(arg);
-      if (deepSelector) traverse(re);
+      if (deepSelector) {
+        traverse(re);
+      } else {
+        // fix useState(s => s) not subscribe reactive state update
+        traverseShallow(re);
+      }
       return re;
     } else {
       traverse(arg);

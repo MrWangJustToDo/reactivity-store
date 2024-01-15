@@ -39,7 +39,7 @@
     "husky": "^8.0.2",
     "lodash": "^4.17.21",
     "prettier": "^3.1.1",
-    "project-tool": "git+ssh://git@github.com:MrWangJustToDo/project-tool.git",
+    "project-tool": "https://github.com/MrWangJustToDo/project-tool.git",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reactivity-store": "workspaces: *",
