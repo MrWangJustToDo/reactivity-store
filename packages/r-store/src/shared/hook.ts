@@ -45,7 +45,12 @@ export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSel
       }
       return re;
     } else {
-      traverse(arg);
+      // !BREAKING CHANGE, will change the default behavior when the deepSelector is true
+      if (deepSelector) {
+        traverse(arg);
+      } else {
+        traverseShallow(arg);
+      }
       return arg;
     }
   });
