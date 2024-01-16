@@ -27,8 +27,10 @@ const useCount = createState(
     { key: "llllll" }
   ),
   {
-    withActions: (s) => ({ add: () => s.count.data++, del: () => 1 }),
+    // withActions: (s) => ({ add: () => s.count.data++, del: () => 1 }),
     withPersist: "1",
+    withNamespace: '111',
+    withDeepSelector: true,
   }
 );
 
@@ -173,16 +175,16 @@ const useHH1 = createState(
     ),
     { generateActions: (s) => ({ lll: () => s.data.sort() }), automaticBatchAction: true }
   ),
-  {
-    withActions: (state) => ({ add: () => state.data.push(100), kkkk: () => state.data.sort() }),
-    // withNamespace: "1111",
-  }
   // {
-  //   withActions: (s) => ({add: () => s.data.push(199)}),
-  //   withPersist: '111',
-  //   withDeepSelector: true,
-  //   withNamespace: '2222'
+  //   withActions: (state) => ({ add: () => state.data.push(100), kkkk: () => state.data.sort() }),
+  //   // withNamespace: "1111",
   // }
+  {
+    withActions: (s) => ({add: () => s.data.push(199)}),
+    withPersist: '111',
+    withDeepSelector: true,
+    withNamespace: '2222'
+  }
 );
 
 useHH1.getActions();
