@@ -13,11 +13,13 @@ import { createElement, Fragment } from 'react';
 
 const wrapperRef = ref<HTMLDivElement>();
 
-const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }) })
+const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }), withNamespace: 'example_count' })
 
 let app: Root;
 
 onMounted(() => {
+  console.log(useCount);
+
   const App = () => {
     const { count, add } = useCount();
 

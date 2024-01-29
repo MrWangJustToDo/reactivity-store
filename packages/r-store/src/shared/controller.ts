@@ -14,9 +14,6 @@ const catchError =
       if (isPromise(res)) {
         throw new Error(`[reactivity-store] selector should be a pure function, but current is a async function`);
       }
-      if (__DEV__) {
-        instance._devState = res;
-      }
       return res;
     } catch (e) {
       if (__DEV__) {
@@ -40,13 +37,15 @@ export class Controller<T = any> {
 
   _effect: ReactiveEffect<T>;
 
+  _devState: any;
+
   _devSelector: any;
 
   _devActions: any;
 
   _devWithDeep: any;
 
-  _devState: any;
+  _devResult: any
 
   // make the state change and component update
   _updateCount = 0;
@@ -54,8 +53,9 @@ export class Controller<T = any> {
   constructor(
     readonly _state: () => T,
     readonly _lifeCycle: LifeCycle,
+    readonly _list: Set<Controller>,
     readonly _namespace?: string,
-    readonly _onUpdate?: (instance: Controller) => void
+    readonly _onUpdate?: (instance: Controller) => void,
   ) {
     this._safeGetState = catchError(_state, this);
     this._effect = new ReactiveEffect(this._safeGetState, () => {
@@ -67,6 +67,7 @@ export class Controller<T = any> {
         }
       }
     });
+    this._list.add(this);
   }
 
   notify = () => {
@@ -106,5 +107,7 @@ export class Controller<T = any> {
 
   stop() {
     this._effect.stop();
+
+    this._list.delete(this);
   }
 }

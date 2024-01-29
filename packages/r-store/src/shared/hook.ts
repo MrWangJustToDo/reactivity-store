@@ -82,6 +82,10 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   namespace?: string,
   actions: C = undefined
 ) => {
+  const controllerList = new Set<Controller>();
+
+  let active = true;
+
   const readonlyState = __DEV__ ? readonly(initialState) : (reactiveState as DeepReadonly<UnwrapNestedRefs<T>>);
 
   namespace = namespace || InternalNameSpace.$$__ignore__$$;
@@ -102,25 +106,28 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       } else {
         ref.current = { ...readonlyState, ...actions };
       }
+
+      if (__DEV__ && i) {
+        i._devResult = ref.current;
+      }
     });
 
     const prevSelector = usePrevValue(selector);
 
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, namespace, getSelected), []);
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
 
     useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
     // initial
     useMemo(() => {
-      ControllerInstance.run();
-      getSelected();
+      if (!active) return;
+      getSelected(ControllerInstance);
     }, [ControllerInstance, getSelected]);
 
     // rerun when the 'selector' change
     useMemo(() => {
-      if (prevSelector !== selector) {
-        ControllerInstance.run();
-        getSelected();
+      if (active && prevSelector !== selector) {
+        getSelected(ControllerInstance);
       }
     }, [ControllerInstance, prevSelector, selector]);
 
@@ -130,6 +137,12 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       ControllerInstance._devActions = actions;
 
       ControllerInstance._devWithDeep = deepSelector;
+
+      ControllerInstance._devState = initialState;
+
+      if (!active) {
+        console.error("current `useSelector` have been inactivated, check your code first");
+      }
 
       useEffect(() => {
         setDevController(ControllerInstance, initialState);
@@ -161,6 +174,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
     useDeepSelector: typeof useSelector;
     useShallowSelector: typeof useSelector;
+    cleanReactiveHooks: () => void;
   };
 
   typedUseSelector.getState = () => toRaw(initialState);
@@ -170,12 +184,20 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.subscribe = (selector, cb) => {
     const subscribeSelector = () => traverse(selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>));
 
-    const controller = new Controller(subscribeSelector, lifeCycle, InternalNameSpace.$$__subscribe__$$, (i) => {
+    const controller = new Controller(subscribeSelector, lifeCycle, controllerList, InternalNameSpace.$$__subscribe__$$, (i) => {
       i?.run?.();
       cb();
     });
 
-    controller.run();
+    if (active) {
+      controller.run();
+    }
+
+    if (__DEV__) {
+      if (!active) {
+        console.error("can not subscribe an inactivated hook, check your code first");
+      }
+    }
 
     return () => controller.stop();
   };
@@ -192,30 +214,32 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     const selectorRef = useSubscribeCallbackRef(selector, true);
 
     const getSelected = useCallbackRef((i?: Controller) => {
-      // 对于deepSelector  需要每次更新重新计算所有依赖
       i?.run?.();
       if (selector) {
         ref.current = selector({ ...readonlyState, ...actions });
       } else {
         ref.current = { ...readonlyState, ...actions };
       }
+
+      if (__DEV__ && i) {
+        i._devResult = ref.current;
+      }
     });
 
     const prevSelector = usePrevValue(selector);
 
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, namespace, getSelected), []);
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
 
     useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
     useMemo(() => {
-      ControllerInstance.run();
-      getSelected();
+      if (!active) return;
+      getSelected(ControllerInstance);
     }, [ControllerInstance, getSelected]);
 
     useMemo(() => {
-      if (prevSelector !== selector) {
-        ControllerInstance.run();
-        getSelected();
+      if (active && prevSelector !== selector) {
+        getSelected(ControllerInstance);
       }
     }, [ControllerInstance, prevSelector, selector]);
 
@@ -225,6 +249,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       ControllerInstance._devActions = actions;
 
       ControllerInstance._devWithDeep = "useDeepSelector";
+
+      ControllerInstance._devState = initialState;
 
       useEffect(() => {
         setDevController(ControllerInstance, initialState);
@@ -253,23 +279,26 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       } else {
         ref.current = { ...readonlyState, ...actions };
       }
+
+      if (__DEV__ && i) {
+        i._devResult = ref.current;
+      }
     });
 
     const prevSelector = usePrevValue(selector);
 
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, namespace, getSelected), []);
+    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
 
     useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
     useMemo(() => {
-      ControllerInstance.run();
-      getSelected();
+      if (!active) return;
+      getSelected(ControllerInstance);
     }, [ControllerInstance, getSelected]);
 
     useMemo(() => {
-      if (prevSelector !== selector) {
-        ControllerInstance.run();
-        getSelected();
+      if (active && prevSelector !== selector) {
+        getSelected(ControllerInstance);
       }
     }, [ControllerInstance, prevSelector, selector]);
 
@@ -279,6 +308,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       ControllerInstance._devActions = actions;
 
       ControllerInstance._devWithDeep = "useShallowSelector";
+
+      ControllerInstance._devState = initialState;
 
       useEffect(() => {
         setDevController(ControllerInstance, initialState);
@@ -293,6 +324,12 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     }
 
     return ref.current;
+  };
+
+  typedUseSelector.cleanReactiveHooks = () => {
+    controllerList.forEach((i) => i.stop());
+
+    active = false;
   };
 
   return typedUseSelector;

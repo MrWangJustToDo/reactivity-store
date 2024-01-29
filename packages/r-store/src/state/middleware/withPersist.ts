@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { reactive, toRaw } from "@vue/reactivity";
 
-
-
 import { Controller } from "../../shared/controller";
 import { setDevController } from "../../shared/dev";
 import { isServer } from "../../shared/env";
@@ -76,6 +74,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           const onUpdate = debounce((instance: Controller) => {
             try {
+              instance.run();
+
               const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
 
               const cache = { data: stringifyState, version: options.version || options.key };
@@ -94,7 +94,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             }
           }, options.debounceTime || 40);
 
-          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), "$$__persist__$$", onUpdate);
+          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), new Set(), "$$__persist__$$", onUpdate);
 
           ControllerInstance.run();
 
