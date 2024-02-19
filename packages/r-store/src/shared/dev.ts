@@ -23,10 +23,7 @@ export const checkHasKey = (key: string) => {
 
 if (__DEV__ && !isServer) {
   try {
-    // if (globalThis["@reactivity-store"]) {
-    //   console.error(`[reactivity-store] you are using multiple version of reactivity-store, this is a unexpected usage`);
-    // }
-    globalThis["@reactivity-store"] = new WeakMap();
+    globalThis["@reactivity-store"] = globalThis["@reactivity-store"] || new WeakMap();
   } catch {
     void 0;
   }
@@ -115,10 +112,18 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 
         if (isPromise(re)) {
           re.finally(() => {
-            sendToDevTools({type: `asyncAction-${name}/${action.name || 'anonymous'}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
+            sendToDevTools({
+              type: `asyncAction-${name}/${action.name || "anonymous"}`,
+              $payload: args.slice(0, len),
+              getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
+            });
           });
         } else {
-          sendToDevTools({type: `syncAction-${name}/${action.name || 'anonymous'}`, $payload: args.slice(0, len), getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) })});
+          sendToDevTools({
+            type: `syncAction-${name}/${action.name || "anonymous"}`,
+            $payload: args.slice(0, len),
+            getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
+          });
         }
         return re;
       };

@@ -46,4 +46,8 @@ export default defineConfig({
 
     socialLinks: [{ icon: "github", link: "https://github.com/MrWangJustToDo/r-store" }],
   },
+  head: [
+    ["link", { rel: "preconnect", href: "https://fonts.cdnfonts.com/", crossorigin: "" }],
+    ["link", { rel: "stylesheet", href: "https://fonts.cdnfonts.com/css/google-sans" }],
+  ],
 });
