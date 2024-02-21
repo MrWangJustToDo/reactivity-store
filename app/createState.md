@@ -23,7 +23,7 @@ new middleware `withNamespace` for `createState` support `reduxDevTools`
 2. `withActions(setup, options)`  add actions for current state, then you can get the action in the `selector` function
 3. `withNamespace(setup, options)`  make the state and change action tracked by `reduxDevTools`, you need install `redux-devtools-extension` on your browser first
 4. `withDeepSelector(setup, options)`  make the selector support deep selector, when the deep state change, the selector will also be trigger, the default value for the `withDeepSelector` is `true`
-5. `withComputed(setup, options)`  TODO
+5. `withComputed(setup, options)`  TODO (maybe won't)
 
 ## Simple Code Example
 

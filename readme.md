@@ -91,7 +91,7 @@ withActions; // support define the action for the state
 withNameSpace; // support define the namespace for the state, and support reduxDevTools in develop mode
 withDeepSelector; // support deep selector for the state, can be used for performance optimization
 
-// TODO
+// TODO (maybe won't)
 withComputed; // support define the computed value for the state
 ```
 

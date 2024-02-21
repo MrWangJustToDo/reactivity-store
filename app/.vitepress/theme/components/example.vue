@@ -18,8 +18,6 @@ const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add:
 let app: Root;
 
 onMounted(() => {
-  console.log(useCount);
-
   const App = () => {
     const { count, add } = useCount();
 
