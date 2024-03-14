@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { checkHasKey, setNamespaceMap } from "../../shared/dev";
+import { checkHasKey } from "../../shared/dev";
 import { InternalNameSpace, isServer } from "../../shared/env";
 import { type MaybeStateWithMiddleware, type UnWrapMiddleware, type WithNamespaceProps , type StateWithMiddleware, createMiddleware, getFinalState, getFinalMiddleware, getFinalActions, getFinalNamespace, getFinalDeepSelector } from "../tools";
 
@@ -58,7 +58,7 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         if (alreadyHasNameSpace) {
           console.warn(`[reactivity-store/middleware] you have duplicate namespace '${options.namespace}' for current store, this is a unexpected usage`);
         }
-        setNamespaceMap(options.namespace, initialState);
+        // setNamespaceMap(options.namespace, initialState);
       }
 
       return {

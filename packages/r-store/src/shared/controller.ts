@@ -47,6 +47,8 @@ export class Controller<T = any> {
 
   _devResult: any
 
+  _devRunCount = 0;
+
   // make the state change and component update
   _updateCount = 0;
 

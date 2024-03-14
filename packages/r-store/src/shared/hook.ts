@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Controller } from "./controller";
-import { delDevController, setDevController } from "./dev";
-import { InternalNameSpace, isReact18 } from "./env";
+import { delDevController, setDevController, setNamespaceMap } from "./dev";
+import { InternalNameSpace, isReact18, isServer } from "./env";
 import { traverse, traverseShallow } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -84,81 +84,98 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 ) => {
   const controllerList = new Set<Controller>();
 
+  // TODO
+  __DEV__ && !isServer && namespace && setNamespaceMap(namespace, initialState);
+
   let active = true;
 
   const readonlyState = __DEV__ ? readonly(initialState) : (reactiveState as DeepReadonly<UnwrapNestedRefs<T>>);
 
   namespace = namespace || InternalNameSpace.$$__ignore__$$;
 
+  // tool function to generate `useSelector` hook
+  const generateUseHook = <P>(type: "default" | "deep" | "shallow") => {
+    return (selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
+      const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
+
+      const selectorRef = useSubscribeCallbackRef(selector, type === "default" ? deepSelector : type === "deep" ? true : false);
+
+      const getSelected = useCallbackRef((i?: Controller) => {
+        i?.run?.();
+        // 0.1.9
+        // make the returned value as a readonly value, so the only way to change the state is in the `actions` middleware
+        if (selector) {
+          ref.current = selector({ ...readonlyState, ...actions });
+        } else {
+          ref.current = { ...readonlyState, ...actions };
+        }
+
+        if (__DEV__ && i) {
+          i._devResult = ref.current;
+          i._devRunCount++;
+        }
+      });
+
+      const prevSelector = usePrevValue(selector);
+
+      const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
+
+      useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
+
+      // initial
+      useMemo(() => {
+        if (!active) return;
+        getSelected(ControllerInstance);
+      }, [ControllerInstance, getSelected]);
+
+      // rerun when the 'selector' change
+      useMemo(() => {
+        if (active && prevSelector !== selector) {
+          getSelected(ControllerInstance);
+        }
+      }, [ControllerInstance, prevSelector, selector]);
+
+      if (__DEV__) {
+        ControllerInstance._devSelector = selector;
+
+        ControllerInstance._devActions = actions;
+
+        ControllerInstance._devWithDeep = type === "default" ? deepSelector : type === "deep" ? "useDeepSelector" : "useShallowSelector";
+
+        ControllerInstance._devState = initialState;
+
+        if (!active) {
+          console.error("current `useSelector` have been inactivated, check your code first");
+        }
+
+        useEffect(() => {
+          setDevController(ControllerInstance, initialState);
+          return () => {
+            delDevController(ControllerInstance, initialState);
+          };
+        }, []);
+      }
+
+      // clean effect
+      // currently, the 18 version of `StrictMode` not work if the unmount logic run, so need disable it in the development mode
+      if (needUnmountEffect) {
+        useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
+      }
+
+      return ref.current;
+    };
+  };
+
+  const defaultHook = generateUseHook("default");
+
+  const deepHook = generateUseHook("deep");
+
+  const shallowHook = generateUseHook("shallow");
+
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
   function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
   function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
-    const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
-
-    const selectorRef = useSubscribeCallbackRef(selector, deepSelector);
-
-    const getSelected = useCallbackRef((i?: Controller) => {
-      i?.run?.();
-      // 0.1.9
-      // make the returned value as a readonly value, so the only way to change the state is in the `actions` middleware
-      if (selector) {
-        ref.current = selector({ ...readonlyState, ...actions });
-      } else {
-        ref.current = { ...readonlyState, ...actions };
-      }
-
-      if (__DEV__ && i) {
-        i._devResult = ref.current;
-      }
-    });
-
-    const prevSelector = usePrevValue(selector);
-
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
-
-    useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
-
-    // initial
-    useMemo(() => {
-      if (!active) return;
-      getSelected(ControllerInstance);
-    }, [ControllerInstance, getSelected]);
-
-    // rerun when the 'selector' change
-    useMemo(() => {
-      if (active && prevSelector !== selector) {
-        getSelected(ControllerInstance);
-      }
-    }, [ControllerInstance, prevSelector, selector]);
-
-    if (__DEV__) {
-      ControllerInstance._devSelector = selector;
-
-      ControllerInstance._devActions = actions;
-
-      ControllerInstance._devWithDeep = deepSelector;
-
-      ControllerInstance._devState = initialState;
-
-      if (!active) {
-        console.error("current `useSelector` have been inactivated, check your code first");
-      }
-
-      useEffect(() => {
-        setDevController(ControllerInstance, initialState);
-        return () => {
-          delDevController(ControllerInstance, initialState);
-        };
-      }, []);
-    }
-
-    // clean effect
-    // currently, the 18 version of `StrictMode` not work if the unmount logic run, so need disable it in the development mode
-    if (needUnmountEffect) {
-      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
-    }
-
-    return ref.current;
+    return defaultHook(selector);
   }
 
   const typedUseSelector = useSelector as typeof useSelector & {
@@ -181,6 +198,16 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   typedUseSelector.getLifeCycle = () => lifeCycle;
 
+  typedUseSelector.getActions = () => actions;
+
+  typedUseSelector.getReactiveState = () => reactiveState;
+
+  typedUseSelector.getReadonlyState = () => readonlyState;
+
+  typedUseSelector.useDeepSelector = deepHook as typeof useSelector;
+
+  typedUseSelector.useShallowSelector = shallowHook as typeof useSelector;
+
   typedUseSelector.subscribe = (selector, cb) => {
     const subscribeSelector = () => traverse(selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>));
 
@@ -200,130 +227,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     }
 
     return () => controller.stop();
-  };
-
-  typedUseSelector.getActions = () => actions;
-
-  typedUseSelector.getReactiveState = () => reactiveState;
-
-  typedUseSelector.getReadonlyState = () => readonlyState;
-
-  typedUseSelector.useDeepSelector = <P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
-    const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
-
-    const selectorRef = useSubscribeCallbackRef(selector, true);
-
-    const getSelected = useCallbackRef((i?: Controller) => {
-      i?.run?.();
-      if (selector) {
-        ref.current = selector({ ...readonlyState, ...actions });
-      } else {
-        ref.current = { ...readonlyState, ...actions };
-      }
-
-      if (__DEV__ && i) {
-        i._devResult = ref.current;
-      }
-    });
-
-    const prevSelector = usePrevValue(selector);
-
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
-
-    useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
-
-    useMemo(() => {
-      if (!active) return;
-      getSelected(ControllerInstance);
-    }, [ControllerInstance, getSelected]);
-
-    useMemo(() => {
-      if (active && prevSelector !== selector) {
-        getSelected(ControllerInstance);
-      }
-    }, [ControllerInstance, prevSelector, selector]);
-
-    if (__DEV__) {
-      ControllerInstance._devSelector = selector;
-
-      ControllerInstance._devActions = actions;
-
-      ControllerInstance._devWithDeep = "useDeepSelector";
-
-      ControllerInstance._devState = initialState;
-
-      useEffect(() => {
-        setDevController(ControllerInstance, initialState);
-        return () => {
-          delDevController(ControllerInstance, initialState);
-        };
-      }, []);
-    }
-
-    if (needUnmountEffect) {
-      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
-    }
-
-    return ref.current;
-  };
-
-  typedUseSelector.useShallowSelector = <P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
-    const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
-
-    const selectorRef = useSubscribeCallbackRef(selector, false);
-
-    const getSelected = useCallbackRef((i?: Controller) => {
-      i?.run?.();
-      if (selector) {
-        ref.current = selector({ ...readonlyState, ...actions });
-      } else {
-        ref.current = { ...readonlyState, ...actions };
-      }
-
-      if (__DEV__ && i) {
-        i._devResult = ref.current;
-      }
-    });
-
-    const prevSelector = usePrevValue(selector);
-
-    const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
-
-    useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
-
-    useMemo(() => {
-      if (!active) return;
-      getSelected(ControllerInstance);
-    }, [ControllerInstance, getSelected]);
-
-    useMemo(() => {
-      if (active && prevSelector !== selector) {
-        getSelected(ControllerInstance);
-      }
-    }, [ControllerInstance, prevSelector, selector]);
-
-    if (__DEV__) {
-      ControllerInstance._devSelector = selector;
-
-      ControllerInstance._devActions = actions;
-
-      ControllerInstance._devWithDeep = "useShallowSelector";
-
-      ControllerInstance._devState = initialState;
-
-      useEffect(() => {
-        setDevController(ControllerInstance, initialState);
-        return () => {
-          delDevController(ControllerInstance, initialState);
-        };
-      }, []);
-    }
-
-    if (needUnmountEffect) {
-      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
-    }
-
-    return ref.current;
   };
 
   typedUseSelector.cleanReactiveHooks = () => {

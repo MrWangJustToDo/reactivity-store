@@ -56,7 +56,21 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
       if (!isServer && !hasSet) {
         try {
-          const storage = options?.getStorage?.() || window.localStorage;
+          const storage = options?.getStorage?.() || window?.localStorage;
+
+          if (!storage) {
+            if (__DEV__) {
+              console.error(`[reactivity-store/persist] can't find storage, please check your environment`);
+            }
+
+            return {
+              ["$$__state__$$"]: initialState,
+              ["$$__middleware__$$"]: middleware,
+              ["$$__actions__$$"]: auctions,
+              ["$$__namespace__$$"]: namespace,
+              ["$$__deepSelector__$$"]: deepSelector,
+            };
+          }
 
           const storageStateString = storage.getItem(persistKey + options.key) as string;
 

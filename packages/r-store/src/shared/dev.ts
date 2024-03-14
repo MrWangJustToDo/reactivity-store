@@ -17,6 +17,13 @@ export const setNamespaceMap = (key: string, value: unknown) => {
 /**
  * @internal
  */
+export const delNamespace = (key: string) => {
+  delete namespaceMap[key];
+}
+
+/**
+ * @internal
+ */
 export const checkHasKey = (key: string) => {
   return key in namespaceMap;
 };
@@ -86,12 +93,6 @@ export const getDevToolInstance = () => globalDevTools || window.__REDUX_DEVTOOL
  */
 export const connectDevTool = (name: string, actions: Record<string, Function>, state: any) => {
   if (window && window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
-    // if (devToolMap[name] && devToolMap[name] !== state) {
-    //   console.warn(`[reactivity-store/middleware] can not connect the devtool with same namespace ${name} but with different state object!`);
-
-    //   return actions;
-    // }
-
     const devTools = globalDevTools || window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
 
     globalDevTools = devTools;
