@@ -47,7 +47,7 @@
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
-    "vitepress": "1.0.0-rc.44",
-    "vue": "^3.4.20"
+    "vitepress": "1.0.0",
+    "vue": "^3.4.21"
   }
 }
