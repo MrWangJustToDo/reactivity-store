@@ -128,6 +128,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         getSelected(ControllerInstance);
       }, [ControllerInstance, getSelected]);
 
+      // !TODO try to improve the performance
       // rerun when the 'selector' change
       useMemo(() => {
         if (active && prevSelector !== selector) {
@@ -185,6 +186,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
      */
     getState: () => T;
     getActions: () => C;
+    getIsActive: () => boolean;
     subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
@@ -234,6 +236,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
     active = false;
   };
+
+  typedUseSelector.getIsActive = () => active;
 
   return typedUseSelector;
 };

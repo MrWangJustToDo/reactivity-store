@@ -20,6 +20,8 @@ const useCount = createStore(() => {
 const App = () => {
   const { reactiveCount, changeCount, refCount } = useCount((state) => state);
 
+  console.log('run App');
+
   return React.createElement(
     "div",
     { className: "my-container" },

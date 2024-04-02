@@ -6,6 +6,12 @@ import { queueJob } from "./queue";
 
 import type { LifeCycle } from "./lifeCycle";
 
+class ControllerEffect extends ReactiveEffect {
+  get _isControllerEffect() {
+    return true;
+  }
+}
+
 const catchError =
   <T>(cb: () => T, instance: Controller) =>
   () => {
@@ -60,7 +66,7 @@ export class Controller<T = any> {
     readonly _onUpdate?: (instance: Controller) => void,
   ) {
     this._safeGetState = catchError(_state, this);
-    this._effect = new ReactiveEffect(this._safeGetState, () => {
+    this._effect = new ControllerEffect(this._safeGetState, () => {
       if (this._lifeCycle.canUpdateComponent) {
         if (this._lifeCycle.syncUpdateComponent) {
           this.notify();
@@ -109,6 +115,8 @@ export class Controller<T = any> {
 
   stop() {
     this._effect.stop();
+
+    this._listeners.clear();
 
     this._list.delete(this);
   }
