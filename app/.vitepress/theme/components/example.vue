@@ -21,6 +21,8 @@ onMounted(() => {
   const App = () => {
     const { count, add } = useCount();
 
+    console.log(useCount.getReactiveState());
+
     return createElement(Fragment, null, createElement('p', { className: 'text' }, 'Reactive count component: '), createElement('button', {
       className: 'button',
       onClick: add

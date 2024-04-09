@@ -3,7 +3,7 @@ import { reactive, toRaw } from "@vue/reactivity";
 
 import { Controller } from "../../shared/controller";
 import { setDevController } from "../../shared/dev";
-import { isServer } from "../../shared/env";
+import { InternalNameSpace, isServer } from "../../shared/env";
 import { createLifeCycle } from "../../shared/lifeCycle";
 import { checkHasReactive, traverse } from "../../shared/tools";
 import { createMiddleware, debounce, getFinalActions, getFinalDeepSelector, getFinalMiddleware, getFinalNamespace, getFinalState, persistKey } from "../tools";
@@ -108,7 +108,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             }
           }, options.debounceTime || 40);
 
-          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), new Set(), "$$__persist__$$", onUpdate);
+          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), new Set(), InternalNameSpace.$$__persist__$$, onUpdate);
 
           ControllerInstance.run();
 

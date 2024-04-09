@@ -2,7 +2,18 @@
 
 import { checkHasKey } from "../../shared/dev";
 import { InternalNameSpace, isServer } from "../../shared/env";
-import { type MaybeStateWithMiddleware, type UnWrapMiddleware, type WithNamespaceProps , type StateWithMiddleware, createMiddleware, getFinalState, getFinalMiddleware, getFinalActions, getFinalNamespace, getFinalDeepSelector } from "../tools";
+import {
+  type MaybeStateWithMiddleware,
+  type UnWrapMiddleware,
+  type WithNamespaceProps,
+  type StateWithMiddleware,
+  createMiddleware,
+  getFinalState,
+  getFinalMiddleware,
+  getFinalActions,
+  getFinalNamespace,
+  getFinalDeepSelector,
+} from "../tools";
 
 import type { Setup } from "../createState";
 
@@ -42,7 +53,8 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         __DEV__ &&
         (options.namespace === InternalNameSpace.$$__ignore__$$ ||
           options.namespace === InternalNameSpace.$$__persist__$$ ||
-          options.namespace === InternalNameSpace.$$__subscribe__$$)
+          options.namespace === InternalNameSpace.$$__subscribe__$$ ||
+          options.namespace === InternalNameSpace.$$__redux_dev_tool__$$)
       ) {
         console.warn(`[reactivity-store/namespace] current namespace: '${options.namespace}' is a internal namespace, try to use another one`);
       }
@@ -52,7 +64,8 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         !isServer &&
         options.namespace !== InternalNameSpace.$$__ignore__$$ &&
         options.namespace !== InternalNameSpace.$$__persist__$$ &&
-        options.namespace !== InternalNameSpace.$$__subscribe__$$
+        options.namespace !== InternalNameSpace.$$__subscribe__$$ &&
+        options.namespace !== InternalNameSpace.$$__redux_dev_tool__$$
       ) {
         const alreadyHasNameSpace = checkHasKey(options.namespace);
         if (alreadyHasNameSpace) {

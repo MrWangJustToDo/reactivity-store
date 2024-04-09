@@ -112,7 +112,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
         if (__DEV__ && i) {
           i._devResult = ref.current;
-          i._devRunCount++;
         }
       });
 

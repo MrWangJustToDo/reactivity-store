@@ -15,6 +15,9 @@ class ControllerEffect extends ReactiveEffect {
 const catchError =
   <T>(cb: () => T, instance: Controller) =>
   () => {
+    if (__DEV__) {
+      instance._devRunCount++;
+    }
     try {
       const res = cb();
       if (isPromise(res)) {
@@ -51,7 +54,7 @@ export class Controller<T = any> {
 
   _devWithDeep: any;
 
-  _devResult: any
+  _devResult: any;
 
   _devRunCount = 0;
 
@@ -63,7 +66,7 @@ export class Controller<T = any> {
     readonly _lifeCycle: LifeCycle,
     readonly _list: Set<Controller>,
     readonly _namespace?: string,
-    readonly _onUpdate?: (instance: Controller) => void,
+    readonly _onUpdate?: (instance: Controller) => void
   ) {
     this._safeGetState = catchError(_state, this);
     this._effect = new ControllerEffect(this._safeGetState, () => {

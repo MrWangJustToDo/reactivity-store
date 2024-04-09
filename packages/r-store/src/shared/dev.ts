@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { isPromise } from "@vue/shared";
 
-import { isServer } from "./env";
-
-import type { Controller } from "./controller";
+import { Controller } from "./controller";
+import { InternalNameSpace, isServer } from "./env";
+import { createLifeCycle } from "./lifeCycle";
+import { traverse } from "./tools";
 
 const namespaceMap: Record<string, unknown> = {};
 
@@ -19,7 +20,7 @@ export const setNamespaceMap = (key: string, value: unknown) => {
  */
 export const delNamespace = (key: string) => {
   delete namespaceMap[key];
-}
+};
 
 /**
  * @internal
@@ -77,6 +78,8 @@ export const delDevController = (controller: Controller, state: any) => {
 // cache state which has connect to devtool
 const devToolMap: Record<string, any> = {};
 
+const devController: Record<string, Controller> = {};
+
 const globalName = "__reactivity-store-redux-devtools__";
 
 type Action = { type: string; $payload?: any; getUpdatedState: () => any };
@@ -91,13 +94,47 @@ export const getDevToolInstance = () => globalDevTools || window.__REDUX_DEVTOOL
 /**
  * @internal
  */
-export const connectDevTool = (name: string, actions: Record<string, Function>, state: any) => {
+export const connectDevTool = (name: string, actions: Record<string, Function>, state: any, reactiveState: any) => {
   if (window && window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
     const devTools = globalDevTools || window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
 
     globalDevTools = devTools;
 
+    const existState = devToolMap[name];
+
+    const existController = devController[name];
+
+    if (existController) {
+      existController.stop();
+
+      delDevController(existController, existState);
+    }
+
     devToolMap[name] = state;
+
+    const lifeCycle = createLifeCycle();
+
+    lifeCycle.syncUpdateComponent = true;
+
+    let updateInAction = false;
+
+    const onUpdateWithoutAction = (instance?: Controller) => {
+      instance?.run();
+      if (updateInAction) return;
+      sendToDevTools({
+        type: `subscribeAction-${name}`,
+        getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
+      });
+    };
+
+    // create a subscribe controller to listen to the state change, because some state change may not trigger by the `action`
+    const controller = new Controller(() => traverse(reactiveState), lifeCycle, new Set(), InternalNameSpace.$$__redux_dev_tool__$$, onUpdateWithoutAction);
+
+    devController[name] = controller;
+
+    controller.run();
+
+    setDevController(controller, state);
 
     const obj = { ...devToolMap };
 
@@ -105,6 +142,8 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 
     return Object.keys(actions).reduce((p, c) => {
       p[c] = (...args) => {
+        updateInAction = true;
+
         const len = actions[c].length || 0;
 
         const re = actions[c](...args);
@@ -118,6 +157,7 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
               $payload: args.slice(0, len),
               getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
             });
+            updateInAction = false;
           });
         } else {
           sendToDevTools({
@@ -125,6 +165,7 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
             $payload: args.slice(0, len),
             getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
           });
+          updateInAction = false;
         }
         return re;
       };

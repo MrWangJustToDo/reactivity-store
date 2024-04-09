@@ -90,13 +90,13 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     );
   }
 
-  if (reduxDevTool) {
-    actions = connectDevTool(namespaceOptions.namespace, actions, rawState) as P;
-  }
-
   const reactiveState = reactive(initialState);
 
   const deepSelector = deepSelectorOptions?.deepSelector ?? true;
+
+  if (reduxDevTool) {
+    actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState) as P;
+  }
 
   const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, namespaceOptions.namespace, actions as P & L);
 
