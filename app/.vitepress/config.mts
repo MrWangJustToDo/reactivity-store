@@ -49,5 +49,6 @@ export default defineConfig({
   head: [
     ["link", { rel: "preconnect", href: "https://fonts.cdnfonts.com/", crossorigin: "" }],
     ["link", { rel: "stylesheet", href: "https://fonts.cdnfonts.com/css/google-sans" }],
+    ['link', { rel: 'icon', href: '/favicon.png' }]
   ],
 });
