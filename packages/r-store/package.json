@@ -5,7 +5,7 @@
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app just like zustand",
   "main": "index.js",
-  "module": "./dist/esm/index.js",
+  "module": "./dist/esm/index.mjs",
   "unpkg": "./dist/umd/index.development.js",
   "jsdelivr": "./dist/umd/index.development.js",
   "types": "./index.d.ts",
@@ -38,7 +38,7 @@
         },
         {
           "dir": "./dist",
-          "entryFileNames": "esm/index.js",
+          "entryFileNames": "esm/index.mjs",
           "format": "esm",
           "sourcemap": true
         },
