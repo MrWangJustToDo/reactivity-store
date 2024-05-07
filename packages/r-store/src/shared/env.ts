@@ -8,7 +8,7 @@ export const isServer = typeof window === "undefined";
 /**
  * @internal
  */
-export const isReact18 = version?.startsWith("18");
+export const isNewStrictModeReact = version?.startsWith("18") || version?.startsWith("19");
 
 /**
  * @internal

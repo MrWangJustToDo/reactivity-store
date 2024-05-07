@@ -8,6 +8,8 @@ import { traverse } from "./tools";
 
 const namespaceMap: Record<string, unknown> = {};
 
+const temp = new Set<Controller>();
+
 /**
  * @internal
  */
@@ -116,11 +118,11 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 
     lifeCycle.syncUpdateComponent = true;
 
-    let updateInAction = false;
+    let updateInActionCount = 0;
 
     const onUpdateWithoutAction = (instance?: Controller) => {
       instance?.run();
-      if (updateInAction) return;
+      if (updateInActionCount > 0) return;
       sendToDevTools({
         type: `subscribeAction-${name}`,
         getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
@@ -128,7 +130,7 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
     };
 
     // create a subscribe controller to listen to the state change, because some state change may not trigger by the `action`
-    const controller = new Controller(() => traverse(reactiveState), lifeCycle, new Set(), InternalNameSpace.$$__redux_dev_tool__$$, onUpdateWithoutAction);
+    const controller = new Controller(() => traverse(reactiveState), lifeCycle, temp, InternalNameSpace.$$__redux_dev_tool__$$, onUpdateWithoutAction);
 
     devController[name] = controller;
 
@@ -142,7 +144,7 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
 
     return Object.keys(actions).reduce((p, c) => {
       p[c] = (...args) => {
-        updateInAction = true;
+        updateInActionCount++;
 
         const len = actions[c].length || 0;
 
@@ -157,7 +159,7 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
               $payload: args.slice(0, len),
               getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
             });
-            updateInAction = false;
+            updateInActionCount--;
           });
         } else {
           sendToDevTools({
@@ -165,7 +167,7 @@ export const connectDevTool = (name: string, actions: Record<string, Function>, 
             $payload: args.slice(0, len),
             getUpdatedState: () => ({ ...devToolMap, [name]: JSON.parse(JSON.stringify(state)) }),
           });
-          updateInAction = false;
+          updateInActionCount--;
         }
         return re;
       };

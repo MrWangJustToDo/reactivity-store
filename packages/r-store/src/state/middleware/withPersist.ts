@@ -11,6 +11,8 @@ import { createMiddleware, debounce, getFinalActions, getFinalDeepSelector, getF
 import type { MaybeStateWithMiddleware, Setup, StateWithMiddleware, UnWrapMiddleware, WithPersistProps } from "../createState";
 import type { StorageState } from "../tools";
 
+const temp = new Set<Controller>();
+
 /**
  * @public
  */
@@ -108,7 +110,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             }
           }, options.debounceTime || 40);
 
-          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), new Set(), InternalNameSpace.$$__persist__$$, onUpdate);
+          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
 
           ControllerInstance.run();
 

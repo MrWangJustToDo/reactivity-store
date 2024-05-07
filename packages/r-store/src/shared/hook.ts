@@ -5,11 +5,13 @@ import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 import { Controller } from "./controller";
 import { delDevController, setDevController, setNamespaceMap } from "./dev";
-import { InternalNameSpace, isReact18, isServer } from "./env";
+import { InternalNameSpace, isNewStrictModeReact, isServer } from "./env";
 import { traverse, traverseShallow } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
 import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
+
+const temp = new Set<Controller>();
 
 /**
  * @internal
@@ -72,7 +74,7 @@ export const usePrevValue = <T>(v: T) => {
 };
 
 // eslint-disable-next-line no-extra-boolean-cast
-const needUnmountEffect = isReact18 ? !Boolean(__DEV__) : true;
+const needUnmountEffect = isNewStrictModeReact ? !Boolean(__DEV__) : true;
 
 export const createHook = <T extends Record<string, unknown>, C extends Record<string, Function>>(
   reactiveState: UnwrapNestedRefs<T>,
@@ -212,7 +214,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.subscribe = (selector, cb) => {
     const subscribeSelector = () => traverse(selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>));
 
-    const controller = new Controller(subscribeSelector, lifeCycle, controllerList, InternalNameSpace.$$__subscribe__$$, (i) => {
+    const controller = new Controller(subscribeSelector, lifeCycle, temp, InternalNameSpace.$$__subscribe__$$, (i) => {
       i?.run?.();
       cb();
     });

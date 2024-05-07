@@ -1,7 +1,7 @@
 import { ReactiveEffect } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 
-import { isServer } from "./env";
+import { InternalNameSpace, isServer } from "./env";
 import { queueJob } from "./queue";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -42,6 +42,8 @@ const catchError =
 export class Controller<T = any> {
   readonly _listeners = new Set<() => void>();
 
+  readonly _list: Set<Controller>;
+
   _safeGetState: () => T;
 
   _effect: ReactiveEffect<T>;
@@ -64,7 +66,7 @@ export class Controller<T = any> {
   constructor(
     readonly _state: () => T,
     readonly _lifeCycle: LifeCycle,
-    readonly _list: Set<Controller>,
+    _list: Set<Controller>,
     readonly _namespace?: string,
     readonly _onUpdate?: (instance: Controller) => void
   ) {
@@ -78,7 +80,14 @@ export class Controller<T = any> {
         }
       }
     });
-    this._list.add(this);
+    if (
+      this._namespace !== InternalNameSpace.$$__persist__$$ &&
+      this._namespace !== InternalNameSpace.$$__subscribe__$$ &&
+      this._namespace !== InternalNameSpace.$$__redux_dev_tool__$$
+    ) {
+      this._list = _list;
+      this._list.add(this);
+    }
   }
 
   notify = () => {
@@ -121,6 +130,6 @@ export class Controller<T = any> {
 
     this._listeners.clear();
 
-    this._list.delete(this);
+    this._list?.delete?.(this);
   }
 }

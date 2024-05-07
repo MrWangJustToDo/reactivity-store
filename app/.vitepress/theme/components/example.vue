@@ -19,7 +19,7 @@ let app: Root;
 
 onMounted(() => {
   const App = () => {
-    const { count, add } = useCount();
+    const { count, add } = useCount(s => s);
 
     return createElement(Fragment, null, createElement('p', { className: 'text' }, 'Reactive count component: '), createElement('button', {
       className: 'button',
