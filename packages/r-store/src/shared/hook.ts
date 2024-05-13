@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { readonly, toRaw } from "@vue/reactivity";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
 import { Controller } from "./controller";
 import { delDevController, setDevController, setNamespaceMap } from "./dev";
