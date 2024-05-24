@@ -4,6 +4,7 @@ import { isPromise } from "@vue/shared";
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasMiddleware, checkHasReactive } from "../shared/tools";
+import { getFinalState } from "../state/tools";
 
 import type { LifeCycle } from "../shared/lifeCycle";
 
@@ -30,12 +31,17 @@ export const internalCreateStore = <T extends Record<string, unknown>>(creator: 
   }
 
   if (__DEV__ && !checkHasReactive(state)) {
-    console.error(`[reactivity-store] '${name}' expect receive a reactive object but got a plain object %o, this is a unexpected usage. should return a reactive object in this 'creator' function`, state);
+    console.error(
+      `[reactivity-store] '${name}' expect receive a reactive object but got a plain object %o, this is a unexpected usage. should return a reactive object in this 'creator' function`,
+      state
+    );
   }
 
-  const rawState = toRaw(state);
+  const _state = getFinalState(state);
 
-  const reactiveState = reactive(state);
+  const rawState = toRaw(_state);
+
+  const reactiveState = reactive(_state);
 
   const lifeCycleInstance = lifeCycle || createLifeCycle();
 

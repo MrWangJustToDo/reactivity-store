@@ -15,6 +15,7 @@ class ControllerEffect extends ReactiveEffect {
 const catchError =
   <T>(cb: () => T, instance: Controller) =>
   () => {
+    if (!instance._isActive) return;
     if (__DEV__) {
       instance._devRunCount++;
     }
@@ -63,6 +64,8 @@ export class Controller<T = any> {
   // make the state change and component update
   _updateCount = 0;
 
+  _isActive = true;
+
   constructor(
     readonly _state: () => T,
     readonly _lifeCycle: LifeCycle,
@@ -72,6 +75,7 @@ export class Controller<T = any> {
   ) {
     this._safeGetState = catchError(_state, this);
     this._effect = new ControllerEffect(this._safeGetState, () => {
+      if (!this._isActive) return;
       if (this._lifeCycle.canUpdateComponent) {
         if (this._lifeCycle.syncUpdateComponent) {
           this.notify();
@@ -122,6 +126,7 @@ export class Controller<T = any> {
   };
 
   run() {
+    if (!this._isActive) return;
     this._effect.run();
   }
 
@@ -131,5 +136,7 @@ export class Controller<T = any> {
     this._listeners.clear();
 
     this._list?.delete?.(this);
+
+    this._isActive = false;
   }
 }

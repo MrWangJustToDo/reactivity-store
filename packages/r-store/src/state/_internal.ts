@@ -67,7 +67,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const rawState = toRaw(initialState);
 
-  const reduxDevTool = __DEV__ && namespaceOptions.reduxDevTool && !isServer;
+  const reduxDevTool = namespaceOptions.reduxDevTool && !isServer;
 
   if (__DEV__ && checkHasReactive(rawState)) {
     console.error(
@@ -94,7 +94,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const deepSelector = deepSelectorOptions?.deepSelector ?? true;
 
-  if (reduxDevTool) {
+  if (__DEV__ && reduxDevTool) {
     actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState) as P;
   }
 
