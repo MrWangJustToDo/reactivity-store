@@ -1,8 +1,19 @@
 <template>
-  <div class="wrapper" ref="wrapperRef">
-    <p class="text">Reactive count component: </p>
-    <button class="button">Counter is: 0</button>
+  <div class="wrapper">
+    <div class="code" style="overflow: auto;">
+      <pre style="margin: 0;">
+<code>const useCount = createState(
+  () => ({ count: 0 }), 
+  { withActions: (s) => ({ add: () => s.count++ }) 
+})</code>
+      </pre>
+    </div>
+    <div ref="wrapperRef">
+      <p class="text">Reactive count component: </p>
+      <button class="button">Counter is: 0</button>
+    </div>
   </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -21,10 +32,12 @@ onMounted(() => {
   const App = () => {
     const { count, add } = useCount(s => s);
 
-    return createElement(Fragment, null, createElement('p', { className: 'text' }, 'Reactive count component: '), createElement('button', {
-      className: 'button',
-      onClick: add
-    }, `Counter is: ${count}`))
+    return createElement(Fragment, null,
+      createElement('p', { className: 'text' }, 'Reactive count component: '),
+      createElement('button', {
+        className: 'button',
+        onClick: add
+      }, `Counter is: ${count}`))
   }
 
   app = hydrateRoot(wrapperRef.value!, createElement(App));
@@ -34,12 +47,19 @@ onBeforeUnmount(() => app.unmount())
 </script>
 
 <style scoped>
+
+@media screen and (width < 600px){
+  .code {
+    display: none;
+  }
+}
+
 .wrapper {
   position: absolute;
   z-index: 1;
   left: 50%;
   top: 50%;
-  padding: 40px;
+  padding: 15px 40px;
   width: 80%;
   transform: translateX(-50%) translateY(-50%);
   border-radius: 8px;
