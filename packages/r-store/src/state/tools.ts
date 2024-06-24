@@ -47,6 +47,10 @@ export type WithPersistProps<T extends Record<string, unknown>> = {
   parse?: (s: string) => Partial<T>;
   merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
   devLog?: boolean;
+  // shallow subscribe the state change
+  shallow?: boolean;
+  // target state to subscribe
+  listener?: (state: T) => any;
 };
 
 /**

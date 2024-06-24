@@ -5,7 +5,7 @@ import { Controller } from "../../shared/controller";
 import { setDevController } from "../../shared/dev";
 import { InternalNameSpace, isServer } from "../../shared/env";
 import { createLifeCycle } from "../../shared/lifeCycle";
-import { checkHasReactive, traverse } from "../../shared/tools";
+import { checkHasReactive, traverse, traverseShallow } from "../../shared/tools";
 import { createMiddleware, debounce, getFinalActions, getFinalDeepSelector, getFinalMiddleware, getFinalNamespace, getFinalState, persistKey } from "../tools";
 
 import type { MaybeStateWithMiddleware, Setup, StateWithMiddleware, UnWrapMiddleware, WithPersistProps } from "../createState";
@@ -110,7 +110,21 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             }
           }, options.debounceTime || 40);
 
-          const ControllerInstance = new Controller(() => traverse(re), createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
+          const subscribe = () => {
+            let _re = re;
+            
+            if (typeof options.listener === "function") {
+              _re = options.listener(re);
+            }
+
+            if (options.shallow) {
+              traverseShallow(_re);
+            } else {
+              traverse(_re);
+            }
+          };
+
+          const ControllerInstance = new Controller(subscribe, createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
 
           ControllerInstance.run();
 
