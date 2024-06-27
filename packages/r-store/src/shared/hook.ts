@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { readonly, toRaw } from "@vue/reactivity";
+import { isPromise } from "@vue/shared";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
@@ -211,8 +212,18 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   typedUseSelector.useShallowSelector = shallowHook as typeof useSelector;
 
-  typedUseSelector.subscribe = (selector, cb) => {
-    const subscribeSelector = () => traverse(selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>));
+  typedUseSelector.subscribe = (selector, cb, shallow?: boolean) => {
+    const subscribeSelector = () => {
+      const re = selector(reactiveState as DeepReadonly<UnwrapNestedRefs<T>>);
+      if (__DEV__ && isPromise(re)) {
+        console.error(`[reactivity-store/subscribe] selector should return a plain object, but current is a promise`);
+      }
+      if (shallow) {
+        traverseShallow(re);
+      } else {
+        traverse(re);
+      }
+    };
 
     const controller = new Controller(subscribeSelector, lifeCycle, temp, InternalNameSpace.$$__subscribe__$$, (i) => {
       i?.run?.();

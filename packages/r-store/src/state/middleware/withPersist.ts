@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { reactive, toRaw } from "@vue/reactivity";
+import { isPromise } from "@vue/shared";
 
 import { Controller } from "../../shared/controller";
 import { setDevController } from "../../shared/dev";
@@ -112,9 +113,14 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           const subscribe = () => {
             let _re = re;
-            
+
             if (typeof options.listener === "function") {
               _re = options.listener(re);
+            }
+
+            if (__DEV__ && isPromise(_re)) {
+              console.error(`[reactivity-store/persist] listener should return a plain object, but current is a promise`);
+              return;
             }
 
             if (options.shallow) {
