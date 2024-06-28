@@ -63,6 +63,7 @@
   "dependencies": {
     "@vue/reactivity": "^3",
     "@vue/shared": "^3",
+    "jsan": "^3.1.14",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {

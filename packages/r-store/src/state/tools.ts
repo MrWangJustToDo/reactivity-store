@@ -67,6 +67,8 @@ export type WithActionsProps<T, P> = {
 export type WithNamespaceProps = {
   namespace: string;
   reduxDevTool?: boolean;
+  // shallow subscribe the state change
+  shallow?: boolean;
   // target state to subscribe
   listener?: (state: any) => any;
 };
@@ -130,9 +132,10 @@ export const getFinalActions = <T extends Record<string, unknown>, P extends Rec
  * @internal
  */
 export const getFinalNamespace = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
-  if (state["$$__state__$$"]) return (state["$$__namespace__$$"] || {}) as { namespace?: string; reduxDevTool?: boolean };
+  if (state["$$__state__$$"])
+    return (state["$$__namespace__$$"] || {}) as { namespace?: string; reduxDevTool?: boolean; listener?: (state: any) => any; shallow?: boolean };
 
-  return {} as { namespace?: string; reduxDevTool?: boolean };
+  return {} as { namespace?: string; reduxDevTool?: boolean; listener?: (state: any) => any; shallow?: boolean };
 };
 
 /**

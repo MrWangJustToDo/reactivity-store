@@ -77,6 +77,9 @@ importers:
       '@vue/shared':
         specifier: ^3
         version: 3.3.11
+      jsan:
+        specifier: ^3.1.14
+        version: 3.1.14
       react:
         specifier: ^17.0.2 || ^18.2.0
         version: 18.2.0
@@ -3608,6 +3611,10 @@ packages:
     dependencies:
       argparse: 2.0.1
     dev: true
+
+  /jsan@3.1.14:
+    resolution: {integrity: sha512-wStfgOJqMv4QKktuH273f5fyi3D3vy2pHOiSDGPvpcS/q+wb/M7AK3vkCcaHbkZxDOlDU/lDJgccygKSG2OhtA==}
+    dev: false
 
   /json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
