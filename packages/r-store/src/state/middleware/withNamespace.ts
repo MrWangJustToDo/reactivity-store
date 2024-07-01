@@ -22,18 +22,18 @@ import type { Setup } from "../createState";
  */
 export function withNamespace<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>,
-  options: WithNamespaceProps
+  options: WithNamespaceProps<T>
 ): Setup<StateWithMiddleware<T, P>>;
 /**
  * @public
  */
-export function withNamespace<T extends Record<string, unknown>>(setup: Setup<T>, options: WithNamespaceProps): Setup<StateWithMiddleware<T, {}>>;
+export function withNamespace<T extends Record<string, unknown>>(setup: Setup<T>, options: WithNamespaceProps<T>): Setup<StateWithMiddleware<T, {}>>;
 /**
  * @public
  */
 export function withNamespace<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
-  options: WithNamespaceProps
+  options: WithNamespaceProps<T>
 ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> {
   return createMiddleware(
     () => {

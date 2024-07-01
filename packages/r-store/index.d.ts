@@ -23,8 +23,8 @@ export declare function createState<T extends Record<string, unknown>, P extends
  */
 export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, L>>, options: {
     withActions: WithActionsProps<T, P>["generateActions"];
-    withPersist?: string;
-    withNamespace?: string;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
 }): UseSelectorWithState<T, P & L>;
 
@@ -33,8 +33,8 @@ export declare function createState<T extends Record<string, unknown>, P extends
  */
 export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<T>, options: {
     withActions: WithActionsProps<T, P>["generateActions"];
-    withPersist?: string;
-    withNamespace?: string;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
 }): UseSelectorWithState<T, P>;
 
@@ -42,8 +42,8 @@ export declare function createState<T extends Record<string, unknown>, P extends
  * @public
  */
 export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: {
-    withPersist?: string;
-    withNamespace?: string;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
 }): UseSelectorWithState<T, P>;
 
@@ -51,8 +51,8 @@ export declare function createState<T extends Record<string, unknown>, P extends
  * @public
  */
 export declare function createState<T extends Record<string, unknown>>(setup: Setup<T>, options: {
-    withPersist?: string;
-    withNamespace?: string;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
 }): UseSelectorWithState<T, {}>;
 
@@ -210,7 +210,7 @@ export declare type UseSelectorWithState<T, C> = {
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
-    subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
+    subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
     useDeepSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
@@ -235,7 +235,7 @@ export declare type UseSelectorWithStore<T> = {
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
-    subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
+    subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
     useShallowSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>>;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
@@ -285,19 +285,21 @@ declare type WithDeepSelectorProps = {
 /**
  * @public
  */
-export declare function withNamespace<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithNamespaceProps): Setup<StateWithMiddleware<T, P>>;
+export declare function withNamespace<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithNamespaceProps<T>): Setup<StateWithMiddleware<T, P>>;
 
 /**
  * @public
  */
-export declare function withNamespace<T extends Record<string, unknown>>(setup: Setup<T>, options: WithNamespaceProps): Setup<StateWithMiddleware<T, {}>>;
+export declare function withNamespace<T extends Record<string, unknown>>(setup: Setup<T>, options: WithNamespaceProps<T>): Setup<StateWithMiddleware<T, {}>>;
 
 /**
  * @public
  */
-export declare type WithNamespaceProps = {
+export declare type WithNamespaceProps<T> = {
     namespace: string;
     reduxDevTool?: boolean;
+    shallow?: boolean;
+    listener?: (state: T) => any;
 };
 
 /**
@@ -322,6 +324,8 @@ export declare type WithPersistProps<T extends Record<string, unknown>> = {
     parse?: (s: string) => Partial<T>;
     merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
     devLog?: boolean;
+    shallow?: boolean;
+    listener?: (state: T) => any;
 };
 
 /**

@@ -64,13 +64,13 @@ export type WithActionsProps<T, P> = {
 /**
  * @public
  */
-export type WithNamespaceProps = {
+export type WithNamespaceProps<T> = {
   namespace: string;
   reduxDevTool?: boolean;
   // shallow subscribe the state change
   shallow?: boolean;
   // target state to subscribe
-  listener?: (state: any) => any;
+  listener?: (state: T) => any;
 };
 
 /**

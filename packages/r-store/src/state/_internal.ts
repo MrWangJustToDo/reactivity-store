@@ -10,7 +10,7 @@ import { checkHasFunction, checkHasReactive, checkHasSameField } from "../shared
 import { withActions, withDeepSelector, withNamespace, withPersist } from "./middleware";
 import { getFinalActions, getFinalDeepSelector, getFinalNamespace, getFinalState } from "./tools";
 
-import type { Setup } from "./createState";
+import type { Setup, WithNamespaceProps, WithPersistProps } from "./createState";
 import type { MaybeStateWithMiddleware, WithActionsProps, UnWrapMiddleware } from "./tools";
 
 /**
@@ -21,16 +21,16 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   setup: Setup<MaybeStateWithMiddleware<T, L>>,
   name: string,
   option?: {
-    withPersist?: string;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
-    withNamespace?: string;
     withDeepSelector?: boolean;
   }
 ) {
   let creator: any = setup;
 
   if (option?.withPersist) {
-    creator = withPersist(creator, { key: option.withPersist });
+    creator = withPersist(creator, typeof option.withPersist === "string" ? { key: option.withPersist } : option.withPersist);
   }
 
   if (option?.withActions) {
@@ -38,7 +38,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   }
 
   if (option?.withNamespace) {
-    creator = withNamespace(creator, { namespace: option.withNamespace, reduxDevTool: true });
+    creator = withNamespace(creator, typeof option.withNamespace === "string" ? { namespace: option.withNamespace, reduxDevTool: true } : option.withNamespace);
   }
 
   if (typeof option?.withDeepSelector !== "undefined") {

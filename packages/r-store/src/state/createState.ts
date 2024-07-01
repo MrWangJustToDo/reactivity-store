@@ -3,7 +3,7 @@
 
 import { internalCreateState } from "./_internal";
 
-import type { MaybeStateWithMiddleware, StateWithMiddleware, UnWrapMiddleware, WithActionsProps } from "./tools";
+import type { MaybeStateWithMiddleware, StateWithMiddleware, UnWrapMiddleware, WithActionsProps, WithNamespaceProps, WithPersistProps } from "./tools";
 import type { LifeCycle } from "../shared/lifeCycle";
 import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 
@@ -62,14 +62,24 @@ export function createState<T extends Record<string, unknown>, P extends Record<
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, L>>,
-  options: { withActions: WithActionsProps<T, P>["generateActions"]; withPersist?: string; withNamespace?: string; withDeepSelector?: boolean }
+  options: {
+    withActions: WithActionsProps<T, P>["generateActions"];
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
+    withDeepSelector?: boolean;
+  }
 ): UseSelectorWithState<T, P & L>;
 /**
  * @public
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<T>,
-  options: { withActions: WithActionsProps<T, P>["generateActions"]; withPersist?: string; withNamespace?: string; withDeepSelector?: boolean }
+  options: {
+    withActions: WithActionsProps<T, P>["generateActions"];
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
+    withDeepSelector?: boolean;
+  }
 ): UseSelectorWithState<T, P>;
 
 /**
@@ -77,14 +87,14 @@ export function createState<T extends Record<string, unknown>, P extends Record<
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>,
-  options: { withPersist?: string; withNamespace?: string; withDeepSelector?: boolean }
+  options: { withPersist?: string | WithPersistProps<T>; withNamespace?: string | WithNamespaceProps<T>; withDeepSelector?: boolean }
 ): UseSelectorWithState<T, P>;
 /**
  * @public
  */
 export function createState<T extends Record<string, unknown>>(
   setup: Setup<T>,
-  options: { withPersist?: string; withNamespace?: string; withDeepSelector?: boolean }
+  options: { withPersist?: string | WithPersistProps<T>; withNamespace?: string | WithNamespaceProps<T>; withDeepSelector?: boolean }
 ): UseSelectorWithState<T, {}>;
 
 /**
@@ -93,9 +103,9 @@ export function createState<T extends Record<string, unknown>>(
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,
   options?: {
-    withPersist?: string;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
-    withNamespace?: string;
     withDeepSelector?: boolean;
   }
 ) {
