@@ -1,28 +1,33 @@
 <template>
-  <div class="wrapper">
-    <div class="code" style="overflow: auto;">
-      <pre style="margin: 0;">
-<code>const useCount = createState(
+<div class="wrapper">
+  <pre style="margin: 0;"><div class="code typescript" ref="codeRef" style="overflow: auto;"><code>const useCount = createState(
   () => ({ count: 0 }), 
   { withActions: (s) => ({ add: () => s.count++ }) 
 })</code>
-      </pre>
-    </div>
-    <div ref="wrapperRef">
-      <p class="text">Reactive count component: </p>
-      <button class="button">Counter is: 0</button>
-    </div>
+</div></pre>
+  <div ref="wrapperRef">
+    <p class="text">Reactive count component: </p>
+    <button class="button">Counter is: 0</button>
   </div>
-
+</div>
 </template>
 
 <script lang="ts" setup>
 import { createState } from 'reactivity-store';
 import { hydrateRoot, Root } from 'react-dom/client'
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import highlight from 'highlight.js';
+import { onBeforeUnmount, onMounted, ref, watchSyncEffect } from 'vue';
 import { createElement, Fragment } from 'react';
 
+import { useData } from 'vitepress'
+
+const styleTag = ref<HTMLStyleElement>()
+
+const { isDark } = useData();
+
 const wrapperRef = ref<HTMLDivElement>();
+
+const codeRef = ref<HTMLDivElement>();
 
 const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }), withNamespace: 'example_count' })
 
@@ -43,12 +48,42 @@ onMounted(() => {
   app = hydrateRoot(wrapperRef.value!, createElement(App));
 })
 
+onMounted(() => {
+  if (!codeRef.value) return;
+  highlight.configure({ ignoreUnescapedHTML: true });
+  highlight.highlightElement(codeRef.value);
+})
+
+onMounted(() => {
+  if (!styleTag.value) {
+    const style = document.createElement('style');
+    style.setAttribute('data-style', 'highlight.js')
+    document.head.appendChild(style);
+    styleTag.value = style;
+  }
+})
+
+watchSyncEffect(() => {
+  const loadStyle = async (isDark?: boolean) => {
+    const content = await import(isDark ? 'highlight.js/styles/github-dark.css?raw' : 'highlight.js/styles/github.css?raw');
+    styleTag.value!.textContent = content.default;
+  }
+  const isDarValue = isDark.value;
+  if (styleTag.value) {
+    loadStyle(isDarValue);
+  }
+})
+
 onBeforeUnmount(() => app.unmount())
 </script>
 
 <style scoped>
+.code {
+  padding: 4px;
+  border-radius: 4px;
+}
 
-@media screen and (width < 600px){
+@media screen and (width < 600px) {
   .code {
     display: none;
   }

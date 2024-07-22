@@ -29,6 +29,9 @@ importers:
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
+      highlight.js:
+        specifier: ^11.10.0
+        version: 11.10.0
       husky:
         specifier: ^8.0.2
         version: 8.0.3
@@ -3249,6 +3252,11 @@ packages:
 
   /help-me@5.0.0:
     resolution: {integrity: sha512-7xgomUX6ADmcYzFik0HzAxh/73YlKR9bmFzf51CZwR+b6YtzU2m0u49hQCqV6SvlqIqsaxovfwdvbnsw3b/zpg==}
+    dev: true
+
+  /highlight.js@11.10.0:
+    resolution: {integrity: sha512-SYVnVFswQER+zu1laSya563s+F8VDGt7o35d4utbamowvUNLLMovFqwCLSocpZTz3MgaSRA1IbqRWZv97dtErQ==}
+    engines: {node: '>=12.0.0'}
     dev: true
 
   /hookable@5.5.3:
