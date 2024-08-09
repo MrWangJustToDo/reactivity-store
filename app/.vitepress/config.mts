@@ -10,6 +10,7 @@ export default defineConfig({
     nav: [
       { text: "Home", link: "/" },
       { text: "Usage", link: "/createStore" },
+      { text: "Projects", items: [{ text: "git-diff-view", target: "_blank", link: "https://github.com/MrWangJustToDo/git-diff-view" }] },
     ],
 
     sidebar: [

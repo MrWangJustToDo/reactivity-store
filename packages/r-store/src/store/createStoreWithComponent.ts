@@ -21,19 +21,19 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 
 // TODO
 /**
- * @public
+ * @deprecated new version of React 'StrictMode' cause lifeCycle function not work as expect
  */
 export function createStoreWithComponent<T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<NonNullable<unknown>, T>
 ): ({ children }: { children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode }) => ReactElement;
 /**
- * @public
+ * @deprecated new version of React 'StrictMode' cause lifeCycle function not work as expect
  */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<P, T>
 ): ({ children }: { children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode } & P) => ReactElement;
 /**
- * @public
+ * @deprecated new version of React 'StrictMode' cause lifeCycle function not work as expect
  */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {
   const { setup, render } = props;
