@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=10"
   },
-  "packageManager": "pnpm@8.6.1",
+  "packageManager": "pnpm@8.9.0",
   "scripts": {
     "dev:packages": "ts-node ./scripts/rollupWatch.ts",
     "build:packages": "ts-node ./scripts/rollupBuild.ts",
@@ -30,25 +30,25 @@
   },
   "devDependencies": {
     "@algolia/client-search": "^4.21.1",
-    "@swc/core": "^1.4.16",
-    "@types/lodash": "^4.17.0",
-    "@types/node": "^20.12.7",
+    "@swc/core": "^1.7.14",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^22.5.0",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
     "eslint": "^8.57.0",
     "highlight.js": "^11.10.0",
     "husky": "^8.0.2",
     "lodash": "^4.17.21",
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.3",
     "project-tool": "https://github.com/MrWangJustToDo/project-tool.git",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "reactivity-store": "workspaces: *",
-    "search-insights": "^2.13.0",
+    "search-insights": "^2.17.0",
     "ts-node": "^10.9.2",
-    "tslib": "^2.6.2",
+    "tslib": "^2.7.0",
     "typescript": "^5.3.3",
     "vitepress": "1.1.0",
-    "vue": "^3.4.24"
+    "vue": "^3.4.38"
   }
 }
