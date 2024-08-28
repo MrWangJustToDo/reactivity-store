@@ -89,9 +89,12 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
           lifeCycleInstance.onMounted.forEach((f) => f());
           setIsMount(true);
         } else {
+          const lastSync = lifeCycleInstance.syncUpdateComponent;
+          lifeCycleInstance.syncUpdateComponent = true;
           lifeCycleInstance.canUpdateComponent = false;
           lifeCycleInstance.onBeforeUpdate.forEach((f) => f());
           lifeCycleInstance.canUpdateComponent = true;
+          lifeCycleInstance.syncUpdateComponent = lastSync;
           lifeCycleInstance.onUpdated.forEach((f) => f());
         }
       }
