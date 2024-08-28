@@ -30,7 +30,7 @@ const wrapperRef = ref<HTMLDivElement>();
 
 const codeRef = ref<HTMLDivElement>();
 
-const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }), withNamespace: 'example_count' })
+const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }), withNamespace: 'example_count', withStableSelector: true })
 
 let app: Root;
 

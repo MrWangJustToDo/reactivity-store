@@ -12,7 +12,7 @@ import {
   getFinalMiddleware,
   getFinalActions,
   getFinalNamespace,
-  getFinalDeepSelector,
+  getFinalSelectorOptions,
 } from "../tools";
 
 import type { Setup } from "../createState";
@@ -47,7 +47,7 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
 
       const namespace = getFinalNamespace(_initialState);
 
-      const deepSelector = getFinalDeepSelector(_initialState);
+      const selectorOptions = getFinalSelectorOptions(_initialState);
 
       if (
         __DEV__ &&
@@ -79,8 +79,8 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: { ...namespace, ...options },
-        ["$$__deepSelector__$$"]: deepSelector,
-      };
+        ["$$__selectorOptions__$$"]: selectorOptions,
+      } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
     },
     { name: "withNamespace" }
   );

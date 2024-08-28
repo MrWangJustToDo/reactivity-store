@@ -101,6 +101,7 @@ const sendToDevTools = (action: Action) => {
   const { getUpdatedState, ...rest } = action;
   try {
     const state = getUpdatedState();
+    
     getDevToolInstance().send(rest, state);
   } catch (e) {
     console.log(e);

@@ -7,7 +7,16 @@ import { setDevController } from "../../shared/dev";
 import { InternalNameSpace, isServer } from "../../shared/env";
 import { createLifeCycle } from "../../shared/lifeCycle";
 import { checkHasReactive, traverse, traverseShallow } from "../../shared/tools";
-import { createMiddleware, debounce, getFinalActions, getFinalDeepSelector, getFinalMiddleware, getFinalNamespace, getFinalState, persistKey } from "../tools";
+import {
+  createMiddleware,
+  debounce,
+  getFinalActions,
+  getFinalSelectorOptions,
+  getFinalMiddleware,
+  getFinalNamespace,
+  getFinalState,
+  persistKey,
+} from "../tools";
 
 import type { MaybeStateWithMiddleware, Setup, StateWithMiddleware, UnWrapMiddleware, WithPersistProps } from "../createState";
 import type { StorageState } from "../tools";
@@ -44,7 +53,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
       const namespace = getFinalNamespace(_initialState);
 
-      const deepSelector = getFinalDeepSelector(_initialState);
+      const selectorOptions = getFinalSelectorOptions(_initialState);
 
       let hasSet = false;
 
@@ -71,8 +80,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
               ["$$__middleware__$$"]: middleware,
               ["$$__actions__$$"]: auctions,
               ["$$__namespace__$$"]: namespace,
-              ["$$__deepSelector__$$"]: deepSelector,
-            };
+              ["$$__selectorOptions__$$"]: selectorOptions,
+            } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
           }
 
           const storageStateString = storage.getItem(persistKey + options.key) as string;
@@ -139,8 +148,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             ["$$__middleware__$$"]: middleware,
             ["$$__actions__$$"]: auctions,
             ["$$__namespace__$$"]: namespace,
-            ["$$__deepSelector__$$"]: deepSelector,
-          };
+            ["$$__selectorOptions__$$"]: selectorOptions,
+          } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
         } catch (e) {
           if (__DEV__) {
             console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
@@ -151,8 +160,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             ["$$__middleware__$$"]: middleware,
             ["$$__actions__$$"]: auctions,
             ["$$__namespace__$$"]: namespace,
-            ["$$__deepSelector__$$"]: deepSelector,
-          };
+            ["$$__selectorOptions__$$"]: selectorOptions,
+          } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
         }
       } else {
         return {
@@ -160,8 +169,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
           ["$$__middleware__$$"]: middleware,
           ["$$__actions__$$"]: auctions,
           ["$$__namespace__$$"]: namespace,
-          ["$$__deepSelector__$$"]: deepSelector,
-        };
+          ["$$__selectorOptions__$$"]: selectorOptions,
+        } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
       }
     },
     { name: "withPersist" }

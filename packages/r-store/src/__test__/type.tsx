@@ -31,6 +31,7 @@ const useCount = createState(
     withPersist: "1",
     withNamespace: '111',
     withDeepSelector: true,
+    withStableSelector: true,
   }
 );
 

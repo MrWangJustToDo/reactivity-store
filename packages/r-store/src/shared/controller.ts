@@ -62,6 +62,10 @@ export class Controller<T = any> {
 
   _devWithDeep: any;
 
+  _devWithStable: any;
+
+  _devType: any;
+
   _devResult: any;
 
   _devRunCount = 0;
@@ -105,6 +109,7 @@ export class Controller<T = any> {
       this._namespace !== InternalNameSpace.$$__redux_dev_tool__$$
     ) {
       this._list = _list;
+      
       this._list.add(this);
     }
   }
@@ -114,20 +119,25 @@ export class Controller<T = any> {
     if (__DEV__ && isServer) {
       console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
     }
+
     this._updateCount++;
+
     try {
       this._onUpdate?.();
     } catch (e) {
       if (__DEV__) {
         console.error(`[reactivity-store] have an error for current updater, ${(e as Error)?.message}, please check your subscribe, %o`, this);
       }
+
       this._lifeCycle.canUpdateComponent = false;
     }
+    
     this._listeners.forEach((f) => f());
   };
 
   subscribe = (listener: () => void) => {
     this._listeners.add(listener);
+
     return () => this._listeners.delete(listener);
   };
 

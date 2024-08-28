@@ -79,6 +79,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   initialState: T,
   lifeCycle: LifeCycle,
   deepSelector = true,
+  stableSelector = false,
   namespace?: string,
   actions: C = undefined
 ) => {
@@ -94,11 +95,15 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   namespace = namespace || InternalNameSpace.$$__ignore__$$;
 
   // tool function to generate `useSelector` hook
-  const generateUseHook = <P>(type: "default" | "deep" | "shallow") => {
+  const generateUseHook = <P>(type: "default" | "deep" | "deep-stable" | "shallow" | "shallow-stable") => {
+    const currentIsDeep = type === 'default' ? deepSelector : type === 'deep' || type === 'deep-stable';
+
+    const currentIsStable = type === 'default' ? stableSelector : type === 'deep-stable' || type === 'shallow-stable';
+
     return (selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
       const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
-      const selectorRef = useSubscribeCallbackRef(selector, type === "default" ? deepSelector : type === "deep" ? true : false);
+      const selectorRef = useSubscribeCallbackRef(selector, currentIsDeep);
 
       const getSelected = useCallbackRef(() => {
         // 0.1.9
@@ -110,7 +115,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         }
       });
 
-      const prevSelector = usePrevValue(selector);
+      const prevSelector = currentIsStable ? selector : usePrevValue(selector);
 
       const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
 
@@ -137,7 +142,11 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
         ControllerInstance._devActions = actions;
 
-        ControllerInstance._devWithDeep = type === "default" ? deepSelector : type === "deep" ? "useDeepSelector" : "useShallowSelector";
+        ControllerInstance._devWithDeep = currentIsDeep;
+
+        ControllerInstance._devWithStable = currentIsStable;
+
+        ControllerInstance._devType = type;
 
         ControllerInstance._devState = initialState;
 
@@ -165,7 +174,11 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   const deepHook = generateUseHook("deep");
 
+  const deepStableHook = generateUseHook("deep-stable");
+
   const shallowHook = generateUseHook("shallow");
+
+  const shallowStableHook = generateUseHook("shallow-stable");
 
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
   function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
@@ -176,7 +189,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   const typedUseSelector = useSelector as typeof useSelector & {
     /**
      * @deprecated
-     * use `getReactiveState` / `getReadonlyState` in stead
+     * use `getReactiveState` / `getReadonlyState` instead
      */
     getState: () => T;
     getActions: () => C;
@@ -185,8 +198,11 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+    useStableSelector: typeof useSelector;
     useDeepSelector: typeof useSelector;
+    useDeepStableSelector: typeof useSelector;
     useShallowSelector: typeof useSelector;
+    useShallowStableSelector: typeof useSelector;
     cleanReactiveHooks: () => void;
   };
 
@@ -202,7 +218,11 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   typedUseSelector.useDeepSelector = deepHook as typeof useSelector;
 
+  typedUseSelector.useDeepStableSelector = deepStableHook as typeof useSelector;
+
   typedUseSelector.useShallowSelector = shallowHook as typeof useSelector;
+
+  typedUseSelector.useShallowStableSelector = shallowStableHook as typeof useSelector;
 
   typedUseSelector.subscribe = (selector, cb, shallow?: boolean) => {
     const subscribeSelector = () => {

@@ -1,6 +1,6 @@
 export { onBeforeMount, onBeforeUpdate, onBeforeUnmount, onMounted, onUpdated, onUnmounted } from "./store/lifeCycle";
 
-export { withActions, withPersist, withNamespace, withDeepSelector } from "./state/middleware";
+export { withActions, withPersist, withNamespace, withDeepSelector, withSelectorOptions } from "./state/middleware";
 
 export * from "./store/createStoreWithComponent";
 

@@ -26,6 +26,7 @@ export declare function createState<T extends Record<string, unknown>, P extends
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
+    withStableSelector?: boolean;
 }): UseSelectorWithState<T, P & L>;
 
 /**
@@ -36,6 +37,7 @@ export declare function createState<T extends Record<string, unknown>, P extends
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
+    withStableSelector?: boolean;
 }): UseSelectorWithState<T, P>;
 
 /**
@@ -45,6 +47,7 @@ export declare function createState<T extends Record<string, unknown>, P extends
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
+    withStableSelector?: boolean;
 }): UseSelectorWithState<T, P>;
 
 /**
@@ -54,6 +57,7 @@ export declare function createState<T extends Record<string, unknown>>(setup: Se
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
+    withStableSelector?: boolean;
 }): UseSelectorWithState<T, {}>;
 
 /**
@@ -62,14 +66,16 @@ export declare function createState<T extends Record<string, unknown>>(setup: Se
 export declare const createStore: <T extends Record<string, unknown>>(creator: Creator<T>) => UseSelectorWithStore<T>;
 
 /**
- * @public
+ * @deprecated new version of React 'StrictMode' cause lifeCycle function not work as expect
+ * try to disable `StrictMode` to fix this issue
  */
 export declare function createStoreWithComponent<T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<NonNullable<unknown>, T>): ({ children }: {
     children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
 }) => ReactElement;
 
 /**
- * @public
+ * @deprecated new version of React 'StrictMode' cause lifeCycle function not work as expect
+ * try to disable `StrictMode` to fix this issue
  */
 export declare function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>): ({ children }: {
     children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
@@ -175,8 +181,9 @@ export declare type StateWithMiddleware<T, P> = {
         namespace?: string;
         reduxDevTool?: boolean;
     };
-    ["$$__deepSelector__$$"]: {
+    ["$$__selectorOptions__$$"]: {
         deepSelector?: boolean;
+        stableSelector?: boolean;
     };
 };
 
@@ -203,7 +210,7 @@ export declare type UseSelectorWithState<T, C> = {
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
     /**
      * @deprecated
-     * use `getReactiveState` / `getReadonlyState` in stead
+     * use `getReactiveState` / `getReadonlyState` instead
      */
     getState: () => T;
     getActions: () => C;
@@ -215,7 +222,15 @@ export declare type UseSelectorWithState<T, C> = {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
     };
+    useDeepStableSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+    };
     useShallowSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
+    };
+    useShallowStableSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
     };
@@ -229,7 +244,7 @@ export declare type UseSelectorWithStore<T> = {
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
     /**
      * @deprecated
-     * use `getReactiveState` / `getReadonlyState` in stead
+     * use `getReactiveState` / `getReadonlyState` instead
      */
     getState: () => T;
     getLifeCycle: () => LifeCycle;
@@ -237,6 +252,18 @@ export declare type UseSelectorWithStore<T> = {
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
     subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
     useShallowSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+    };
+    useShallowStableSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+    };
+    useDeepSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+    };
+    useDeepStableSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>>;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
     };
@@ -266,21 +293,9 @@ export declare type WithActionsProps<T, P> = {
 };
 
 /**
- * @public
+ * @deprecated use `withSelectorOptions` instead
  */
-export declare function withDeepSelector<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithDeepSelectorProps): Setup<StateWithMiddleware<T, P>>;
-
-/**
- * @public
- */
-export declare function withDeepSelector<T extends Record<string, unknown>>(setup: Setup<T>, options: WithDeepSelectorProps): Setup<StateWithMiddleware<T, {}>>;
-
-/**
- * @public
- */
-declare type WithDeepSelectorProps = {
-    deepSelector?: boolean;
-};
+export declare const withDeepSelector: typeof withSelectorOptions;
 
 /**
  * @public
@@ -326,6 +341,24 @@ export declare type WithPersistProps<T extends Record<string, unknown>> = {
     devLog?: boolean;
     shallow?: boolean;
     listener?: (state: T) => any;
+};
+
+/**
+ * @public
+ */
+export declare function withSelectorOptions<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithSelectorOptionsProps): Setup<StateWithMiddleware<T, P>>;
+
+/**
+ * @public
+ */
+export declare function withSelectorOptions<T extends Record<string, unknown>>(setup: Setup<T>, options: WithSelectorOptionsProps): Setup<StateWithMiddleware<T, {}>>;
+
+/**
+ * @public
+ */
+declare type WithSelectorOptionsProps = {
+    deepSelector?: boolean;
+    stableSelector?: boolean;
 };
 
 /**

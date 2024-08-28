@@ -1,5 +1,5 @@
 import { reactive, toRaw } from "@vue/reactivity";
-import { isPromise } from "@vue/shared";
+import { isPromise, isObject } from "@vue/shared";
 
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
@@ -23,6 +23,12 @@ export const internalCreateStore = <T extends Record<string, unknown>>(creator: 
     console.error(
       `[reactivity-store] '${name}' expect receive a reactive object but got a promise %o, this is a unexpected usage. should not return a promise in this 'creator' function`,
       state
+    );
+  }
+
+  if (__DEV__ && !isObject(state)) {
+    console.error(
+      `[reactivity-store] '${name}' expect receive a reactive object but got a ${state}, this is a unexpected usage. should return a reactive object in this 'creator' function`
     );
   }
 

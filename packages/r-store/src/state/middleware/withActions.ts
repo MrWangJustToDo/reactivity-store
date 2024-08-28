@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { reactive, toRaw } from "@vue/reactivity";
 
-import { createMiddleware, getBatchUpdateActions, getFinalActions, getFinalDeepSelector, getFinalMiddleware, getFinalNamespace, getFinalState } from "../tools";
+import {
+  createMiddleware,
+  getBatchUpdateActions,
+  getFinalActions,
+  getFinalSelectorOptions,
+  getFinalMiddleware,
+  getFinalNamespace,
+  getFinalState,
+} from "../tools";
 
 import type { Setup } from "../createState";
 import type { MaybeStateWithMiddleware, UnWrapMiddleware, WithActionsProps, StateWithMiddleware } from "../tools";
@@ -41,7 +49,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
 
       const namespace = getFinalNamespace(_initialState);
 
-      const deepSelector = getFinalDeepSelector(_initialState);
+      const selectorOptions = getFinalSelectorOptions(_initialState);
 
       const reactiveState = reactive(initialState) as UnWrapMiddleware<T>;
 
@@ -82,7 +90,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         ["$$__actions__$$"]: { ...actions, ...batchActions },
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,
-        ["$$__deepSelector__$$"]: deepSelector,
+        ["$$__selectorOptions__$$"]: selectorOptions,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
     },
     { name: "withActions" }

@@ -21,7 +21,7 @@ export type StateWithMiddleware<T, P> = {
   ["$$__middleware__$$"]: Record<string, unknown>;
   ["$$__actions__$$"]: P;
   ["$$__namespace__$$"]: { namespace?: string; reduxDevTool?: boolean };
-  ["$$__deepSelector__$$"]: { deepSelector?: boolean };
+  ["$$__selectorOptions__$$"]: { deepSelector?: boolean; stableSelector?: boolean };
 };
 
 /**
@@ -76,8 +76,9 @@ export type WithNamespaceProps<T> = {
 /**
  * @public
  */
-export type WithDeepSelectorProps = {
+export type WithSelectorOptionsProps = {
   deepSelector?: boolean;
+  stableSelector?: boolean;
 };
 
 /**
@@ -141,10 +142,10 @@ export const getFinalNamespace = <T extends Record<string, unknown>, P extends R
 /**
  * @internal
  */
-export const getFinalDeepSelector = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
-  if (state["$$__state__$$"]) return (state["$$__deepSelector__$$"] || {}) as { deepSelector?: boolean };
+export const getFinalSelectorOptions = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
+  if (state["$$__state__$$"]) return (state["$$__selectorOptions__$$"] || {}) as { deepSelector?: boolean; stableSelector?: boolean };
 
-  return {} as { deepSelector?: boolean };
+  return {} as { deepSelector?: boolean; stableSelector?: boolean };
 };
 
 // function for help to build external middleware
@@ -164,7 +165,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
 
     const namespace = getFinalNamespace(state);
 
-    const deepSelector = getFinalDeepSelector(state);
+    const selectorOptions = getFinalSelectorOptions(state);
 
     if (__DEV__ && middleware[options.name]) {
       console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is a unexpected usage`);
@@ -177,7 +178,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
       ["$$__actions__$$"]: actions,
       ["$$__middleware__$$"]: middleware,
       ["$$__namespace__$$"]: namespace,
-      ["$$__deepSelector__$$"]: deepSelector,
+      ["$$__selectorOptions__$$"]: selectorOptions,
     } as T;
   };
 }

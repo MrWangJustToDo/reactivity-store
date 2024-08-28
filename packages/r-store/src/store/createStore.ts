@@ -14,7 +14,7 @@ export type UseSelectorWithStore<T> = {
   <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
   /**
    * @deprecated
-   * use `getReactiveState` / `getReadonlyState` in stead
+   * use `getReactiveState` / `getReadonlyState` instead
    */
   getState: () => T;
   getLifeCycle: () => LifeCycle;
@@ -25,6 +25,18 @@ export type UseSelectorWithStore<T> = {
     (): DeepReadonly<UnwrapNestedRefs<T>>;
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
   };
+  useShallowStableSelector: {
+    (): DeepReadonly<UnwrapNestedRefs<T>>;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+  };
+  useDeepSelector: {
+    (): DeepReadonly<UnwrapNestedRefs<T>>;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+  };
+  useDeepStableSelector: {
+    (): DeepReadonly<UnwrapNestedRefs<T>>;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+  }
 };
 
 /**

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import {
   type StateWithMiddleware,
-  type WithDeepSelectorProps,
+  type WithSelectorOptionsProps,
   type MaybeStateWithMiddleware,
   type UnWrapMiddleware,
   createMiddleware,
@@ -9,7 +9,7 @@ import {
   getFinalMiddleware,
   getFinalActions,
   getFinalNamespace,
-  getFinalDeepSelector,
+  getFinalSelectorOptions,
 } from "../tools";
 
 import type { Setup } from "../createState";
@@ -17,20 +17,20 @@ import type { Setup } from "../createState";
 /**
  * @public
  */
-export function withDeepSelector<T extends Record<string, unknown>, P extends Record<string, Function>>(
+export function withSelectorOptions<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>,
-  options: WithDeepSelectorProps
+  options: WithSelectorOptionsProps
 ): Setup<StateWithMiddleware<T, P>>;
 /**
  * @public
  */
-export function withDeepSelector<T extends Record<string, unknown>>(setup: Setup<T>, options: WithDeepSelectorProps): Setup<StateWithMiddleware<T, {}>>;
+export function withSelectorOptions<T extends Record<string, unknown>>(setup: Setup<T>, options: WithSelectorOptionsProps): Setup<StateWithMiddleware<T, {}>>;
 /**
  * @public
  */
-export function withDeepSelector<T extends Record<string, unknown>, P extends Record<string, Function>>(
+export function withSelectorOptions<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
-  options: WithDeepSelectorProps
+  options: WithSelectorOptionsProps
 ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> {
   return createMiddleware(
     () => {
@@ -44,16 +44,22 @@ export function withDeepSelector<T extends Record<string, unknown>, P extends Re
 
       const namespace = getFinalNamespace(_initialState);
 
-      const deepSelector = getFinalDeepSelector(_initialState);
+      const selectorOptions = getFinalSelectorOptions(_initialState);
 
       return {
         ["$$__state__$$"]: initialState,
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,
-        ["$$__deepSelector__$$"]: { ...deepSelector, ...options },
-      };
+        ["$$__selectorOptions__$$"]: { ...selectorOptions, ...options },
+      } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
     },
-    { name: "withDeepSelector" }
+    { name: "withSelectorOptions" }
   );
 }
+
+/**
+ * @deprecated 
+ * use `withSelectorOptions` instead
+ */
+export const withDeepSelector = withSelectorOptions;

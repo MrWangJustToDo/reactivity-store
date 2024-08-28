@@ -1,5 +1,5 @@
 import { reactive, toRaw } from "@vue/reactivity";
-import { isPromise } from "@vue/shared";
+import { isObject, isPromise } from "@vue/shared";
 
 import { connectDevTool } from "../shared/dev";
 import { isServer } from "../shared/env";
@@ -7,8 +7,8 @@ import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasFunction, checkHasReactive, checkHasSameField } from "../shared/tools";
 
-import { withActions, withDeepSelector, withNamespace, withPersist } from "./middleware";
-import { getFinalActions, getFinalDeepSelector, getFinalNamespace, getFinalState } from "./tools";
+import { withActions, withSelectorOptions, withNamespace, withPersist } from "./middleware";
+import { getFinalActions, getFinalSelectorOptions, getFinalNamespace, getFinalState } from "./tools";
 
 import type { Setup, WithNamespaceProps, WithPersistProps } from "./createState";
 import type { MaybeStateWithMiddleware, WithActionsProps, UnWrapMiddleware } from "./tools";
@@ -25,6 +25,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     withNamespace?: string | WithNamespaceProps<T>;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
     withDeepSelector?: boolean;
+    withStableSelector?: boolean;
   }
 ) {
   let creator: any = setup;
@@ -41,13 +42,19 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     creator = withNamespace(creator, typeof option.withNamespace === "string" ? { namespace: option.withNamespace, reduxDevTool: true } : option.withNamespace);
   }
 
-  if (typeof option?.withDeepSelector !== "undefined") {
-    creator = withDeepSelector(creator, { deepSelector: option.withDeepSelector });
+  if (typeof option?.withDeepSelector !== "undefined" || typeof option?.withStableSelector !== "undefined") {
+    creator = withSelectorOptions(creator, { deepSelector: option.withDeepSelector, stableSelector: option.withStableSelector });
   }
 
   const lifeCycle = createLifeCycle();
 
   const state = creator();
+
+  if (__DEV__ && !isObject(state)) {
+    console.error(
+      `[reactivity-store] '${name}' expect receive a plain object but got a ${state}, this is a unexpected usage. should return a plain object in this 'setup' function`
+    );
+  }
 
   // handle withActions middleware;
   const initialState = getFinalState(state) as T;
@@ -63,7 +70,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const namespaceOptions = getFinalNamespace(state);
 
-  const deepSelectorOptions = getFinalDeepSelector(state);
+  const selectorOptions = getFinalSelectorOptions(state);
 
   const rawState = toRaw(initialState);
 
@@ -92,13 +99,15 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const reactiveState = reactive(initialState);
 
-  const deepSelector = deepSelectorOptions?.deepSelector ?? true;
+  const deepSelector = selectorOptions?.deepSelector ?? true;
+
+  const stableSelector = selectorOptions?.stableSelector ?? false;
 
   if (__DEV__ && reduxDevTool) {
     actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState) as P;
   }
 
-  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, namespaceOptions.namespace, actions as P & L);
+  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, stableSelector, namespaceOptions.namespace, actions as P & L);
 
   return useSelector;
 }
