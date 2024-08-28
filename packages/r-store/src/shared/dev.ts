@@ -144,8 +144,7 @@ export const connectDevTool = (
 
       let updateInActionCount = 0;
 
-      const onUpdateWithoutAction = (instance?: Controller) => {
-        instance?.run();
+      const onUpdateWithoutAction = () => {
         if (updateInActionCount > 0) return;
         sendToDevTools({
           type: `subscribeAction-${name}`,

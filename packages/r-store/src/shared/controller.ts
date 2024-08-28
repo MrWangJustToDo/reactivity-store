@@ -12,18 +12,21 @@ class ControllerEffect extends ReactiveEffect {
   }
 }
 
-const catchError =
-  <T>(cb: () => T, instance: Controller) =>
-  () => {
+const catchError = <T>(cb: () => T, instance: Controller) => {
+  return () => {
     if (!instance._isActive) return;
+
     if (__DEV__) {
       instance._devRunCount++;
     }
+
     try {
       const res = cb();
+
       if (isPromise(res)) {
         throw new Error(`[reactivity-store] selector should be a pure function, but current is a async function`);
       }
+
       return res;
     } catch (e) {
       if (__DEV__) {
@@ -32,9 +35,11 @@ const catchError =
           instance
         );
       }
+
       return null;
     }
   };
+};
 
 // TODO
 /**
@@ -71,11 +76,20 @@ export class Controller<T = any> {
     readonly _lifeCycle: LifeCycle,
     _list: Set<Controller>,
     readonly _namespace?: string,
-    readonly _onUpdate?: (instance: Controller) => void
+    readonly _onUpdate?: () => void
   ) {
     this._safeGetState = catchError(_state, this);
+
     this._effect = new ControllerEffect(this._safeGetState, () => {
-      if (!this._isActive) return;
+      if (!this._isActive) {
+        if (__DEV__) {
+          console.error(`[reactivity-store] unexpected update for reactivity-store, current store have been inactivated`);
+        }
+        return;
+      }
+
+      this.run();
+
       if (this._lifeCycle.canUpdateComponent) {
         if (this._lifeCycle.syncUpdateComponent) {
           this.notify();
@@ -84,6 +98,7 @@ export class Controller<T = any> {
         }
       }
     });
+
     if (
       this._namespace !== InternalNameSpace.$$__persist__$$ &&
       this._namespace !== InternalNameSpace.$$__subscribe__$$ &&
@@ -100,7 +115,14 @@ export class Controller<T = any> {
       console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
     }
     this._updateCount++;
-    this._onUpdate?.(this);
+    try {
+      this._onUpdate?.();
+    } catch (e) {
+      if (__DEV__) {
+        console.error(`[reactivity-store] have an error for current updater, ${(e as Error)?.message}, please check your subscribe, %o`, this);
+      }
+      this._lifeCycle.canUpdateComponent = false;
+    }
     this._listeners.forEach((f) => f());
   };
 
@@ -125,6 +147,7 @@ export class Controller<T = any> {
     return this._lifeCycle;
   };
 
+  // TODO move into constructor function?
   run() {
     if (!this._isActive) return;
     this._effect.run();

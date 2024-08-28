@@ -1,14 +1,7 @@
-import { version } from "react";
-
 /**
  * @internal
  */
 export const isServer = typeof window === "undefined";
-
-/**
- * @internal
- */
-export const isNewStrictModeReact = version?.startsWith("18") || version?.startsWith("19");
 
 /**
  * @internal

@@ -22,7 +22,7 @@ const Time = createStoreWithComponent({
     })
 
     onMounted(() => {
-      id = setInterval(() => (timeRef.value = new Date().toString()), 1000);
+      id = setInterval(() => { timeRef.value = new Date().toString() }, 1000);
     });
 
     onBeforeUpdate(() => {
@@ -85,5 +85,5 @@ vue_OnBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="divRef"></div>
+<div ref="divRef"></div>
 </template>

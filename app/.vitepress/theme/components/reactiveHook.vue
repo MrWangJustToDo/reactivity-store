@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useReactiveState, useReactiveEffect } from 'reactivity-store';
-import { createElement } from 'react';
+import { createElement, StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
 const usePosition = () => {
@@ -31,12 +31,12 @@ const divRef = ref<HTMLDivElement>();
 const App = () => {
   const { x, y } = usePosition();
 
-  return createElement(
+  return createElement(StrictMode, null, createElement(
     "div",
     { className: "my-container" },
     createElement("p", { className: 'my-title' }, "React Reactive Hook"),
     createElement("p", { className: 'my-text' }, `position: ${x}, ${y}`),
-  );
+  ));
 }
 
 let root: ReturnType<(typeof ReactDOM)["createRoot"]> | null = null;
@@ -53,5 +53,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="divRef"></div>
+<div ref="divRef"></div>
 </template>

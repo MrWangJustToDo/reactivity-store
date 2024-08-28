@@ -6,7 +6,7 @@ import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
 import { Controller } from "./controller";
 import { delDevController, setDevController, setNamespaceMap } from "./dev";
-import { InternalNameSpace, isNewStrictModeReact, isServer } from "./env";
+import { InternalNameSpace, isServer } from "./env";
 import { traverse, traverseShallow } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -74,9 +74,6 @@ export const usePrevValue = <T>(v: T) => {
   return vRef.current;
 };
 
-// eslint-disable-next-line no-extra-boolean-cast
-const needUnmountEffect = isNewStrictModeReact ? !Boolean(__DEV__) : true;
-
 export const createHook = <T extends Record<string, unknown>, C extends Record<string, Function>>(
   reactiveState: UnwrapNestedRefs<T>,
   initialState: T,
@@ -103,18 +100,13 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       const selectorRef = useSubscribeCallbackRef(selector, type === "default" ? deepSelector : type === "deep" ? true : false);
 
-      const getSelected = useCallbackRef((i?: Controller) => {
-        i?.run?.();
+      const getSelected = useCallbackRef(() => {
         // 0.1.9
         // make the returned value as a readonly value, so the only way to change the state is in the `actions` middleware
         if (selector) {
           ref.current = selector({ ...readonlyState, ...actions });
         } else {
           ref.current = { ...readonlyState, ...actions };
-        }
-
-        if (__DEV__ && i) {
-          i._devResult = ref.current;
         }
       });
 
@@ -127,14 +119,16 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       // initial
       useMemo(() => {
         if (!active) return;
-        getSelected(ControllerInstance);
+        ControllerInstance.run();
+        getSelected();
       }, [ControllerInstance, getSelected]);
 
       // !TODO try to improve the performance
       // rerun when the 'selector' change
       useMemo(() => {
         if (active && prevSelector !== selector) {
-          getSelected(ControllerInstance);
+          ControllerInstance.run();
+          getSelected();
         }
       }, [ControllerInstance, prevSelector, selector]);
 
@@ -146,6 +140,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         ControllerInstance._devWithDeep = type === "default" ? deepSelector : type === "deep" ? "useDeepSelector" : "useShallowSelector";
 
         ControllerInstance._devState = initialState;
+
+        ControllerInstance._devResult = ref.current;
 
         if (!active) {
           console.error("current `useSelector` have been inactivated, check your code first");
@@ -159,11 +155,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         }, []);
       }
 
-      // clean effect
-      // currently, the 18 version of `StrictMode` not work if the unmount logic run, so need disable it in the development mode
-      if (needUnmountEffect) {
-        useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
-      }
+      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
 
       return ref.current;
     };
@@ -225,10 +217,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       }
     };
 
-    const controller = new Controller(subscribeSelector, lifeCycle, temp, InternalNameSpace.$$__subscribe__$$, (i) => {
-      i?.run?.();
-      cb();
-    });
+    const controller = new Controller(subscribeSelector, lifeCycle, temp, InternalNameSpace.$$__subscribe__$$, () => cb());
 
     if (active) {
       controller.run();

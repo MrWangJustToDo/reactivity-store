@@ -28,7 +28,6 @@ export const useReactiveEffect = (effectCallback: () => void | (() => void)) => 
     const controller = new Controller(subscribe, createLifeCycle(), temp, InternalNameSpace.$$__subscribe__$$, () => {
       // run the effect when the subscribed state change
       cleanCb();
-      controller.run();
     });
 
     // run the effect on the component mount

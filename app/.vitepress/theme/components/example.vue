@@ -17,9 +17,10 @@ import { createState } from 'reactivity-store';
 import { hydrateRoot, Root } from 'react-dom/client'
 import highlight from 'highlight.js';
 import { onBeforeUnmount, onMounted, ref, watchSyncEffect } from 'vue';
-import { createElement, Fragment } from 'react';
+import { createElement } from 'react';
 
 import { useData } from 'vitepress'
+import { StrictMode } from 'react';
 
 const styleTag = ref<HTMLStyleElement>()
 
@@ -37,7 +38,7 @@ onMounted(() => {
   const App = () => {
     const { count, add } = useCount(s => s);
 
-    return createElement(Fragment, null,
+    return createElement(StrictMode, null,
       createElement('p', { className: 'text' }, 'Reactive count component: '),
       createElement('button', {
         className: 'button',

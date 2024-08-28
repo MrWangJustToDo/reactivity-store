@@ -89,10 +89,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           re = reactive(re) as UnWrapMiddleware<T>;
 
-          const onUpdate = debounce((instance: Controller) => {
+          const onUpdate = debounce(() => {
             try {
-              instance.run();
-
               const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
 
               const cache = { data: stringifyState, version: options.version || options.key };
@@ -106,8 +104,6 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
               if (__DEV__) {
                 console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
               }
-
-              instance?.stop();
             }
           }, options.debounceTime || 40);
 
