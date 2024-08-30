@@ -50,7 +50,7 @@ export class Controller<T = any> {
 
   readonly _list: Set<Controller>;
 
-  _safeGetState: () => T;
+  _getStateSafe: () => T;
 
   _effect: ReactiveEffect<T>;
 
@@ -76,23 +76,23 @@ export class Controller<T = any> {
   _isActive = true;
 
   constructor(
-    readonly _state: () => T,
+    readonly _getState: () => T,
     readonly _lifeCycle: LifeCycle,
     _list: Set<Controller>,
     readonly _namespace?: string,
     readonly _onUpdate?: () => void
   ) {
-    this._safeGetState = catchError(_state, this);
+    this._getStateSafe = catchError(_getState, this);
 
-    this._effect = new ControllerEffect(this._safeGetState, () => {
+    this._effect = new ControllerEffect(this._getStateSafe, () => {
+      this.run();
+
       if (!this._isActive) {
         if (__DEV__) {
           console.error(`[reactivity-store] unexpected update for reactivity-store, current store have been inactivated`);
         }
         return;
       }
-
-      this.run();
 
       if (this._lifeCycle.canUpdateComponent) {
         if (this._lifeCycle.syncUpdateComponent) {
@@ -150,7 +150,7 @@ export class Controller<T = any> {
   };
 
   getSelectorState = () => {
-    return this._safeGetState();
+    return this._getStateSafe();
   };
 
   getLifeCycle = () => {
@@ -159,7 +159,6 @@ export class Controller<T = any> {
 
   // TODO move into constructor function?
   run() {
-    if (!this._isActive) return;
     this._effect.run();
   }
 

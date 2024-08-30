@@ -115,6 +115,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         }
       });
 
+      // may not work will with hmr
       const prevSelector = currentIsStable ? selector : usePrevValue(selector);
 
       const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);

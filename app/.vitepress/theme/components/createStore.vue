@@ -18,7 +18,7 @@ const useCount = createStore(() => {
 });
 
 const App = () => {
-  const { reactiveCount, changeCount, refCount } = useCount((state) => state);
+  const { reactiveCount, changeCount, refCount } = useCount.useDeepStableSelector((state) => state);
 
   return React.createElement(
     "div",
