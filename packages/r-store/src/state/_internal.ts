@@ -104,7 +104,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   const stableSelector = selectorOptions?.stableSelector ?? false;
 
   if (__DEV__ && reduxDevTool) {
-    actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState) as P;
+    actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState, namespaceOptions) as P;
   }
 
   const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, stableSelector, namespaceOptions.namespace, actions as P & L);

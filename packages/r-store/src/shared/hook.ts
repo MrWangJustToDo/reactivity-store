@@ -96,9 +96,9 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   // tool function to generate `useSelector` hook
   const generateUseHook = <P>(type: "default" | "deep" | "deep-stable" | "shallow" | "shallow-stable") => {
-    const currentIsDeep = type === 'default' ? deepSelector : type === 'deep' || type === 'deep-stable';
+    const currentIsDeep = type === "default" ? deepSelector : type === "deep" || type === "deep-stable";
 
-    const currentIsStable = type === 'default' ? stableSelector : type === 'deep-stable' || type === 'shallow-stable';
+    const currentIsStable = type === "default" ? stableSelector : type === "deep-stable" || type === "shallow-stable";
 
     return (selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
       const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
@@ -248,9 +248,16 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       if (!active) {
         console.error("can not subscribe an inactivated hook, check your code first");
       }
+
+      setDevController(controller, initialState);
     }
 
-    return () => controller.stop();
+    return () => {
+      if (__DEV__) {
+        delDevController(controller, initialState);
+      }
+      controller.stop();
+    };
   };
 
   typedUseSelector.cleanReactiveHooks = () => {

@@ -64,6 +64,8 @@ export class Controller<T = any> {
 
   _devWithStable: any;
 
+  _devVersion: string;
+
   _devType: any;
 
   _devResult: any;
@@ -109,8 +111,12 @@ export class Controller<T = any> {
       this._namespace !== InternalNameSpace.$$__redux_dev_tool__$$
     ) {
       this._list = _list;
-      
+
       this._list.add(this);
+    }
+
+    if (__DEV__) {
+      this._devVersion = __VERSION__;
     }
   }
 
@@ -131,7 +137,7 @@ export class Controller<T = any> {
 
       this._lifeCycle.canUpdateComponent = false;
     }
-    
+
     this._listeners.forEach((f) => f());
   };
 
