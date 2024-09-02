@@ -59,6 +59,7 @@ export function withSelectorOptions<T extends Record<string, unknown>, P extends
 }
 
 /**
+ * @public
  * @deprecated 
  * use `withSelectorOptions` instead
  */

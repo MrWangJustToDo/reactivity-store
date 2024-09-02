@@ -66,6 +66,7 @@ export declare function createState<T extends Record<string, unknown>>(setup: Se
 export declare const createStore: <T extends Record<string, unknown>>(creator: Creator<T>) => UseSelectorWithStore<T>;
 
 /**
+ * @public
  * @deprecated
  * new version of React 'StrictMode' cause lifeCycle function not work as expect
  * try to disable `StrictMode` to fix this issue
@@ -75,6 +76,7 @@ export declare function createStoreWithComponent<T extends Record<string, unknow
 }) => ReactElement;
 
 /**
+ * @public
  * @deprecated
  * new version of React 'StrictMode' cause lifeCycle function not work as expect
  * try to disable `StrictMode` to fix this issue
@@ -295,6 +297,7 @@ export declare type WithActionsProps<T, P> = {
 };
 
 /**
+ * @public
  * @deprecated
  * use `withSelectorOptions` instead
  */
