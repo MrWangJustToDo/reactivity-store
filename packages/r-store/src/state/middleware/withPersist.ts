@@ -142,8 +142,6 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
           if (__DEV__) {
             setDevController(ControllerInstance, initialState);
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             ControllerInstance._devPersistOptions = options;
           }
 

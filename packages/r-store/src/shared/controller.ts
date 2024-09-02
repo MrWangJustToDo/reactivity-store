@@ -66,6 +66,10 @@ export class Controller<T = any> {
 
   _devVersion: string;
 
+  _devReduxOptions: any;
+
+  _devPersistOptions: any;
+
   _devType: any;
 
   _devResult: any;

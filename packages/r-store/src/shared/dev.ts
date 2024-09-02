@@ -168,8 +168,6 @@ export const connectDevTool = (
       // create a subscribe controller to listen to the state change, because some state change may not trigger by the `action`
       const controller = new Controller(subscribe, lifeCycle, temp, InternalNameSpace.$$__redux_dev_tool__$$, onUpdateWithoutAction);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       controller._devReduxOptions = options;
 
       devController[name] = controller;

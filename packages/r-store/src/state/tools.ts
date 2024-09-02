@@ -176,6 +176,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
     return {
       ["$$__state__$$"]: initialState,
       ["$$__actions__$$"]: actions,
+      // field to check duplicate middleware
       ["$$__middleware__$$"]: middleware,
       ["$$__namespace__$$"]: namespace,
       ["$$__selectorOptions__$$"]: selectorOptions,

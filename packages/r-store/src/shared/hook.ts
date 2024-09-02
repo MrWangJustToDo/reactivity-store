@@ -2,6 +2,7 @@
 import { readonly, toRaw } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+// SEE https://github.com/facebook/react/pull/25231
 import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
 import { Controller } from "./controller";
