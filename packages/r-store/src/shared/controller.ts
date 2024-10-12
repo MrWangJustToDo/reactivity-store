@@ -93,12 +93,7 @@ export class Controller<T = any> {
     this._effect = new ControllerEffect(this._getStateSafe, () => {
       this.run();
 
-      if (!this._isActive) {
-        if (__DEV__) {
-          console.error(`[reactivity-store] unexpected update for reactivity-store, current store have been inactivated`);
-        }
-        return;
-      }
+      if (!this._isActive) return;
 
       if (this._lifeCycle.canUpdateComponent) {
         if (this._lifeCycle.syncUpdateComponent) {
@@ -125,6 +120,8 @@ export class Controller<T = any> {
   }
 
   notify = () => {
+    if (!this._isActive) return;
+
     // TODO implement server side initialState
     if (__DEV__ && isServer) {
       console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
@@ -180,5 +177,13 @@ export class Controller<T = any> {
     this._list?.delete?.(this);
 
     this._isActive = false;
+  }
+
+  inactive() {
+    this._isActive = false;
+  }
+
+  active() {
+    this._isActive = true;
   }
 }

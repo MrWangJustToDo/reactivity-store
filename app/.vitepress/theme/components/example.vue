@@ -21,6 +21,7 @@ import { createElement } from 'react';
 
 import { useData } from 'vitepress'
 import { StrictMode } from 'react';
+import { Fragment } from 'react';
 
 const styleTag = ref<HTMLStyleElement>()
 
@@ -38,7 +39,7 @@ onMounted(() => {
   const App = () => {
     const { count, add } = useCount(s => s);
 
-    return createElement(StrictMode, null,
+    return createElement(Fragment, null,
       createElement('p', { className: 'text' }, 'Reactive count component: '),
       createElement('button', {
         className: 'button',
@@ -46,7 +47,7 @@ onMounted(() => {
       }, `Counter is: ${count}`))
   }
 
-  app = hydrateRoot(wrapperRef.value!, createElement(App));
+  app = hydrateRoot(wrapperRef.value!, createElement(StrictMode, null, createElement(App)));
 })
 
 onMounted(() => {

@@ -13,8 +13,6 @@ import { traverse, traverseShallow } from "./tools";
 import type { LifeCycle } from "./lifeCycle";
 import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
 
-const temp = new Set<Controller>();
-
 /**
  * @internal
  */
@@ -125,7 +123,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       // initial
       useMemo(() => {
-        if (!active) return;
         ControllerInstance.run();
         getSelected();
       }, [ControllerInstance, getSelected]);
@@ -133,7 +130,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       // !TODO try to improve the performance
       // rerun when the 'selector' change
       useMemo(() => {
-        if (active && prevSelector !== selector) {
+        if (prevSelector !== selector) {
           ControllerInstance.run();
           getSelected();
         }
@@ -154,19 +151,21 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
         ControllerInstance._devResult = ref.current;
 
-        if (!active) {
-          console.error("current `useSelector` have been inactivated, check your code first");
-        }
-
         useEffect(() => {
           setDevController(ControllerInstance, initialState);
+
           return () => {
             delDevController(ControllerInstance, initialState);
           };
-        }, []);
+        }, [ControllerInstance]);
       }
 
-      useEffect(() => () => ControllerInstance.stop(), [ControllerInstance]);
+      useEffect(() => {
+        ControllerInstance.active();
+        return () => {
+          ControllerInstance.inactive();
+        };
+      }, [ControllerInstance]);
 
       return ref.current;
     };
@@ -239,17 +238,11 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       }
     };
 
-    const controller = new Controller(subscribeSelector, lifeCycle, temp, InternalNameSpace.$$__subscribe__$$, () => cb());
+    const controller = new Controller(subscribeSelector, lifeCycle, controllerList, InternalNameSpace.$$__subscribe__$$, () => cb());
 
-    if (active) {
-      controller.run();
-    }
+    controller.run();
 
     if (__DEV__) {
-      if (!active) {
-        console.error("can not subscribe an inactivated hook, check your code first");
-      }
-
       setDevController(controller, initialState);
     }
 
