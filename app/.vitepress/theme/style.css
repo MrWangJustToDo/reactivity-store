@@ -153,3 +153,7 @@
 .my-button:hover {
   background-color: #eee;
 }
+
+.twoslash .twoslash-popup-container {
+  white-space: pre-wrap;
+}

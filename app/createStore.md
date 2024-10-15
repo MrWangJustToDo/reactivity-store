@@ -14,11 +14,12 @@ the state which in the `selector` function is a readonly state, so the only way 
 
 ## Code Example
 
-```tsx
+```tsx twoslash
+import * as React from 'react';
 import { createStore, reactive, ref } from "reactivity-store";
 
 // here we create a `count` store
-const useCount = createStore(() => {
+const _useCount = createStore(() => {
   // state
   const reactiveCount = reactive({ count: 0 });
 

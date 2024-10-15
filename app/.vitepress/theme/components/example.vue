@@ -1,10 +1,6 @@
 <template>
 <div class="wrapper">
-  <pre style="margin: 0;"><div class="code typescript" ref="codeRef" style="overflow: auto;"><code>const useCount = createState(
-  () => ({ count: 0 }), 
-  { withActions: (s) => ({ add: () => s.count++ }) 
-})</code>
-</div></pre>
+  <div ref="codeRef" class="code-wrapper vp-code" :data-theme="isDark ? 'dark' : 'light'" v-html="str" />
   <div ref="wrapperRef">
     <p class="text">Reactive count component: </p>
     <button class="button">Counter is: 0</button>
@@ -15,15 +11,13 @@
 <script lang="ts" setup>
 import { createState } from 'reactivity-store';
 import { hydrateRoot, Root } from 'react-dom/client'
-import highlight from 'highlight.js';
-import { onBeforeUnmount, onMounted, ref, watchSyncEffect } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { createElement } from 'react';
+import { codeToHtml } from 'shiki';
 
 import { useData } from 'vitepress'
 import { StrictMode } from 'react';
 import { Fragment } from 'react';
-
-const styleTag = ref<HTMLStyleElement>()
 
 const { isDark } = useData();
 
@@ -33,7 +27,25 @@ const codeRef = ref<HTMLDivElement>();
 
 const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }), withNamespace: 'example_count', withStableSelector: true })
 
+const source = `
+import { createState } from 'reactivity-store';
+
+const useCount = createState(
+  () => ({ count: 0 }), 
+  { withActions: (s) => ({ add: () => s.count++ }) 
+});
+`.trim();
+
 let app: Root;
+
+let str = await codeToHtml(source, {
+  lang: 'ts',
+  themes: {
+    dark: 'github-dark',
+    light: 'github-light'
+  },
+  defaultColor: false,
+})
 
 onMounted(() => {
   const App = () => {
@@ -48,32 +60,6 @@ onMounted(() => {
   }
 
   app = hydrateRoot(wrapperRef.value!, createElement(StrictMode, null, createElement(App)));
-})
-
-onMounted(() => {
-  if (!codeRef.value) return;
-  highlight.configure({ ignoreUnescapedHTML: true });
-  highlight.highlightElement(codeRef.value);
-})
-
-onMounted(() => {
-  if (!styleTag.value) {
-    const style = document.createElement('style');
-    style.setAttribute('data-style', 'highlight.js')
-    document.head.appendChild(style);
-    styleTag.value = style;
-  }
-})
-
-watchSyncEffect(() => {
-  const loadStyle = async (isDark?: boolean) => {
-    const content = await import(isDark ? 'highlight.js/styles/github-dark.css?raw' : 'highlight.js/styles/github.css?raw');
-    styleTag.value!.textContent = content.default;
-  }
-  const isDarValue = isDark.value;
-  if (styleTag.value) {
-    loadStyle(isDarValue);
-  }
 })
 
 onBeforeUnmount(() => app.unmount())
@@ -96,8 +82,8 @@ onBeforeUnmount(() => app.unmount())
   z-index: 1;
   left: 50%;
   top: 50%;
-  padding: 15px 40px;
-  width: 80%;
+  padding: 15px 10px;
+  width: 90%;
   transform: translateX(-50%) translateY(-50%);
   border-radius: 8px;
   border: 1px solid rgba(240, 240, 240, .8);
@@ -107,6 +93,10 @@ onBeforeUnmount(() => app.unmount())
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+
+.code-wrapper {
+  overflow: auto;
 }
 
 .text {

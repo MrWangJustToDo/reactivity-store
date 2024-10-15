@@ -1,10 +1,14 @@
 import { defineConfig } from "vitepress";
+import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Reactivity Store",
   base: "/reactivity-store/",
   description: "A React state-management tool power by Reactive api",
+  markdown: {
+    codeTransformers: [transformerTwoslash()],
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

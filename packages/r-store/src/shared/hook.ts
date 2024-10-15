@@ -163,7 +163,12 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       useEffect(() => {
         ControllerInstance.active();
         return () => {
-          ControllerInstance.inactive();
+          // fix React strictMode issue
+          if (__DEV__) {
+            ControllerInstance.inactive();
+          } else {
+            ControllerInstance.stop();
+          }
         };
       }, [ControllerInstance]);
 
