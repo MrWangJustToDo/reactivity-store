@@ -25,7 +25,7 @@ const wrapperRef = ref<HTMLDivElement>();
 
 const codeRef = ref<HTMLDivElement>();
 
-const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }), withNamespace: 'example_count', withStableSelector: true })
+const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }), withNamespace: 'example_count', withStableSelector: true });
 
 const source = `
 import { createState } from 'reactivity-store';
@@ -82,7 +82,7 @@ onBeforeUnmount(() => app.unmount())
   z-index: 1;
   left: 50%;
   top: 50%;
-  padding: 15px 10px;
+  padding: 15px 16px;
   width: 90%;
   transform: translateX(-50%) translateY(-50%);
   border-radius: 8px;

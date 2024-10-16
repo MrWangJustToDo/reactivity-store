@@ -2,7 +2,7 @@
 
 ## ToDoList example
 
-```tsx
+```tsx twoslash
 import { createStore, ref, computed } from 'reactivity-store';
 
 const useTodo = createStore(() => {

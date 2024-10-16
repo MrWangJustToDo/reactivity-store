@@ -15,7 +15,7 @@ the state which in the `selector` function is a readonly state, so the only way 
 ## Code Example
 
 ```tsx twoslash
-import * as React from 'react';
+import * as React from "react";
 import { createStore, reactive, ref } from "reactivity-store";
 
 // here we create a `count` store
@@ -61,12 +61,14 @@ const App = () => {
 
 ::: details Click to show `zustand` code with same logic
 
-```tsx
+```tsx twoslash
 // ==== r-store ====
 
 // 1. use createStore
 import { createStore, ref } from "reactivity-store";
-const useCount = createStore(() => {
+
+// step1 create store
+const useCount_1 = createStore(() => {
   const reactiveCount = ref(0);
 
   const changeCount = (c: number) => {
@@ -75,16 +77,27 @@ const useCount = createStore(() => {
 
   return { reactiveCount, changeCount };
 });
+// step2 use store
+const { reactiveCount: c1, changeCount: _c1 } = useCount_1((s) => s);
+
 // 2. use createState
 import { createState } from "reactivity-store";
-const useCount = createState(() => ({ reactiveCount: 0 }), { withActions: (s) => ({ changeCount: (c: number) => (s.reactiveCount = c) }) });
+
+// step1 create store
+const useCount_2 = createState(() => ({ reactiveCount: 0 }), { withActions: (s) => ({ changeCount: (c: number) => (s.reactiveCount = c) }) });
+// step2 use store
+const { reactiveCount: c2, changeCount: _c2 } = useCount_2((s) => s);
 
 // ==== zustand ====
 import { create } from "zustand";
-const useCount = create((set, get) => ({
+
+// step1 create store
+const useCount_3 = create<{ reactiveCount: number; changeCount: (c: number) => void }>((set, get) => ({
   reactiveCount: 0,
   changeCount: (c: number) => set({ reactiveCount: c }),
 }));
+// step2 use store
+const { reactiveCount: c_3, changeCount: _c3 } = useCount_3((s) => s);
 ```
 
 :::

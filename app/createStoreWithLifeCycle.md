@@ -8,7 +8,8 @@ So `Vue` have a lifeCycle function in the `setup` step, can we use it in `React`
 
 ## Code Example
 
-```tsx
+```tsx twoslash
+import * as React from "react";
 import { createStoreWithComponent, onMounted, onBeforeUpdate, onBeforeUnmount, ref } from "reactivity-store";
 
 // just like `Vue` api
@@ -17,7 +18,7 @@ const Time = createStoreWithComponent({
     const timeRef = ref(new Date().toString());
     const updateCountRef = ref(0);
 
-    let id;
+    let id: NodeJS.Timeout;
 
     onMounted(() => {
       id = setInterval(() => (timeRef.value = new Date().toString()), 1000);

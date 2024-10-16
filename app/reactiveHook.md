@@ -2,7 +2,7 @@
 
 ## Reactive Hook example
 
-```tsx
+```tsx twoslash
 import { useReactiveState, useReactiveEffect } from "reactivity-store";
 
 const usePosition = () => {

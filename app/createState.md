@@ -13,21 +13,29 @@
 the state which in the `selector` function is a readonly state, so the only way to change state is in the `action` middleware function.
 
 ## v0.2.4 update
+
 new middleware `withDeepSelector` for `createState` support config the selector behavior
 
 ## v0.2.6 update
+
 new middleware `withNamespace` for `createState` support `reduxDevTools`
 
+## v0.3.5 update
+
+middleware `withDeepSelector` change to `withSelectorOptions`, also add `stableSelector` config for this middleware
+
 ## All build in middleware for `createState`
-1. `withPersist(setup, options)`  make the state auto sync to storage when some data change
-2. `withActions(setup, options)`  add actions for current state, then you can get the action in the `selector` function
-3. `withNamespace(setup, options)`  make the state and change action tracked by `reduxDevTools`, you need install `redux-devtools-extension` on your browser first
-4. `withDeepSelector(setup, options)`  make the selector support deep selector, when the deep state change, the selector will also be trigger, the default value for the `withDeepSelector` is `true`
-5. `withComputed(setup, options)`  TODO (maybe won't)
+
+1. `withPersist(setup, options)` make the state auto sync to storage when some data change
+2. `withActions(setup, options)` add actions for current state, then you can get the action in the `selector` function
+3. `withNamespace(setup, options)` make the state and change action tracked by `reduxDevTools`, you need install `redux-devtools-extension` on your browser first
+4. `withDeepSelector(setup, options)` make the selector support deep selector, when the deep state change, the selector will also be trigger, the default value for the `withDeepSelector` is `true`
+5. `withComputed(setup, options)` TODO (maybe won't)
 
 ## Simple Code Example
 
-```tsx
+```tsx twoslash
+import * as React from "react";
 import { createState } from "reactivity-store";
 
 // a simple `createState` store, there are not any change function, so the state will never change
@@ -65,10 +73,11 @@ const App = () => {
 
 ## Code Example with localStorage middleware
 
-```tsx
+```tsx twoslash
+import * as React from "react";
 import { createState, withPersist } from "reactivity-store";
 
-const useCount = createState(
+const _useCount = createState(
   withPersist(
     () => {
       const data = { count: 0 };
@@ -82,7 +91,7 @@ const useCount = createState(
      * parse?: (s: string) => T; // how to parse the string state to object
      * merge?: (fromCreator: T, fromStorage: Partial<T>) => T; // merge two part of state to the final state
      */
-    { key: "count" }
+    { key: "count", getStorage: undefined, stringify: undefined, parse: undefined, merge: undefined, shallow: undefined }
   )
 );
 
@@ -117,10 +126,11 @@ const App = () => {
 
 ## Code Example with action middleware
 
-```tsx
+```tsx twoslash
+import * as React from "react";
 import { createState, withActions } from "reactivity-store";
 
-const useCount = createState(
+const _useCount = createState(
   withActions(
     () => {
       const data = { count: 0 };
@@ -157,28 +167,20 @@ const App = () => {
 
 ::: details Click to show zustand code with same logic
 
-```tsx
+```tsx twoslash
 // r-store
 import { createState } from "reactivity-store";
-const useCount = createState(
-  () => {
-    const data = { count: 0 };
-
-    return data;
-  },
-  { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
-);
+const useCount_1 = createState(() => ({ count: 0 }), { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) });
 
 // zustand
 import { create } from "zustand";
-const useCount = create(
-  (set, get) => ({
-    data: { count: 0 },
-    add: () => set((state) => ({ data: { count: state.data.count + 1 } })),
-    del: () => set((state) => ({ data: { count: state.data.count - 1 } })),
-  })
-)
+const useCount_2 = create<{ data: { count: number } }>((set, get) => ({
+  data: { count: 0 },
+  add: () => set((state) => ({ data: { count: state.data.count + 1 } })),
+  del: () => set((state) => ({ data: { count: state.data.count - 1 } })),
+}));
 ```
+
 :::
 
 ## Online Example
@@ -187,20 +189,27 @@ const useCount = create(
 
 ## Code Example with all the middleware
 
-```tsx
-import { createState, withActions, withPersist } from "reactivity-store";
+```tsx twoslash
+import * as React from "react";
+import { createState, withActions, withPersist, withSelectorOptions, withNamespace } from "reactivity-store";
 
-const useCount = createState(
-  withActions(
-    withPersist(
-      () => {
-        const data = { count: 0 };
+const _useCount = createState(
+  withSelectorOptions(
+    withNamespace(
+      withActions(
+        withPersist(
+          () => {
+            const data = { count: 0 };
 
-        return data;
-      },
-      { key: "foo" }
+            return data;
+          },
+          { key: "foo" }
+        ),
+        { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
+      ),
+      { namespace: "_useCount", reduxDevTool: true, shallow: true }
     ),
-    { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
+    { stableSelector: true, deepSelector: false }
   )
 );
 
@@ -212,7 +221,13 @@ const useCount = createState(
 
     return data;
   },
-  { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }), withPersist: "foo" }
+  {
+    withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }),
+    withPersist: "foo",
+    withDeepSelector: false,
+    withStableSelector: true,
+    withNamespace: "useCount",
+  }
 );
 
 const App = () => {
@@ -234,7 +249,8 @@ const App = () => {
 
 ## Code Example with deepSelector
 
-```tsx
+```tsx twoslash
+import * as React from "react";
 import { createState, withActions, withPersist } from "reactivity-store";
 
 const useCount = createState(
@@ -256,11 +272,11 @@ const useCount = createState(
      *
      * the default value for the `withDeepSelector` is true
      */
-    withDeepSelector: true;
+    withDeepSelector: true,
   }
 );
 
-const App = () => {
+const Foo = () => {
   // the `withDeepSelector` option is true, the selector will be trigger when the `re.count` state change, so the component will update normally
   const { re, add } = useCount((state) => ({ re: state.re, add: state.add }));
 
@@ -283,11 +299,11 @@ const useCount_2 = createState(
     { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
   ),
   {
-    withDeepSelector: false;
+    withDeepSelector: false,
   }
 );
 
-const App = () => {
+const Bar = () => {
   //the `withDeepSelector` option is false, the selector will not be trigger when the `re.count` state change, so the component will not update
   const { re, add } = useCount_2((state) => ({ re: state.re, add: state.add }));
 
