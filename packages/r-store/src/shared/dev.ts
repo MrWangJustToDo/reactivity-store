@@ -51,6 +51,10 @@ export const setDevController = (controller: Controller, state: any) => {
 
       set.add(controller);
 
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      set.name = controller._namespace || set?.name;
+
       globalThis["@reactivity-store"]?.set?.(state, set);
     } catch {
       void 0;
