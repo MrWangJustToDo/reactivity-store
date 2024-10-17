@@ -288,10 +288,6 @@ const useCount = createState(
 );
 ```
 
-# v0.3.5 update
-
-### `withDeepSelector` change to `withSelectorOptions`, also add `stableSelector` config
-
 or
 
 ```tsx
@@ -309,6 +305,12 @@ const useCount = createState(
   }
 );
 ```
+
+# v0.3.5 update
+
+### `withDeepSelector` change to `withSelectorOptions`, also add `stableSelector` config
+
+
 
 ## License
 
