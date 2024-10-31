@@ -90,19 +90,9 @@ export class Controller<T = any> {
   ) {
     this._getStateSafe = catchError(_getState, this);
 
-    this._effect = new ControllerEffect(this._getStateSafe, () => {
-      this.run();
+    this._effect = new ControllerEffect(this._getStateSafe);
 
-      if (!this._isActive) return;
-
-      if (this._lifeCycle.canUpdateComponent) {
-        if (this._lifeCycle.syncUpdateComponent) {
-          this.notify();
-        } else {
-          queueJob(this);
-        }
-      }
-    });
+    this._effect.scheduler = this._scheduler;
 
     if (
       this._namespace !== InternalNameSpace.$$__persist__$$ &&
@@ -140,6 +130,20 @@ export class Controller<T = any> {
     }
 
     this._listeners.forEach((f) => f());
+  };
+
+  _scheduler = () => {
+    this.run();
+
+    if (!this._isActive) return;
+
+    if (this._lifeCycle.canUpdateComponent) {
+      if (this._lifeCycle.syncUpdateComponent) {
+        this.notify();
+      } else {
+        queueJob(this);
+      }
+    }
   };
 
   subscribe = (listener: () => void) => {
