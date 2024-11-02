@@ -84,10 +84,10 @@ importers:
   packages/r-store:
     dependencies:
       '@vue/reactivity':
-        specifier: ^3.5.12
+        specifier: ~3.5.12
         version: 3.5.12
       '@vue/shared':
-        specifier: ^3.5.12
+        specifier: ~3.5.12
         version: 3.5.12
       jsan:
         specifier: ^3.1.14
