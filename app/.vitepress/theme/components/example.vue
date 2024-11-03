@@ -1,6 +1,6 @@
 <template>
 <div class="wrapper">
-  <div ref="codeRef" class="code-wrapper vp-code" :data-theme="isDark ? 'dark' : 'light'" v-html="str" />
+  <div ref="codeRef" class="code-wrapper code vp-code" :data-theme="isDark ? 'dark' : 'light'" v-html="str" />
   <div ref="wrapperRef">
     <p class="text">Reactive count component: </p>
     <button class="button">Counter is: 0</button>
@@ -66,10 +66,6 @@ onBeforeUnmount(() => app.unmount())
 </script>
 
 <style scoped>
-.code {
-  padding: 4px;
-  border-radius: 4px;
-}
 
 @media screen and (width < 600px) {
   .code {
