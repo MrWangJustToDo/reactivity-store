@@ -54,6 +54,8 @@ export class Controller<T = any> {
 
   _effect: ReactiveEffect<T>;
 
+  _state: T;
+
   _devState: any;
 
   _devSelector: any;
@@ -133,9 +135,15 @@ export class Controller<T = any> {
   };
 
   _scheduler = () => {
-    this.run();
+    const newState = this.run();
 
     if (!this._isActive) return;
+
+    const triggerUpdate = this._lifeCycle.triggerUpdateOnlyChanged ? !Object.is(newState, this._state) : true;
+
+    if (!triggerUpdate) return;
+
+    this._state = newState;
 
     if (this._lifeCycle.canUpdateComponent) {
       if (this._lifeCycle.syncUpdateComponent) {
@@ -170,7 +178,7 @@ export class Controller<T = any> {
 
   // TODO move into constructor function?
   run() {
-    this._effect.run();
+    return this._effect.run();
   }
 
   stop() {

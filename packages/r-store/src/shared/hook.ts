@@ -99,7 +99,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
     const currentIsStable = type === "default" ? stableSelector : type === "deep-stable" || type === "shallow-stable";
 
-    return (selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) => {
+    function useReactiveHookWithSelector (selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
       const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
       const selectorRef = useSubscribeCallbackRef(selector, currentIsDeep);
@@ -174,6 +174,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       return ref.current;
     };
+
+    return useReactiveHookWithSelector;
   };
 
   const defaultHook = generateUseHook("default");

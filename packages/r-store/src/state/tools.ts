@@ -79,6 +79,11 @@ export type WithNamespaceProps<T> = {
 export type WithSelectorOptionsProps = {
   deepSelector?: boolean;
   stableSelector?: boolean;
+  /**
+   * state what return from the selector will be used to compare with the previous state, if the state is equal, the component will not update
+   * @default false
+   */
+  triggerUpdateOnlyChanged?: boolean;
 };
 
 /**
@@ -134,18 +139,18 @@ export const getFinalActions = <T extends Record<string, unknown>, P extends Rec
  */
 export const getFinalNamespace = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
   if (state["$$__state__$$"])
-    return (state["$$__namespace__$$"] || {}) as { namespace?: string; reduxDevTool?: boolean; listener?: (state: any) => any; shallow?: boolean };
+    return (state["$$__namespace__$$"] || {}) as WithNamespaceProps<T>;
 
-  return {} as { namespace?: string; reduxDevTool?: boolean; listener?: (state: any) => any; shallow?: boolean };
+  return {} as WithNamespaceProps<T>;
 };
 
 /**
  * @internal
  */
 export const getFinalSelectorOptions = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
-  if (state["$$__state__$$"]) return (state["$$__selectorOptions__$$"] || {}) as { deepSelector?: boolean; stableSelector?: boolean };
+  if (state["$$__state__$$"]) return (state["$$__selectorOptions__$$"] || {}) as WithSelectorOptionsProps;
 
-  return {} as { deepSelector?: boolean; stableSelector?: boolean };
+  return {} as WithSelectorOptionsProps;
 };
 
 // function for help to build external middleware

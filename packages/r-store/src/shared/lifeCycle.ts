@@ -21,6 +21,8 @@ export type LifeCycle = {
 
   // TODO!
   syncUpdateComponent: boolean;
+
+  triggerUpdateOnlyChanged: boolean;
 }
 
 /**
@@ -36,4 +38,5 @@ export const createLifeCycle = (): LifeCycle => ({
   hasHookInstall: false,
   canUpdateComponent: true,
   syncUpdateComponent: false,
+  triggerUpdateOnlyChanged: false,
 });
