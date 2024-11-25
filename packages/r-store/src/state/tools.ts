@@ -20,8 +20,8 @@ export type StateWithMiddleware<T, P> = {
   ["$$__state__$$"]: T;
   ["$$__middleware__$$"]: Record<string, unknown>;
   ["$$__actions__$$"]: P;
-  ["$$__namespace__$$"]: { namespace?: string; reduxDevTool?: boolean };
-  ["$$__selectorOptions__$$"]: { deepSelector?: boolean; stableSelector?: boolean };
+  ["$$__namespace__$$"]: WithNamespaceProps<T>;
+  ["$$__selectorOptions__$$"]: WithSelectorOptionsProps;
 };
 
 /**
