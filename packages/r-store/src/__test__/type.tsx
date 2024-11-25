@@ -188,6 +188,8 @@ const useHH1 = createState(
   }
 );
 
+const dd = useHH1(s => s.data);
+
 useHH1.getActions();
 
 useHH1.getReactiveState();

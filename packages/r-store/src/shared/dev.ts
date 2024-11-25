@@ -11,6 +11,8 @@ const namespaceMap: Record<string, unknown> = {};
 
 const temp = new Set<Controller>();
 
+const defaultCompare = () => true;
+
 /**
  * @internal
  */
@@ -170,7 +172,7 @@ export const connectDevTool = (
       };
 
       // create a subscribe controller to listen to the state change, because some state change may not trigger by the `action`
-      const controller = new Controller(subscribe, lifeCycle, temp, InternalNameSpace.$$__redux_dev_tool__$$, onUpdateWithoutAction);
+      const controller = new Controller(subscribe, defaultCompare, lifeCycle, temp, InternalNameSpace.$$__redux_dev_tool__$$, onUpdateWithoutAction);
 
       controller._devReduxOptions = options;
 

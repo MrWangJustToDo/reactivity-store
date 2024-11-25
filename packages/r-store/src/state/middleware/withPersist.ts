@@ -23,6 +23,8 @@ import type { StorageState } from "../tools";
 
 const temp = new Set<Controller>();
 
+const defaultCompare = () => true;
+
 /**
  * @public
  */
@@ -135,7 +137,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             }
           };
 
-          const ControllerInstance = new Controller(subscribe, createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
+          const ControllerInstance = new Controller(subscribe, defaultCompare, createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
 
           ControllerInstance.run();
 

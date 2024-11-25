@@ -79,11 +79,6 @@ export type WithNamespaceProps<T> = {
 export type WithSelectorOptionsProps = {
   deepSelector?: boolean;
   stableSelector?: boolean;
-  /**
-   * state what return from the selector will be used to compare with the previous state, if the state is equal, the component will not update
-   * @default false
-   */
-  triggerUpdateOnlyChanged?: boolean;
 };
 
 /**

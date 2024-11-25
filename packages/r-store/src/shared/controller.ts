@@ -58,6 +58,8 @@ export class Controller<T = any> {
 
   _devState: any;
 
+  _devCompare: any;
+
   _devSelector: any;
 
   _devActions: any;
@@ -85,6 +87,7 @@ export class Controller<T = any> {
 
   constructor(
     readonly _getState: () => T,
+    readonly _compare: (prev: T, next: T) => boolean,
     readonly _lifeCycle: LifeCycle,
     _list: Set<Controller>,
     readonly _namespace?: string,
@@ -139,17 +142,17 @@ export class Controller<T = any> {
 
     if (!this._isActive) return;
 
-    const triggerUpdate = this._lifeCycle.triggerUpdateOnlyChanged ? !Object.is(newState, this._state) : true;
-
-    if (!triggerUpdate) return;
+    const needTrigger = this._compare(this._state, newState);
 
     this._state = newState;
 
-    if (this._lifeCycle.canUpdateComponent) {
-      if (this._lifeCycle.syncUpdateComponent) {
-        this.notify();
-      } else {
-        queueJob(this);
+    if (needTrigger) {
+      if (this._lifeCycle.canUpdateComponent) {
+        if (this._lifeCycle.syncUpdateComponent) {
+          this.notify();
+        } else {
+          queueJob(this);
+        }
       }
     }
   };

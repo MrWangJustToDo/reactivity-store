@@ -103,10 +103,6 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const stableSelector = selectorOptions?.stableSelector ?? false;
 
-  const triggerUpdateOnlyChanged = selectorOptions?.triggerUpdateOnlyChanged ?? false;
-
-  lifeCycle.triggerUpdateOnlyChanged = triggerUpdateOnlyChanged;
-
   if (__DEV__ && reduxDevTool) {
     actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState, namespaceOptions) as P;
   }

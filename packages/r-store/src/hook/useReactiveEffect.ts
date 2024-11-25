@@ -7,6 +7,8 @@ import { createLifeCycle } from "../shared/lifeCycle";
 
 const temp = new Set<Controller>();
 
+const defaultCompare = () => true;
+
 /**
  * @public
  */
@@ -25,10 +27,17 @@ export const useReactiveEffect = (effectCallback: () => void | (() => void)) => 
       }
     };
 
-    const controller = new Controller(subscribe, createLifeCycle(), temp, InternalNameSpace.$$__subscribe__$$, () => {
-      // run the effect when the subscribed state change
-      cleanCb();
-    });
+    const controller = new Controller(
+      subscribe,
+      defaultCompare,
+      createLifeCycle(),
+      temp,
+      InternalNameSpace.$$__subscribe__$$,
+      () => {
+        // run the effect when the subscribed state change
+        cleanCb();
+      }
+    );
 
     // run the effect on the component mount
     controller.run();

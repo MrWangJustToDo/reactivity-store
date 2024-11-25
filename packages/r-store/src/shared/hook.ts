@@ -99,7 +99,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
     const currentIsStable = type === "default" ? stableSelector : type === "deep-stable" || type === "shallow-stable";
 
-    function useReactiveHookWithSelector (selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
+    function useReactiveHookWithSelector(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean) {
       const ref = useRef<P | DeepReadonly<UnwrapNestedRefs<T>>>();
 
       const selectorRef = useSubscribeCallbackRef(selector, currentIsDeep);
@@ -114,10 +114,20 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         }
       });
 
+      const stableCompare = useCallbackRef((p, n) => {
+        if (compare && typeof compare === "function") {
+          return compare(p, n);
+        }
+        return true;
+      });
+
       // may not work will with hmr
       const prevSelector = currentIsStable ? selector : usePrevValue(selector);
 
-      const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), lifeCycle, controllerList, namespace, getSelected), []);
+      const ControllerInstance = useMemo(
+        () => new Controller(() => selectorRef(reactiveState as any), stableCompare, lifeCycle, controllerList, namespace, getSelected),
+        []
+      );
 
       useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
@@ -138,6 +148,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       if (__DEV__) {
         ControllerInstance._devSelector = selector;
+
+        ControllerInstance._devCompare = compare;
 
         ControllerInstance._devActions = actions;
 
@@ -173,7 +185,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       }, [ControllerInstance]);
 
       return ref.current;
-    };
+    }
 
     return useReactiveHookWithSelector;
   };
@@ -189,9 +201,9 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   const shallowStableHook = generateUseHook("shallow-stable");
 
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
-  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P): P;
-  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P) {
-    return defaultHook(selector);
+  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean): P;
+  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean) {
+    return defaultHook(selector, compare);
   }
 
   const typedUseSelector = useSelector as typeof useSelector & {
@@ -245,7 +257,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       }
     };
 
-    const controller = new Controller(subscribeSelector, lifeCycle, controllerList, InternalNameSpace.$$__subscribe__$$, () => cb());
+    const controller = new Controller(subscribeSelector, Object.is, lifeCycle, controllerList, InternalNameSpace.$$__subscribe__$$, () => cb());
 
     controller.run();
 
