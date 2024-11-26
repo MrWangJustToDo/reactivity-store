@@ -43,9 +43,9 @@ const useFf = createStore(() => {
   return { vvv };
 });
 
-const h = useFf((s) => s);
+const h = useFf((s) => s.vvv, (p, c) => p === c);
 
-const i = useCount((s) => s);
+const i = useCount((s) => s, Object.is);
 
 const useCount_v2 = createState(
   withActions(

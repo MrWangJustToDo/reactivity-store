@@ -205,7 +205,7 @@ export declare const useReactiveState: <T extends Record<string, unknown>>(initi
  */
 export declare type UseSelectorWithState<T, C> = {
     (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean): P;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     /**
      * @deprecated
      * use `getReactiveState` / `getReadonlyState` instead
@@ -215,22 +215,28 @@ export declare type UseSelectorWithState<T, C> = {
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+    /**
+     *
+     * @param selector - a method to select the state, when the state change, the `cb` will be called
+     * @param cb - a callback function
+     * @returns a unsubscribe function
+     */
     subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
     useDeepSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
     useDeepStableSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
     useShallowSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
     useShallowStableSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
 };
 
@@ -239,7 +245,7 @@ export declare type UseSelectorWithState<T, C> = {
  */
 export declare type UseSelectorWithStore<T> = {
     (): DeepReadonly<UnwrapNestedRefs<T>>;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     /**
      * @deprecated
      * use `getReactiveState` / `getReadonlyState` instead
@@ -248,22 +254,28 @@ export declare type UseSelectorWithStore<T> = {
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+    /**
+     *
+     * @param selector - a method to select the state, when the state change, the `cb` will be called
+     * @param cb - a callback function
+     * @returns a unsubscribe function
+     */
     subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
     useShallowSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>>;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
     useShallowStableSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>>;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
     useDeepSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>>;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
     useDeepStableSelector: {
         (): DeepReadonly<UnwrapNestedRefs<T>>;
-        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P): P;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
 };
 

@@ -201,8 +201,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   const shallowStableHook = generateUseHook("shallow-stable");
 
   function useSelector(): DeepReadonly<UnwrapNestedRefs<T>> & C;
-  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean): P;
-  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: (prev: P, next: P) => boolean) {
+  function useSelector<P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+  function useSelector<P>(selector?: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean) {
     return defaultHook(selector, compare);
   }
 
