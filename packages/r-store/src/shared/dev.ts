@@ -11,7 +11,7 @@ const namespaceMap: Record<string, unknown> = {};
 
 const temp = new Set<Controller>();
 
-const defaultCompare = () => true;
+const defaultCompare = () => false;
 
 /**
  * @internal

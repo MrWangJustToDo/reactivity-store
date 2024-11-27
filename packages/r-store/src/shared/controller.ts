@@ -138,15 +138,15 @@ export class Controller<T = any> {
   };
 
   _scheduler = () => {
-    const newState = this.run();
+    const newState = this._effect.run();
 
     if (!this._isActive) return;
 
-    const needTrigger = this._compare(this._state, newState);
+    const isSame = this._compare(this._state, newState);
 
     this._state = newState;
 
-    if (needTrigger) {
+    if (!isSame) {
       if (this._lifeCycle.canUpdateComponent) {
         if (this._lifeCycle.syncUpdateComponent) {
           this.notify();
@@ -181,7 +181,7 @@ export class Controller<T = any> {
 
   // TODO move into constructor function?
   run() {
-    return this._effect.run();
+    this._state = this._effect.run();
   }
 
   stop() {

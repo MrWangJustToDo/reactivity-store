@@ -118,7 +118,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         if (compare && typeof compare === "function") {
           return compare(p, n);
         }
-        return true;
+        return false;
       });
 
       // may not work will with hmr

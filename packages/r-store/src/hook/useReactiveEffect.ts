@@ -7,7 +7,7 @@ import { createLifeCycle } from "../shared/lifeCycle";
 
 const temp = new Set<Controller>();
 
-const defaultCompare = () => true;
+const defaultCompare = () => false;
 
 /**
  * @public
