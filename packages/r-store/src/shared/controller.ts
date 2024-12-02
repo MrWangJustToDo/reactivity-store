@@ -17,6 +17,8 @@ const catchError = <T>(cb: () => T, instance: Controller) => {
     if (!instance._isActive) return;
 
     if (__DEV__) {
+      instance._devRunCount = instance._devRunCount || 0;
+      
       instance._devRunCount++;
     }
 
@@ -78,7 +80,7 @@ export class Controller<T = any> {
 
   _devResult: any;
 
-  _devRunCount = 0;
+  _devRunCount: number;
 
   // make the state change and component update
   _updateCount = 0;
