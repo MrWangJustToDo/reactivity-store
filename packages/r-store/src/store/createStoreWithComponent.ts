@@ -21,9 +21,8 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 // TODO
 /**
  * @public
- * @deprecated
- * new version of React 'StrictMode' cause lifeCycle function not work as expect
- * try to disable `StrictMode` to fix this issue
+ * @deprecated 
+ * not recommend to use this function, use `createStore` instead
  */
 export function createStoreWithComponent<T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<NonNullable<unknown>, T>
@@ -31,8 +30,7 @@ export function createStoreWithComponent<T extends Record<string, unknown>>(
 /**
  * @public
  * @deprecated 
- * new version of React 'StrictMode' cause lifeCycle function not work as expect
- * try to disable `StrictMode` to fix this issue
+ * not recommend to use this function, use `createStore` instead
  */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
   props: CreateStoreWithComponentProps<P, T>
@@ -40,8 +38,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
 /**
  * @public
  * @deprecated 
- * new version of React 'StrictMode' cause lifeCycle function not work as expect
- * try to disable `StrictMode` to fix this issue
+ * not recommend to use this function, use `createStore` instead
  */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {
   const { setup, render } = props;

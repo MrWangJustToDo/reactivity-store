@@ -68,8 +68,7 @@ export declare const createStore: <T extends Record<string, unknown>>(creator: C
 /**
  * @public
  * @deprecated
- * new version of React 'StrictMode' cause lifeCycle function not work as expect
- * try to disable `StrictMode` to fix this issue
+ * not recommend to use this function, use `createStore` instead
  */
 export declare function createStoreWithComponent<T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<NonNullable<unknown>, T>): ({ children }: {
     children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
@@ -78,8 +77,7 @@ export declare function createStoreWithComponent<T extends Record<string, unknow
 /**
  * @public
  * @deprecated
- * new version of React 'StrictMode' cause lifeCycle function not work as expect
- * try to disable `StrictMode` to fix this issue
+ * not recommend to use this function, use `createStore` instead
  */
 export declare function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>): ({ children }: {
     children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
