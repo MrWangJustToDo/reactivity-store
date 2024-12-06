@@ -1,9 +1,9 @@
-import { unstable_batchedUpdates } from "react-dom";
+const defaultBatch = (cb: () => void) => cb();
 
 /**
  * @internal
  */
-const batchObject: { current: (cb: () => void) => void } = { current: unstable_batchedUpdates };
+const batchObject: { current: (cb: () => void) => void } = { current: defaultBatch };
 
 /**
  * @public
@@ -29,7 +29,7 @@ export const getBatch = () => {
  * no need to use this function
  */
 export const resetBatch = () => {
-  batchObject.current = unstable_batchedUpdates;
+  batchObject.current = defaultBatch;
 };
 
 /**

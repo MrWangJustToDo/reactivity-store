@@ -29,7 +29,7 @@ const useCount = createState(
   {
     // withActions: (s) => ({ add: () => s.count.data++, del: () => 1 }),
     withPersist: "1",
-    withNamespace: '111',
+    withNamespace: "111",
     withDeepSelector: true,
     withStableSelector: true,
   }
@@ -43,7 +43,10 @@ const useFf = createStore(() => {
   return { vvv };
 });
 
-const h = useFf((s) => s.vvv, (p, c) => p === c);
+const h = useFf(
+  (s) => s.vvv,
+  (p, c) => p === c
+);
 
 const i = useCount((s) => s, Object.is);
 
@@ -181,14 +184,14 @@ const useHH1 = createState(
   //   // withNamespace: "1111",
   // }
   {
-    withActions: (s) => ({add: () => s.data.push(199)}),
-    withPersist: '111',
+    withActions: (s) => ({ add: () => s.data.push(199) }),
+    withPersist: "111",
     withDeepSelector: true,
-    withNamespace: '2222'
+    withNamespace: "2222",
   }
 );
 
-const dd = useHH1(s => s.data);
+const dd = useHH1((s) => s.data);
 
 useHH1.getActions();
 

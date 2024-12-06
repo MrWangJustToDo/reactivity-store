@@ -335,6 +335,11 @@ export declare function withActions<T extends Record<string, unknown>, P extends
  */
 export declare type WithActionsProps<T, P> = {
     generateActions?: (state: T) => P;
+    /**
+     * @deprecated
+     *
+     * no need this option anymore
+     */
     automaticBatchAction?: boolean;
 };
 

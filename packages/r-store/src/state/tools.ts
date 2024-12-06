@@ -58,6 +58,11 @@ export type WithPersistProps<T extends Record<string, unknown>> = {
  */
 export type WithActionsProps<T, P> = {
   generateActions?: (state: T) => P;
+  /**
+   * @deprecated
+   * 
+   * no need this option anymore
+   */
   automaticBatchAction?: boolean;
 };
 
@@ -133,8 +138,7 @@ export const getFinalActions = <T extends Record<string, unknown>, P extends Rec
  * @internal
  */
 export const getFinalNamespace = <T extends Record<string, unknown>, P extends Record<string, Function>>(state: MaybeStateWithMiddleware<T, P>) => {
-  if (state["$$__state__$$"])
-    return (state["$$__namespace__$$"] || {}) as WithNamespaceProps<T>;
+  if (state["$$__state__$$"]) return (state["$$__namespace__$$"] || {}) as WithNamespaceProps<T>;
 
   return {} as WithNamespaceProps<T>;
 };
