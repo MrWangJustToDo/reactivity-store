@@ -14,36 +14,38 @@ const Time = createStoreWithComponent({
     let id;
 
     onBeforeMount(() => {
-      console.log('before mount')
-    })
+      console.log("before mount");
+    });
 
     onMounted(() => {
-      console.log('mounted')
-    })
+      console.log("mounted");
+    });
 
     onMounted(() => {
-      id = setInterval(() => { timeRef.value = new Date().toString() }, 1000);
+      id = setInterval(() => {
+        timeRef.value = new Date().toString();
+      }, 1000);
     });
 
     onBeforeUpdate(() => {
-      console.log('before update')
-    })
+      console.log("before update");
+    });
 
     onBeforeUpdate(() => {
-      updateCountRef.value++
+      updateCountRef.value++;
     });
 
     onUpdated(() => {
-      console.log('updated')
-    })
+      console.log("updated");
+    });
 
     onBeforeUnmount(() => {
-      console.log('before unmount')
-    })
+      console.log("before unmount");
+    });
 
     onUnmounted(() => {
-      console.log('unmounted')
-    })
+      console.log("unmounted");
+    });
 
     onUnmounted(() => {
       clearInterval(id);
@@ -54,21 +56,25 @@ const Time = createStoreWithComponent({
 });
 
 const App = () => {
-  return React.createElement(React.StrictMode, null, React.createElement(
-    "div",
-    { className: "my-container" },
-    React.createElement(Time, {
-      children: ({ timeRef, updateCountRef }) => {
-        return React.createElement(
-          React.Fragment,
-          null,
-          React.createElement("p", { className: 'my-title' }, "React Reactive Time"),
-          React.createElement("p", { className: 'my-text' }, "Time: ", React.createElement("span", { style: { color: 'red' } }, timeRef)),
-          React.createElement("p", { className: 'my-text' }, "Update count: ", React.createElement("span", { style: { color: "red" } }, updateCountRef))
-        );
-      },
-    })
-  ));
+  return React.createElement(
+    React.StrictMode,
+    null,
+    React.createElement(
+      "div",
+      { className: "my-container" },
+      React.createElement(Time, {
+        children: ({ timeRef, updateCountRef }) => {
+          return React.createElement(
+            React.Fragment,
+            null,
+            React.createElement("p", { className: "my-title" }, "React Reactive Time"),
+            React.createElement("p", { className: "my-text" }, "Time: ", React.createElement("span", { style: { color: "red" } }, timeRef)),
+            React.createElement("p", { className: "my-text" }, "Update count: ", React.createElement("span", { style: { color: "red" } }, updateCountRef))
+          );
+        },
+      })
+    )
+  );
 };
 
 let root: ReturnType<(typeof ReactDOM)["createRoot"]> | null = null;
@@ -85,5 +91,5 @@ vue_OnBeforeUnmount(() => {
 </script>
 
 <template>
-<div ref="divRef"></div>
+  <div ref="divRef"></div>
 </template>

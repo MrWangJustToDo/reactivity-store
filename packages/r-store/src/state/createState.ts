@@ -77,16 +77,67 @@ export type UseSelectorWithState<T, C> = {
 
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>
 ): UseSelectorWithState<T, P>;
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>>(setup: Setup<T>): UseSelectorWithState<T, {}>;
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>
@@ -94,6 +145,23 @@ export function createState<T extends Record<string, unknown>, P extends Record<
 
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, L>>,
@@ -107,6 +175,23 @@ export function createState<T extends Record<string, unknown>, P extends Record<
 ): UseSelectorWithState<T, P & L>;
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<T>,
@@ -121,6 +206,23 @@ export function createState<T extends Record<string, unknown>, P extends Record<
 
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>,
@@ -133,6 +235,23 @@ export function createState<T extends Record<string, unknown>, P extends Record<
 ): UseSelectorWithState<T, P>;
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>>(
   setup: Setup<T>,
@@ -146,6 +265,23 @@ export function createState<T extends Record<string, unknown>>(
 
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createState } from "r-store";
+ *
+ * const count = createState(() => ({state: 0}), {
+ *  withPersist: "count",
+ *  withActions: (state) => ({
+ *   increment: () => {
+ *    state.state++;
+ *   },
+ *  }),
+ *  withNamespace: "count",
+ *  withDeepSelector: true,
+ *  withStableSelector: true,
+ * });
+ * ```
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,

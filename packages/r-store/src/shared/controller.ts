@@ -18,7 +18,7 @@ const catchError = <T>(cb: () => T, instance: Controller) => {
 
     if (__DEV__) {
       instance._devRunCount = instance._devRunCount || 0;
-      
+
       instance._devRunCount++;
     }
 

@@ -38,7 +38,7 @@ export type UseSelectorWithStore<T> = {
    */
   getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
   /**
-   * 
+   *
    * @param selector - a method to select the state, when the state change, the `cb` will be called
    * @param cb - a callback function
    * @returns a unsubscribe function
@@ -64,6 +64,21 @@ export type UseSelectorWithStore<T> = {
 
 /**
  * @public
+ *
+ * @example
+ * ```typescript
+ * import { createStore, ref } from "r-store";
+ *
+ * const count = createStore(() => {
+ *  const state = ref(0);
+ *
+ *  const increment = () => {
+ *    state.value++;
+ *  };
+ *
+ *  return { state, increment };
+ * });
+ * ```
  */
 export const createStore = <T extends Record<string, unknown>>(creator: Creator<T>): UseSelectorWithStore<T> => {
   return internalCreateStore(creator);

@@ -5,8 +5,8 @@
 
 /* font-family */
 :root {
-  --vp-font-family-base: Outfit, sans-serif, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
-    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  --vp-font-family-base: Outfit, sans-serif, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,
+    sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
 
 /**
@@ -119,7 +119,7 @@
 }
 
 .my-container {
-  border: 1px solid rgba(240, 240, 240, .8);
+  border: 1px solid rgba(240, 240, 240, 0.8);
   padding: 10px;
   border-radius: 8px;
 }
@@ -136,7 +136,7 @@
 
 .my-button {
   background-color: #fafafa;
-  transition: background-color .5s;
+  transition: background-color 0.5s;
   padding: 5px 12px;
   border: 1px solid grey;
   border-radius: 8px;
@@ -147,7 +147,7 @@
 }
 
 .my-button.large {
-  font-size: 1.2em
+  font-size: 1.2em;
 }
 
 .my-button:hover {

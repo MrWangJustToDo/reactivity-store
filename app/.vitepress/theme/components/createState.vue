@@ -28,7 +28,6 @@ const usePosition = () => {
   return { y: state.y, x: xPosition.x };
 };
 
-
 const useCountState = createState(withNamespace(() => ({ data: { count: 1 } }), { namespace: "count", reduxDevTool: true }));
 
 const App = () => {
@@ -36,13 +35,17 @@ const App = () => {
 
   // const { x, y } = usePosition();
 
-  return React.createElement(React.StrictMode, null, React.createElement(
-    "div",
-    { className: "my-container" },
-    React.createElement("p", { className: 'my-title' }, "React Reactive Count"),
-    React.createElement("p", { className: 'my-text' }, "Count: " + count.count),
-    React.createElement("button", { className: "my-button", onClick: () => useCountState.getReactiveState().data.count++ }, "Add Count"),
-  ));
+  return React.createElement(
+    React.StrictMode,
+    null,
+    React.createElement(
+      "div",
+      { className: "my-container" },
+      React.createElement("p", { className: "my-title" }, "React Reactive Count"),
+      React.createElement("p", { className: "my-text" }, "Count: " + count.count),
+      React.createElement("button", { className: "my-button", onClick: () => useCountState.getReactiveState().data.count++ }, "Add Count")
+    )
+  );
 };
 
 let root: ReturnType<(typeof ReactDOM)["createRoot"]> | null = null;
@@ -59,5 +62,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-<div ref="divRef"></div>
+  <div ref="divRef"></div>
 </template>

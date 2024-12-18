@@ -315,7 +315,6 @@ const Bar = () => {
     </div>
   );
 };
-
 ```
 
 ## Online Example

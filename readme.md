@@ -89,7 +89,7 @@ const App = () => {
 withPersist; // support auto cache the state to the `Storage`
 withActions; // support define the action for the state
 withNameSpace; // support define the namespace for the state, and support reduxDevTools in develop mode
-withSelectorOptions // withDeepSelector; // support deep selector / stable selector for the state, can be used for performance optimization
+withSelectorOptions; // withDeepSelector; // support deep selector / stable selector for the state, can be used for performance optimization
 
 // TODO (maybe won't)
 withComputed; // support define the computed value for the state
@@ -309,8 +309,6 @@ const useCount = createState(
 # v0.3.5 update
 
 ### `withDeepSelector` change to `withSelectorOptions`, also add `stableSelector` config
-
-
 
 ## License
 

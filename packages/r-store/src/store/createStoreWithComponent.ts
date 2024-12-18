@@ -21,7 +21,7 @@ export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T e
 // TODO
 /**
  * @public
- * @deprecated 
+ * @deprecated
  * not recommend to use this function, use `createStore` instead
  */
 export function createStoreWithComponent<T extends Record<string, unknown>>(
@@ -29,7 +29,7 @@ export function createStoreWithComponent<T extends Record<string, unknown>>(
 ): ({ children }: { children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode }) => ReactElement;
 /**
  * @public
- * @deprecated 
+ * @deprecated
  * not recommend to use this function, use `createStore` instead
  */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
@@ -37,7 +37,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
 ): ({ children }: { children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode } & P) => ReactElement;
 /**
  * @public
- * @deprecated 
+ * @deprecated
  * not recommend to use this function, use `createStore` instead
  */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {

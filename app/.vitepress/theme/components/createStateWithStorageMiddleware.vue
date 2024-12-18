@@ -5,7 +5,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
 
-const useCountState = createState(withPersist(() => ({ data: { count: 1 } }), { key: 'count', devLog: true }));
+const useCountState = createState(withPersist(() => ({ data: { count: 1 } }), { key: "count", devLog: true }));
 
 const App = () => {
   const count = useCountState((state) => state.data);
@@ -13,8 +13,8 @@ const App = () => {
   return React.createElement(
     "div",
     { className: "my-container" },
-    React.createElement("p", { className: 'my-title' }, "React Reactive Count"),
-    React.createElement("p", { className: 'my-text' }, "Count: " + count.count),
+    React.createElement("p", { className: "my-title" }, "React Reactive Count"),
+    React.createElement("p", { className: "my-text" }, "Count: " + count.count),
     React.createElement("button", { className: "my-button", onClick: () => useCountState.getReactiveState().data.count++ }, "Add Count")
   );
 };

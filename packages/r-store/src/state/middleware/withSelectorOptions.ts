@@ -60,7 +60,7 @@ export function withSelectorOptions<T extends Record<string, unknown>, P extends
 
 /**
  * @public
- * @deprecated 
+ * @deprecated
  * use `withSelectorOptions` instead
  */
 export const withDeepSelector = withSelectorOptions;

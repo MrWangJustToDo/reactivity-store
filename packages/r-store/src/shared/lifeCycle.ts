@@ -21,7 +21,7 @@ export type LifeCycle = {
 
   // TODO!
   syncUpdateComponent: boolean;
-}
+};
 
 /**
  * @internal

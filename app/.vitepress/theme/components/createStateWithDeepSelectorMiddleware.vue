@@ -7,9 +7,14 @@ const divRef_1 = ref<HTMLElement | null>(null);
 
 const divRef_2 = ref<HTMLDivElement | null>(null);
 
-const useCountState_1 = createState(withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) }));
+const useCountState_1 = createState(
+  withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) })
+);
 
-const useCountState_2 = createState(withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) }), { withDeepSelector: false });
+const useCountState_2 = createState(
+  withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) }),
+  { withDeepSelector: false }
+);
 
 // const useCountState_3 = createState(() => ({ count: 1 }), { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }), withDeepSelector: false });
 
@@ -18,25 +23,33 @@ const App_1 = () => {
 
   // const { count, add } = useCountState_3(s => s);
 
-  return React.createElement(React.StrictMode, null, React.createElement(
-    "div",
-    { className: "my-container" },
-    React.createElement("p", { className: 'my-title' }, "React Reactive Count with DeepSelector, the component will update when the button click"),
-    React.createElement("p", { className: 'my-text' }, "Count: " + data.count),
-    React.createElement("button", { className: "my-button", onClick: () => add() }, "Add Count (work)")
-  ));
+  return React.createElement(
+    React.StrictMode,
+    null,
+    React.createElement(
+      "div",
+      { className: "my-container" },
+      React.createElement("p", { className: "my-title" }, "React Reactive Count with DeepSelector, the component will update when the button click"),
+      React.createElement("p", { className: "my-text" }, "Count: " + data.count),
+      React.createElement("button", { className: "my-button", onClick: () => add() }, "Add Count (work)")
+    )
+  );
 };
 
 const App_2 = () => {
   const { data, add } = useCountState_2((state) => ({ data: state.data, add: state.add }));
 
-  return React.createElement(React.StrictMode, null, React.createElement(
-    "div",
-    { className: "my-container" },
-    React.createElement("p", { className: 'my-title' }, "React Reactive Count without DeepSelector, the component will never update when the button click"),
-    React.createElement("p", { className: 'my-text' }, "Count: " + data.count),
-    React.createElement("button", { className: "my-button", onClick: () => add() }, "Add Count (not work)")
-  ));
+  return React.createElement(
+    React.StrictMode,
+    null,
+    React.createElement(
+      "div",
+      { className: "my-container" },
+      React.createElement("p", { className: "my-title" }, "React Reactive Count without DeepSelector, the component will never update when the button click"),
+      React.createElement("p", { className: "my-text" }, "Count: " + data.count),
+      React.createElement("button", { className: "my-button", onClick: () => add() }, "Add Count (not work)")
+    )
+  );
 };
 
 let root: ReturnType<(typeof ReactDOM)["createRoot"]> | null = null;

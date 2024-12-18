@@ -12,7 +12,7 @@ const useCount = createStore(() => {
 
   const changeCount = (s: number) => {
     reactiveCount.count = s;
-  }
+  };
 
   return { reactiveCount, changeCount, refCount };
 });
@@ -23,8 +23,8 @@ const App = () => {
   return React.createElement(
     "div",
     { className: "my-container" },
-    React.createElement("p", { className: 'my-title' }, "React Reactive Count"),
-    React.createElement("p", { className: 'my-text' }, "Count: " + reactiveCount.count),
+    React.createElement("p", { className: "my-title" }, "React Reactive Count"),
+    React.createElement("p", { className: "my-text" }, "Count: " + reactiveCount.count),
     React.createElement("button", { className: "my-button", onClick: () => changeCount(reactiveCount.count + 1) }, "Add Count")
   );
 };
