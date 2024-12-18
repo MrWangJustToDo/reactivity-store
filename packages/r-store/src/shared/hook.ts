@@ -255,6 +255,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       } else {
         traverse(re);
       }
+
+      return re;
     };
 
     const controller = new Controller(subscribeSelector, Object.is, lifeCycle, controllerList, InternalNameSpace.$$__subscribe__$$, () => cb());
