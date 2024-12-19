@@ -58,7 +58,7 @@ onMounted(() => {
     return createElement(
       Fragment,
       null,
-      createElement("p", { className: "text" }, "Reactive count component: "),
+      createElement("p", { className: "text" }, "Reactive count component:"),
       createElement(
         "button",
         {

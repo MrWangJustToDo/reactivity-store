@@ -1,6 +1,7 @@
 declare global {
   const __DEV__: boolean;
   const __VERSION__: string;
+  const __VUE_VERSION__: string;
 
   namespace NodeJS {
     interface ProcessEnv {

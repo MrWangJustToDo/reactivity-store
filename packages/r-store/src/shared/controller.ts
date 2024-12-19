@@ -6,9 +6,19 @@ import { queueJob } from "./queue";
 
 import type { LifeCycle } from "./lifeCycle";
 
-class ControllerEffect extends ReactiveEffect {
+class ControllerEffect<T = any> extends ReactiveEffect<T> {
+  _devVersion: string;
+
   get _isControllerEffect() {
     return true;
+  }
+
+  constructor(getter: () => T) {
+    super(getter);
+
+    if (__DEV__) {
+      this._devVersion = __VUE_VERSION__;
+    }
   }
 }
 
