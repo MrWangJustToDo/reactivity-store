@@ -2,8 +2,6 @@
   "compilerOptions": {
     "target": "ES6",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "stripInternal": true
   },
