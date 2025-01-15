@@ -1,4 +1,3 @@
-import { effectScope } from "@vue/reactivity";
 import { useMemo, useEffect, useState } from "react";
 
 import { createLifeCycle } from "../shared/lifeCycle";
@@ -44,18 +43,16 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
   const { setup, render } = props;
 
   const ComponentWithState = (props: P & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
-    const { useSelector, scope } = useMemo(() => {
+    const useSelector = useMemo(() => {
       const lifeCycleInstance = createLifeCycle();
 
       setGlobalStoreLifeCycle(lifeCycleInstance);
 
-      const scope = effectScope();
-
-      const useSelector = scope.run(() => internalCreateStore(setup, "createStoreWithComponent", lifeCycleInstance));
+      const useSelector = internalCreateStore(setup, "createStoreWithComponent", lifeCycleInstance);
 
       setGlobalStoreLifeCycle(null);
 
-      return { useSelector, scope };
+      return useSelector;
     }, []);
 
     const [isMount, setIsMount] = useState(false);
@@ -112,7 +109,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
       };
     }, [lifeCycleInstance]);
 
-    useEffect(() => scope.stop.bind(scope), []);
+    useEffect(() => () => useSelector.scope?.stop(), [useSelector]);
 
     const renderedChildren = targetRender({ ...last, ...state } as P & DeepReadonly<UnwrapNestedRefs<T>>) || null;
 

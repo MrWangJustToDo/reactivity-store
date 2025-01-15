@@ -6,12 +6,12 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
 import { Controller } from "./controller";
-import { delDevController, setDevController, setNamespaceMap } from "./dev";
+import { delDevController, delNamespace, setDevController, setNamespaceMap } from "./dev";
 import { InternalNameSpace, isServer } from "./env";
 import { traverse, traverseShallow } from "./tools";
 
 import type { LifeCycle } from "./lifeCycle";
-import type { DeepReadonly, UnwrapNestedRefs } from "@vue/reactivity";
+import type { DeepReadonly, EffectScope, UnwrapNestedRefs } from "@vue/reactivity";
 
 /**
  * @internal
@@ -173,11 +173,11 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       }
 
       useEffect(() => {
-        ControllerInstance.active();
+        ControllerInstance.setActive(true);
         return () => {
           // fix React strictMode issue
           if (__DEV__) {
-            ControllerInstance.inactive();
+            ControllerInstance.setActive(false);
           } else {
             ControllerInstance.stop();
           }
@@ -223,7 +223,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     useDeepStableSelector: typeof useSelector;
     useShallowSelector: typeof useSelector;
     useShallowStableSelector: typeof useSelector;
-    cleanReactiveHooks: () => void;
+    clear: () => void;
+    scope?: EffectScope;
   };
 
   typedUseSelector.getState = () => toRaw(initialState);
@@ -275,13 +276,15 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     };
   };
 
-  typedUseSelector.cleanReactiveHooks = () => {
+  typedUseSelector.getIsActive = () => active;
+
+  typedUseSelector.clear = () => {
     controllerList.forEach((i) => i.stop());
+
+    __DEV__ && !isServer && namespace && delNamespace(namespace);
 
     active = false;
   };
-
-  typedUseSelector.getIsActive = () => active;
 
   return typedUseSelector;
 };

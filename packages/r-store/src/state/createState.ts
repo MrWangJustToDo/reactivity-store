@@ -73,6 +73,7 @@ export type UseSelectorWithState<T, C> = {
     (): DeepReadonly<UnwrapNestedRefs<T>> & C;
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
   };
+  clear: () => void;
 };
 
 /**

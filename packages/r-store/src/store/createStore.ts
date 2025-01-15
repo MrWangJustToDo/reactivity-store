@@ -60,6 +60,7 @@ export type UseSelectorWithStore<T> = {
     (): DeepReadonly<UnwrapNestedRefs<T>>;
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
   };
+  clear: () => void;
 };
 
 /**

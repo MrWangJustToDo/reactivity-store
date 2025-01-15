@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { internalCreateState } from "../state/_internal";
 
@@ -31,6 +31,8 @@ export const useReactiveState = <T extends Record<string, unknown>>(initialState
     },
     [useSelector]
   );
+
+  useEffect(() => () => !(__DEV__) && useSelector.clear(), [useSelector]);
 
   // make the state can be used in the `useReactiveEffect` hook
   // use getReactiveState to make effect can track deps

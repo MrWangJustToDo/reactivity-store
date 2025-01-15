@@ -1,4 +1,4 @@
-import { reactive, toRaw } from "@vue/reactivity";
+import { effectScope, reactive, toRaw } from "@vue/reactivity";
 import { isPromise, isObject } from "@vue/shared";
 
 import { createHook } from "../shared/hook";
@@ -16,7 +16,7 @@ export type Creator<T extends Record<string, unknown>> = () => T;
 /**
  * @internal
  */
-export const internalCreateStore = <T extends Record<string, unknown>>(creator: Creator<T>, name = "createStore", lifeCycle?: LifeCycle) => {
+const _internalCreateStore = <T extends Record<string, unknown>>(creator: Creator<T>, name = "createStore", lifeCycle?: LifeCycle) => {
   const state = creator();
 
   if (__DEV__ && isPromise(state)) {
@@ -52,6 +52,19 @@ export const internalCreateStore = <T extends Record<string, unknown>>(creator: 
   const lifeCycleInstance = lifeCycle || createLifeCycle();
 
   const useSelector = createHook<T, NonNullable<unknown>>(reactiveState, rawState, lifeCycleInstance);
+
+  return useSelector;
+};
+
+/**
+ * @internal
+ */
+export const internalCreateStore = <T extends Record<string, unknown>>(creator: Creator<T>, name = "createStore", lifeCycle?: LifeCycle) => {
+  const scope = effectScope();
+
+  const useSelector = scope.run(() => _internalCreateStore(creator, name, lifeCycle));
+
+  useSelector.scope = scope;
 
   return useSelector;
 };

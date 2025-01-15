@@ -206,11 +206,7 @@ export class Controller<T = any> {
     this._isActive = false;
   }
 
-  inactive() {
-    this._isActive = false;
-  }
-
-  active() {
-    this._isActive = true;
+  setActive(d: boolean) {
+    this._isActive = d;
   }
 }
