@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { wrapperBatchUpdate } from "../shared/batch";
 
 import type { Setup } from "./createState";
@@ -38,7 +38,7 @@ export type UnWrapMiddleware<T> = T extends StateWithMiddleware<infer Q, infer _
 /**
  * @public
  */
-export type WithPersistProps<T extends Record<string, unknown>> = {
+export type WithPersistProps<T> = {
   key: string;
   version?: string;
   debounceTime?: number;

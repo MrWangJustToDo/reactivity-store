@@ -16,7 +16,8 @@ import type { MaybeStateWithMiddleware, WithActionsProps, UnWrapMiddleware } fro
 /**
  * @internal
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export function internalCreateState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,
   name: string,
@@ -35,6 +36,8 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   }
 
   if (option?.withActions) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     creator = withActions(creator, { generateActions: option.withActions });
   }
 

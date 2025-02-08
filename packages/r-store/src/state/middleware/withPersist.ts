@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { reactive, toRaw } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 
@@ -35,6 +35,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 /**
  * @public
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export function withPersist<T extends Record<string, unknown>>(setup: Setup<T>, options: WithPersistProps<T>): Setup<StateWithMiddleware<T, {}>>;
 /**
  * @public
@@ -98,7 +99,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             re = options?.merge?.(initialState, cachedState) || Object.assign(initialState, cachedState);
           }
 
-          re = reactive(re) as UnWrapMiddleware<T>;
+          re = reactive(re as object) as UnWrapMiddleware<T>;
 
           const onUpdate = debounce(() => {
             try {

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { isPromise } from "@vue/shared";
 import jsan from "jsan";
 
@@ -219,7 +219,7 @@ export const connectDevTool = (
       }, {});
     } catch (e) {
       if (__DEV__) {
-        console.warn(`[reactivity-store] connect to redux devtools failed, please check the redux devtools extension`);
+        console.warn(`[reactivity-store] connect to redux devtools failed, please check the redux devtools extension`, e);
       }
       return actions;
     }

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
 import { checkHasKey } from "../../shared/dev";
 import { InternalNameSpace, isServer } from "../../shared/env";
@@ -27,6 +27,7 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
 /**
  * @public
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export function withNamespace<T extends Record<string, unknown>>(setup: Setup<T>, options: WithNamespaceProps<T>): Setup<StateWithMiddleware<T, {}>>;
 /**
  * @public

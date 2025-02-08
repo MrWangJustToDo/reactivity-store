@@ -391,6 +391,7 @@ export declare type UseSelectorWithState<T, C> = {
         (): DeepReadonly<UnwrapNestedRefs<T>> & C;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
+    clear: () => void;
 };
 
 /**
@@ -447,6 +448,7 @@ export declare type UseSelectorWithStore<T> = {
         (): DeepReadonly<UnwrapNestedRefs<T>>;
         <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
     };
+    clear: () => void;
 };
 
 /**
@@ -517,7 +519,7 @@ export declare function withPersist<T extends Record<string, unknown>>(setup: Se
 /**
  * @public
  */
-export declare type WithPersistProps<T extends Record<string, unknown>> = {
+export declare type WithPersistProps<T> = {
     key: string;
     version?: string;
     debounceTime?: number;

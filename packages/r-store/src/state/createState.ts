@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 // `createState` provider
 
 import { internalCreateState } from "./_internal";

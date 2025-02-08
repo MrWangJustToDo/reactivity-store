@@ -37,7 +37,7 @@ export const resetBatch = () => {
  * @deprecated
  * no need to use this function
  */
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export const wrapperBatchUpdate = <T extends Function>(cb: T): T => {
   return ((...args: any[]) => batchObject.current(() => (args.length ? cb.call(null, ...args) : cb.call(null)))) as unknown as T;
 };

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import {
   type StateWithMiddleware,
   type WithSelectorOptionsProps,
@@ -24,6 +24,7 @@ export function withSelectorOptions<T extends Record<string, unknown>, P extends
 /**
  * @public
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export function withSelectorOptions<T extends Record<string, unknown>>(setup: Setup<T>, options: WithSelectorOptionsProps): Setup<StateWithMiddleware<T, {}>>;
 /**
  * @public

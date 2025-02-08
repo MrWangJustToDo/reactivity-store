@@ -160,6 +160,7 @@ const useCountG = createState(
 
 useCountG.getActions();
 
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 useCountG.getReactiveState().count;
 
 const useHH1 = createState(

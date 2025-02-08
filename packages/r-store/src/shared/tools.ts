@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { isProxy, isReactive, isRef, ReactiveFlags } from "@vue/reactivity";
 import { isArray, isFunction, isMap, isObject, isPlainObject, isSet } from "@vue/shared";
 import { isValidElement } from "react";

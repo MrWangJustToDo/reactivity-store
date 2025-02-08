@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { readonly, toRaw } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -85,7 +85,9 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   const controllerList = new Set<Controller>();
 
   // TODO
-  __DEV__ && !isServer && namespace && setNamespaceMap(namespace, initialState);
+  if (__DEV__ && !isServer && namespace) {
+    setNamespaceMap(namespace, initialState);
+  }
 
   let active = true;
 
@@ -281,7 +283,9 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.clear = () => {
     controllerList.forEach((i) => i.stop());
 
-    __DEV__ && !isServer && namespace && delNamespace(namespace);
+    if (__DEV__ && !isServer && namespace) {
+      delNamespace(namespace);
+    }
 
     active = false;
   };
