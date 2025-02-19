@@ -79,6 +79,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   lifeCycle: LifeCycle,
   deepSelector = true,
   stableSelector = false,
+  stableCompare = true,
   namespace?: string,
   actions: C = undefined
 ) => {
@@ -116,7 +117,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         }
       });
 
-      const stableCompare = useCallbackRef((p, n) => {
+      const memoCompare = useCallbackRef((p, n) => {
         if (compare && typeof compare === "function") {
           return compare(p, n);
         }
@@ -126,8 +127,10 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       // may not work will with hmr
       const prevSelector = currentIsStable ? selector : usePrevValue(selector);
 
+      const prevCompare = stableCompare ? compare : usePrevValue(compare);
+
       const ControllerInstance = useMemo(
-        () => new Controller(() => selectorRef(reactiveState as any), stableCompare, lifeCycle, controllerList, namespace, getSelected),
+        () => new Controller(() => selectorRef(reactiveState as any), memoCompare, lifeCycle, controllerList, namespace, getSelected),
         []
       );
 
@@ -147,6 +150,13 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
           getSelected();
         }
       }, [ControllerInstance, prevSelector, selector]);
+
+      useMemo(() => {
+        if (prevCompare !== compare) {
+          ControllerInstance.run();
+          getSelected();
+        }
+      }, [ControllerInstance, prevCompare, compare]);
 
       if (__DEV__) {
         ControllerInstance._devSelector = selector;

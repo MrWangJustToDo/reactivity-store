@@ -106,12 +106,23 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const stableSelector = selectorOptions?.stableSelector ?? false;
 
+  const stableCompare = selectorOptions.stableCompare ?? true;
+
   // TODO
   if (__DEV__ && reduxDevTool) {
     actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState, namespaceOptions) as P;
   }
 
-  const useSelector = createHook<T, P & L>(reactiveState, rawState, lifeCycle, deepSelector, stableSelector, namespaceOptions.namespace, actions as P & L);
+  const useSelector = createHook<T, P & L>(
+    reactiveState,
+    rawState,
+    lifeCycle,
+    deepSelector,
+    stableSelector,
+    stableCompare,
+    namespaceOptions.namespace,
+    actions as P & L
+  );
 
   return useSelector;
 }

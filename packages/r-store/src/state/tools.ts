@@ -83,6 +83,7 @@ export type WithNamespaceProps<T> = {
  */
 export type WithSelectorOptionsProps = {
   deepSelector?: boolean;
+  stableCompare?: boolean;
   stableSelector?: boolean;
 };
 
