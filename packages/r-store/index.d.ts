@@ -547,6 +547,7 @@ export declare function withSelectorOptions<T extends Record<string, unknown>>(s
  */
 declare type WithSelectorOptionsProps = {
     deepSelector?: boolean;
+    stableCompare?: boolean;
     stableSelector?: boolean;
 };
 
