@@ -3,7 +3,6 @@ import { reactive, toRaw } from "@vue/reactivity";
 
 import {
   createMiddleware,
-  getBatchUpdateActions,
   getFinalActions,
   getFinalSelectorOptions,
   getFinalMiddleware,
@@ -57,7 +56,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
 
       const allActions = pendingGenerate?.(reactiveState);
 
-      const batchActions = options.automaticBatchAction === true ? getBatchUpdateActions(allActions) : allActions;
+      const batchActions = allActions;
 
       // check duplicate key
       if (__DEV__) {

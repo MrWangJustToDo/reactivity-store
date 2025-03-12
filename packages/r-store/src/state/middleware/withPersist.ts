@@ -70,8 +70,14 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
       }
 
       if (!isServer && !hasSet) {
+        let re = initialState;
+
+        const storageKey = persistKey + options.key;
+
+        let storage: Storage | null = null;
+
         try {
-          const storage = options?.getStorage?.() || window?.localStorage;
+          storage = options?.getStorage?.() || window?.localStorage;
 
           if (!storage) {
             if (__DEV__) {
@@ -87,87 +93,81 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
           }
 
-          const storageStateString = storage.getItem(persistKey + options.key) as string;
+          const storageStateString = storage.getItem(storageKey) as string;
 
           const storageState = JSON.parse(storageStateString) as StorageState;
-
-          let re = initialState;
 
           if (storageState?.version === (options.version || options.key) && storageState.data) {
             const cachedState = options?.parse?.(storageState.data) || JSON.parse(storageState.data);
 
             re = options?.merge?.(initialState, cachedState) || Object.assign(initialState, cachedState);
           }
-
-          re = reactive(re as object) as UnWrapMiddleware<T>;
-
-          const onUpdate = debounce(() => {
-            try {
-              const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
-
-              const cache = { data: stringifyState, version: options.version || options.key };
-
-              if (__DEV__ && options.devLog) {
-                console.log(`[reactivity-store/persist] state changed, try to cache newState: %o`, cache);
-              }
-
-              storage.setItem(persistKey + options.key, JSON.stringify(cache));
-            } catch (e) {
-              if (__DEV__) {
-                console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
-              }
-            }
-          }, options.debounceTime || 40);
-
-          const subscribe = () => {
-            let _re = re;
-
-            if (typeof options.listener === "function") {
-              _re = options.listener(re);
-            }
-
-            if (__DEV__ && isPromise(_re)) {
-              console.error(`[reactivity-store/persist] listener should return a plain object, but current is a promise`);
-              return;
-            }
-
-            if (options.shallow) {
-              traverseShallow(_re);
-            } else {
-              traverse(_re);
-            }
-          };
-
-          const ControllerInstance = new Controller(subscribe, defaultCompare, createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
-
-          ControllerInstance.run();
-
-          if (__DEV__) {
-            setDevController(ControllerInstance, initialState);
-
-            ControllerInstance._devPersistOptions = options;
-          }
-
-          return {
-            ["$$__state__$$"]: toRaw(re),
-            ["$$__middleware__$$"]: middleware,
-            ["$$__actions__$$"]: auctions,
-            ["$$__namespace__$$"]: namespace,
-            ["$$__selectorOptions__$$"]: selectorOptions,
-          } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
         } catch (e) {
           if (__DEV__) {
             console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
           }
 
-          return {
-            ["$$__state__$$"]: initialState,
-            ["$$__middleware__$$"]: middleware,
-            ["$$__actions__$$"]: auctions,
-            ["$$__namespace__$$"]: namespace,
-            ["$$__selectorOptions__$$"]: selectorOptions,
-          } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
+          storage.removeItem?.(storageKey);
         }
+
+        re = reactive(re as object) as UnWrapMiddleware<T>;
+
+        const onUpdate = debounce(() => {
+          try {
+            const stringifyState = options?.stringify?.(re) || JSON.stringify(re);
+
+            const cache = { data: stringifyState, version: options.version || options.key };
+
+            if (__DEV__ && options.devLog) {
+              console.log(`[reactivity-store/persist] state changed, try to cache newState: %o`, cache);
+            }
+
+            storage.setItem?.(storageKey, JSON.stringify(cache));
+          } catch (e) {
+            if (__DEV__) {
+              console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
+            }
+
+            storage.removeItem?.(storageKey);
+          }
+        }, options.debounceTime || 40);
+
+        const subscribe = () => {
+          let _re = re;
+
+          if (typeof options.listener === "function") {
+            _re = options.listener(re);
+          }
+
+          if (__DEV__ && isPromise(_re)) {
+            console.error(`[reactivity-store/persist] listener should return a plain object, but current is a promise`);
+            return;
+          }
+
+          if (options.shallow) {
+            traverseShallow(_re);
+          } else {
+            traverse(_re);
+          }
+        };
+
+        const ControllerInstance = new Controller(subscribe, defaultCompare, createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
+
+        ControllerInstance.run();
+
+        if (__DEV__) {
+          setDevController(ControllerInstance, initialState);
+
+          ControllerInstance._devPersistOptions = options;
+        }
+
+        return {
+          ["$$__state__$$"]: toRaw(re),
+          ["$$__middleware__$$"]: middleware,
+          ["$$__actions__$$"]: auctions,
+          ["$$__namespace__$$"]: namespace,
+          ["$$__selectorOptions__$$"]: selectorOptions,
+        } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
       } else {
         return {
           ["$$__state__$$"]: initialState,

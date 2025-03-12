@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { wrapperBatchUpdate } from "../shared/batch";
-
 import type { Setup } from "./createState";
 
 /**
@@ -96,16 +94,6 @@ export const debounce = <T extends Function>(cb: T, time): T => {
     clearTimeout(id);
     id = setTimeout(() => cb.call(null, ...args), time);
   }) as unknown as T;
-};
-
-/**
- * @internal
- */
-export const getBatchUpdateActions = (actions: ReturnType<typeof getFinalActions>) => {
-  return Object.keys(actions).reduce<typeof actions>((p, c) => {
-    p[c] = wrapperBatchUpdate(actions[c] as () => void);
-    return p;
-  }, {}) as ReturnType<typeof getFinalActions>;
 };
 
 /**
