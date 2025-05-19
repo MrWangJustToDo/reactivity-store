@@ -58,8 +58,8 @@
     "state-management, reactive, vue, react"
   ],
   "dependencies": {
-    "@vue/reactivity": "~3.5.13",
-    "@vue/shared": "~3.5.13",
+    "@vue/reactivity": "~3.5.14",
+    "@vue/shared": "~3.5.14",
     "jsan": "^3.1.14",
     "use-sync-external-store": "^1.4.0"
   },
