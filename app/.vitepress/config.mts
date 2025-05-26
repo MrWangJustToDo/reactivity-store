@@ -13,6 +13,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
+      { text: "Install", link: "/install" },
       { text: "Usage", link: "/createStore" },
       { text: "Projects", items: [{ text: "git-diff-view", target: "_blank", link: "https://github.com/MrWangJustToDo/git-diff-view" }] },
     ],
@@ -26,11 +27,16 @@ export default defineConfig({
         ],
       },
       {
+        text: "Install",
+        items: [{ text: "Install", link: "/install" }],
+      },
+      {
         text: "Usage",
         items: [
           { text: "Create Store", link: "/createStore" },
           { text: "Create Store with lifeCycle", link: "/createStoreWithLifeCycle" },
           { text: "Create State", link: "/createState" },
+          { text: "Subscribe", link: "/subscribe" },
         ],
       },
       {
