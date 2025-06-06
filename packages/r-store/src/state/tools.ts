@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
+import { toRaw } from "@vue/reactivity";
+
 import type { Setup } from "./createState";
 
 /**
@@ -167,7 +169,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
     middleware[options.name] = true;
 
     return {
-      ["$$__state__$$"]: initialState,
+      ["$$__state__$$"]: toRaw(initialState),
       ["$$__actions__$$"]: actions,
       // field to check duplicate middleware
       ["$$__middleware__$$"]: middleware,

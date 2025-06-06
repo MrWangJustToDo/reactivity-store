@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { reactive, toRaw } from "@vue/reactivity";
+import { reactive, readonly, toRaw } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 
 import { Controller } from "../../shared/controller";
@@ -85,7 +85,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             }
 
             return {
-              ["$$__state__$$"]: initialState,
+              ["$$__state__$$"]: toRaw(initialState),
               ["$$__middleware__$$"]: middleware,
               ["$$__actions__$$"]: auctions,
               ["$$__namespace__$$"]: namespace,
@@ -155,8 +155,10 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
         ControllerInstance.run();
 
+        const readonlyState = readonly(toRaw(re) as object);
+
         if (__DEV__) {
-          setDevController(ControllerInstance, initialState);
+          setDevController(ControllerInstance, readonlyState);
 
           ControllerInstance._devPersistOptions = options;
         }
@@ -170,7 +172,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
         } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
       } else {
         return {
-          ["$$__state__$$"]: initialState,
+          ["$$__state__$$"]: toRaw(initialState),
           ["$$__middleware__$$"]: middleware,
           ["$$__actions__$$"]: auctions,
           ["$$__namespace__$$"]: namespace,

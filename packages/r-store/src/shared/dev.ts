@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { isPromise } from "@vue/shared";
-import jsan from "jsan";
 
 import { Controller } from "./controller";
 import { InternalNameSpace, isServer } from "./env";
@@ -120,7 +119,7 @@ const sendToDevTools = (action: Action) => {
 export const connectDevTool = (
   name: string,
   actions: Record<string, Function>,
-  state: any,
+  readonlyState: any,
   reactiveState: any,
   options?: {
     shallow?: boolean;
@@ -143,7 +142,7 @@ export const connectDevTool = (
         delDevController(existController, existState);
       }
 
-      devToolMap[name] = state;
+      devToolMap[name] = readonlyState;
 
       const lifeCycle = createLifeCycle();
 
@@ -155,7 +154,7 @@ export const connectDevTool = (
         if (updateInActionCount > 0) return;
         sendToDevTools({
           type: `subscribeAction-${name}`,
-          getUpdatedState: () => ({ ...devToolMap, [name]: jsan.parse(jsan.stringify(state)) }),
+          getUpdatedState: () => ({ ...devToolMap, [name]: readonlyState }),
         });
       };
 
@@ -180,7 +179,7 @@ export const connectDevTool = (
 
       controller.run();
 
-      setDevController(controller, state);
+      setDevController(controller, readonlyState);
 
       const obj = { ...devToolMap };
 
@@ -201,7 +200,7 @@ export const connectDevTool = (
               sendToDevTools({
                 type: `asyncAction-${name}/${action.name || "anonymous"}`,
                 $payload: args.slice(0, len),
-                getUpdatedState: () => ({ ...devToolMap, [name]: jsan.parse(jsan.stringify(state)) }),
+                getUpdatedState: () => ({ ...devToolMap, [name]: readonlyState }),
               });
               updateInActionCount--;
             });
@@ -209,7 +208,7 @@ export const connectDevTool = (
             sendToDevTools({
               type: `syncAction-${name}/${action.name || "anonymous"}`,
               $payload: args.slice(0, len),
-              getUpdatedState: () => ({ ...devToolMap, [name]: jsan.parse(jsan.stringify(state)) }),
+              getUpdatedState: () => ({ ...devToolMap, [name]: readonlyState }),
             });
             updateInActionCount--;
           }

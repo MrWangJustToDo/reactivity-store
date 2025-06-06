@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
+import { toRaw } from "@vue/reactivity";
+
 import {
   type StateWithMiddleware,
   type WithSelectorOptionsProps,
@@ -48,7 +50,7 @@ export function withSelectorOptions<T extends Record<string, unknown>, P extends
       const selectorOptions = getFinalSelectorOptions(_initialState);
 
       return {
-        ["$$__state__$$"]: initialState,
+        ["$$__state__$$"]: toRaw(initialState),
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,

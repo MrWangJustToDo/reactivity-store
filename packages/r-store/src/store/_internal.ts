@@ -1,4 +1,4 @@
-import { effectScope, reactive, toRaw } from "@vue/reactivity";
+import { effectScope, reactive, readonly, toRaw } from "@vue/reactivity";
 import { isPromise, isObject } from "@vue/shared";
 
 import { createHook } from "../shared/hook";
@@ -49,9 +49,11 @@ const _internalCreateStore = <T extends Record<string, unknown>>(creator: Creato
 
   const reactiveState = reactive(_state);
 
+  const readonlyState = readonly(_state);
+
   const lifeCycleInstance = lifeCycle || createLifeCycle();
 
-  const useSelector = createHook<T, NonNullable<unknown>>(reactiveState, rawState, lifeCycleInstance);
+  const useSelector = createHook<T, NonNullable<unknown>>(reactiveState, readonlyState, rawState, lifeCycleInstance);
 
   return useSelector;
 };

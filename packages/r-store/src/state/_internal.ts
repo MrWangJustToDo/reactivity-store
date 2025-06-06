@@ -1,4 +1,4 @@
-import { reactive, toRaw } from "@vue/reactivity";
+import { reactive, readonly, toRaw } from "@vue/reactivity";
 import { isObject, isPromise } from "@vue/shared";
 
 import { connectDevTool } from "../shared/dev";
@@ -102,6 +102,8 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   const reactiveState = reactive(initialState);
 
+  const readonlyState = readonly(initialState);
+
   const deepSelector = selectorOptions?.deepSelector ?? true;
 
   const stableSelector = selectorOptions?.stableSelector ?? false;
@@ -110,11 +112,12 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   // TODO
   if (__DEV__ && reduxDevTool) {
-    actions = connectDevTool(namespaceOptions.namespace, actions, rawState, reactiveState, namespaceOptions) as P;
+    actions = connectDevTool(namespaceOptions.namespace, actions, readonlyState, reactiveState, namespaceOptions) as P;
   }
 
   const useSelector = createHook<T, P & L>(
     reactiveState,
+    readonlyState,
     rawState,
     lifeCycle,
     deepSelector,

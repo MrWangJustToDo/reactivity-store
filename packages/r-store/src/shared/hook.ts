@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { readonly, toRaw } from "@vue/reactivity";
+import { toRaw } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 // SEE https://github.com/facebook/react/pull/25231
@@ -75,6 +75,7 @@ export const usePrevValue = <T>(v: T) => {
 
 export const createHook = <T extends Record<string, unknown>, C extends Record<string, Function>>(
   reactiveState: UnwrapNestedRefs<T>,
+  readonlyState: DeepReadonly<UnwrapNestedRefs<T>>,
   initialState: T,
   lifeCycle: LifeCycle,
   deepSelector = true,
@@ -91,8 +92,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   }
 
   let active = true;
-
-  const readonlyState = __DEV__ ? readonly(initialState) : (reactiveState as DeepReadonly<UnwrapNestedRefs<T>>);
 
   namespace = namespace || InternalNameSpace.$$__ignore__$$;
 
@@ -176,10 +175,10 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         ControllerInstance._devResult = ref.current;
 
         useEffect(() => {
-          setDevController(ControllerInstance, initialState);
+          setDevController(ControllerInstance, readonlyState);
 
           return () => {
-            delDevController(ControllerInstance, initialState);
+            delDevController(ControllerInstance, readonlyState);
           };
         }, [ControllerInstance]);
       }

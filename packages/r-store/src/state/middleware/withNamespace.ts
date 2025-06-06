@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
+import { toRaw } from "@vue/reactivity";
+
 import { checkHasKey } from "../../shared/dev";
 import { InternalNameSpace, isServer } from "../../shared/env";
 import {
@@ -76,7 +78,7 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
       }
 
       return {
-        ["$$__state__$$"]: initialState,
+        ["$$__state__$$"]: toRaw(initialState),
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: { ...namespace, ...options },
