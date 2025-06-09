@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { reactive, readonly, toRaw } from "@vue/reactivity";
+import { reactive, toRaw } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 
 import { Controller } from "../../shared/controller";
-import { setDevController } from "../../shared/dev";
 import { InternalNameSpace, isServer } from "../../shared/env";
 import { createLifeCycle } from "../../shared/lifeCycle";
 import { checkHasReactive, traverse, traverseShallow } from "../../shared/tools";
@@ -155,11 +154,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
         ControllerInstance.run();
 
-        const readonlyState = readonly(toRaw(re) as object);
-
         if (__DEV__) {
-          setDevController(ControllerInstance, readonlyState);
-
           ControllerInstance._devPersistOptions = options;
         }
 

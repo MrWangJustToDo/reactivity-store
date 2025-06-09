@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
 import { Controller } from "./controller";
-import { delDevController, delNamespace, setDevController, setNamespaceMap } from "./dev";
+import { delNamespace, setNamespaceMap } from "./dev";
 import { InternalNameSpace, isServer } from "./env";
 import { traverse, traverseShallow } from "./tools";
 
@@ -173,14 +173,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         ControllerInstance._devState = initialState;
 
         ControllerInstance._devResult = ref.current;
-
-        useEffect(() => {
-          setDevController(ControllerInstance, readonlyState);
-
-          return () => {
-            delDevController(ControllerInstance, readonlyState);
-          };
-        }, [ControllerInstance]);
       }
 
       useEffect(() => {
@@ -275,16 +267,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
     controller.run();
 
-    if (__DEV__) {
-      setDevController(controller, initialState);
-    }
-
-    return () => {
-      if (__DEV__) {
-        delDevController(controller, initialState);
-      }
-      controller.stop();
-    };
+    return () => controller.stop();
   };
 
   typedUseSelector.getIsActive = () => active;

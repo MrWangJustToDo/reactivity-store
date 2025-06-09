@@ -2,7 +2,7 @@
 import { isPromise } from "@vue/shared";
 
 import { Controller } from "./controller";
-import { InternalNameSpace, isServer } from "./env";
+import { InternalNameSpace } from "./env";
 import { createLifeCycle } from "./lifeCycle";
 import { traverse, traverseShallow } from "./tools";
 
@@ -31,56 +31,6 @@ export const delNamespace = (key: string) => {
  */
 export const checkHasKey = (key: string) => {
   return key in namespaceMap;
-};
-
-if (__DEV__ && !isServer) {
-  try {
-    globalThis["@reactivity-store"] = globalThis["@reactivity-store"] || new WeakMap();
-  } catch {
-    void 0;
-  }
-}
-
-/**
- * @internal
- */
-export const setDevController = (controller: Controller, state: any) => {
-  if (__DEV__ && !isServer) {
-    if (!globalThis["@reactivity-store"]) return;
-    try {
-      const set = (globalThis["@reactivity-store"]?.get?.(state) || new Set()) as Set<Controller>;
-
-      set.add(controller);
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      set.name = controller._namespace || set?.name;
-
-      globalThis["@reactivity-store"]?.set?.(state, set);
-    } catch {
-      void 0;
-    }
-  }
-};
-
-/**
- * @internal
- */
-export const delDevController = (controller: Controller, state: any) => {
-  if (__DEV__ && !isServer) {
-    if (!globalThis["@reactivity-store"]) return;
-    try {
-      const set = globalThis["@reactivity-store"]?.get?.(state) as Set<Controller>;
-
-      set?.delete?.(controller);
-
-      if (set.size === 0) {
-        globalThis["@reactivity-store"]?.delete?.(state);
-      }
-    } catch {
-      void 0;
-    }
-  }
 };
 
 // cache state which has connect to devtool
@@ -132,14 +82,10 @@ export const connectDevTool = (
 
       globalDevTools = devTools;
 
-      const existState = devToolMap[name];
-
       const existController = devController[name];
 
       if (existController) {
         existController.stop();
-
-        delDevController(existController, existState);
       }
 
       devToolMap[name] = readonlyState;
@@ -178,8 +124,6 @@ export const connectDevTool = (
       devController[name] = controller;
 
       controller.run();
-
-      setDevController(controller, readonlyState);
 
       const obj = { ...devToolMap };
 

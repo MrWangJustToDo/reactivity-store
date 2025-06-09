@@ -1,7 +1,46 @@
 import type { DeepReadonly } from '@vue/reactivity';
 import type { ReactElement } from 'react';
+import { ReactiveEffect } from '@vue/reactivity';
 import type { ReactNode } from 'react';
 import type { UnwrapNestedRefs } from '@vue/reactivity';
+
+export declare class Controller<T = any> {
+    readonly _getState: () => T;
+    readonly _compare: (prev: T, next: T) => boolean;
+    readonly _lifeCycle: LifeCycle;
+    readonly _namespace?: string;
+    readonly _onUpdate?: () => void;
+    readonly _listeners: Set<() => void>;
+    readonly _list: Set<Controller>;
+    _getStateSafe: () => T;
+    _effect: ReactiveEffect<T>;
+    _state: T;
+    _devState: any;
+    _devCompare: any;
+    _devSelector: any;
+    _devActions: any;
+    _devWithDeep: any;
+    _devWithStable: any;
+    _devVersion: string;
+    _devReduxOptions: any;
+    _devPersistOptions: any;
+    _devType: any;
+    _devResult: any;
+    _devRunCount: number;
+    _updateCount: number;
+    _isActive: boolean;
+    constructor(_getState: () => T, _compare: (prev: T, next: T) => boolean, _lifeCycle: LifeCycle, _list: Set<Controller>, _namespace?: string, _onUpdate?: () => void);
+    notify: () => void;
+    _scheduler: () => void;
+    subscribe: (listener: () => void) => () => boolean;
+    getState: () => number;
+    getEffect: () => ReactiveEffect<T>;
+    getSelectorState: () => T;
+    getLifeCycle: () => LifeCycle;
+    run(): void;
+    stop(): void;
+    setActive(d: boolean): void;
+}
 
 /**
  * @public
@@ -236,6 +275,8 @@ export declare type Creator<T extends Record<string, unknown>> = () => T;
  * no need to use this function
  */
 export declare const getBatch: () => (cb: () => void) => void;
+
+export declare function getCurrentController(): Controller | null;
 
 /**
  * @public

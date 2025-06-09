@@ -2,6 +2,8 @@ export { onBeforeMount, onBeforeUpdate, onBeforeUnmount, onMounted, onUpdated, o
 
 export { withActions, withPersist, withNamespace, withDeepSelector, withSelectorOptions } from "./state/middleware";
 
+export { getCurrentController, Controller } from "./shared/controller";
+
 export * from "./store/createStoreWithComponent";
 
 export * from "./store/createStore";

@@ -6,6 +6,12 @@ import { queueJob } from "./queue";
 
 import type { LifeCycle } from "./lifeCycle";
 
+let currentController: Controller | null = null;
+
+export function getCurrentController(): Controller | null {
+  return currentController;
+}
+
 class ControllerEffect<T = any> extends ReactiveEffect<T> {
   _devVersion: string;
 
@@ -53,10 +59,6 @@ const catchError = <T>(cb: () => T, instance: Controller) => {
   };
 };
 
-// TODO
-/**
- * @internal
- */
 export class Controller<T = any> {
   readonly _listeners = new Set<() => void>();
 
@@ -150,7 +152,14 @@ export class Controller<T = any> {
   };
 
   _scheduler = () => {
+    const p = getCurrentController();
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    currentController = this;
+
     const newState = this._effect.run();
+
+    currentController = p;
 
     if (!this._isActive) return;
 
@@ -193,7 +202,14 @@ export class Controller<T = any> {
 
   // TODO move into constructor function?
   run() {
+    const p = getCurrentController();
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    currentController = this;
+
     this._state = this._effect.run();
+    
+    currentController = p;
   }
 
   stop() {
