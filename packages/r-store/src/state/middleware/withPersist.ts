@@ -106,7 +106,11 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
           }
 
-          storage.removeItem?.(storageKey);
+          try {
+            storage.removeItem?.(storageKey);
+          } catch {
+            void 0;
+          }
         }
 
         re = reactive(re as object) as UnWrapMiddleware<T>;
@@ -127,7 +131,11 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
               console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
             }
 
-            storage.removeItem?.(storageKey);
+            try {
+              storage.removeItem?.(storageKey);
+            } catch {
+              void 0;
+            }
           }
         }, options.debounceTime || 40);
 
