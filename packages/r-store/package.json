@@ -1,6 +1,6 @@
 {
   "name": "reactivity-store",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "author": "MrWangJustToDo",
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app just like zustand",
@@ -58,8 +58,8 @@
     "state-management, reactive, vue, react"
   ],
   "dependencies": {
-    "@vue/reactivity": "~3.5.16",
-    "@vue/shared": "~3.5.16",
+    "@vue/reactivity": "~3.5.17",
+    "@vue/shared": "~3.5.17",
     "use-sync-external-store": "^1.5.0"
   },
   "peerDependencies": {
