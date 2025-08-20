@@ -3,6 +3,8 @@
 [![Deploy](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml/badge.svg)](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml)
 [![npm](https://img.shields.io/npm/v/reactivity-store)](https://www.npmjs.com/package/reactivity-store)
 [![Release](https://img.shields.io/github/v/release/MrWangJustToDo/r-store)](https://github.com/MrWangJustToDo/r-store)
+![NPM Downloads](https://img.shields.io/npm/dm/reactivity-store)
+
 
 ## A React state-management, inspired by the `Vue` and `zustand`
 
