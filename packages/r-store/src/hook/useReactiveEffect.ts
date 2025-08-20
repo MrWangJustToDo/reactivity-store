@@ -5,8 +5,6 @@ import { InternalNameSpace } from "../shared/env";
 import { useCallbackRef } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 
-const temp = new Set<Controller>();
-
 const defaultCompare = () => false;
 
 /**
@@ -27,7 +25,7 @@ export const useReactiveEffect = (effectCallback: () => void | (() => void)) => 
       }
     };
 
-    const controller = new Controller(subscribe, defaultCompare, createLifeCycle(), temp, InternalNameSpace.$$__subscribe__$$, () => {
+    const controller = new Controller(subscribe, defaultCompare, createLifeCycle(), InternalNameSpace.$$__subscribe__$$, () => {
       // run the effect when the subscribed state change
       cleanCb();
     });

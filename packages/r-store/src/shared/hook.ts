@@ -128,10 +128,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       const prevCompare = stableCompare ? compare : usePrevValue(compare);
 
-      const ControllerInstance = useMemo(
-        () => new Controller(() => selectorRef(reactiveState as any), memoCompare, lifeCycle, controllerList, namespace, getSelected),
-        []
-      );
+      const ControllerInstance = useMemo(() => new Controller(() => selectorRef(reactiveState as any), memoCompare, lifeCycle, namespace, getSelected), []);
 
       useSyncExternalStore(ControllerInstance.subscribe, ControllerInstance.getState, ControllerInstance.getState);
 
@@ -177,6 +174,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
       useEffect(() => {
         ControllerInstance.setActive(true);
+        controllerList.add(ControllerInstance);
         return () => {
           // fix React strictMode issue
           if (__DEV__) {
@@ -184,6 +182,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
           } else {
             ControllerInstance.stop();
           }
+          controllerList.delete(ControllerInstance);
         };
       }, [ControllerInstance]);
 
@@ -230,7 +229,12 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     scope?: EffectScope;
   };
 
-  typedUseSelector.getState = () => toRaw(initialState);
+  typedUseSelector.getState = () => {
+    if (__DEV__) {
+      console.warn("[reactivity-store] `getState` is deprecated, use `getReactiveState` or `getReadonlyState` instead");
+    }
+    return toRaw(initialState);
+  };
 
   typedUseSelector.getLifeCycle = () => lifeCycle;
 
@@ -263,11 +267,16 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
       return re;
     };
 
-    const controller = new Controller(subscribeSelector, Object.is, lifeCycle, controllerList, InternalNameSpace.$$__subscribe__$$, () => cb());
+    const controller = new Controller(subscribeSelector, Object.is, lifeCycle, InternalNameSpace.$$__subscribe__$$, () => cb());
 
     controller.run();
 
-    return () => controller.stop();
+    controllerList.add(controller);
+
+    return () => {
+      controllerList.delete(controller);
+      controller.stop();
+    };
   };
 
   typedUseSelector.getIsActive = () => active;

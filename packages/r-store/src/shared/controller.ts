@@ -1,7 +1,7 @@
 import { ReactiveEffect } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 
-import { InternalNameSpace, isServer } from "./env";
+import { isServer } from "./env";
 import { queueJob } from "./queue";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -62,8 +62,6 @@ const catchError = <T>(cb: () => T, instance: Controller) => {
 export class Controller<T = any> {
   readonly _listeners = new Set<() => void>();
 
-  readonly _list: Set<Controller>;
-
   _getStateSafe: () => T;
 
   _effect: ReactiveEffect<T>;
@@ -103,7 +101,6 @@ export class Controller<T = any> {
     readonly _getState: () => T,
     readonly _compare: (prev: T, next: T) => boolean,
     readonly _lifeCycle: LifeCycle,
-    _list: Set<Controller>,
     readonly _namespace?: string,
     readonly _onUpdate?: () => void
   ) {
@@ -112,16 +109,6 @@ export class Controller<T = any> {
     this._effect = new ControllerEffect(this._getStateSafe);
 
     this._effect.scheduler = this._scheduler;
-
-    if (
-      this._namespace !== InternalNameSpace.$$__persist__$$ &&
-      this._namespace !== InternalNameSpace.$$__subscribe__$$ &&
-      this._namespace !== InternalNameSpace.$$__redux_dev_tool__$$
-    ) {
-      this._list = _list;
-
-      this._list.add(this);
-    }
 
     if (__DEV__) {
       this._devVersion = __VERSION__;
@@ -217,9 +204,9 @@ export class Controller<T = any> {
 
     this._listeners.clear();
 
-    this._list?.delete?.(this);
-
     this._isActive = false;
+
+    this._state = null;
   }
 
   setActive(d: boolean) {

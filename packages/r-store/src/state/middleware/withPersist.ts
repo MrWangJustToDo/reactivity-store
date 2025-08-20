@@ -20,8 +20,6 @@ import {
 import type { MaybeStateWithMiddleware, Setup, StateWithMiddleware, UnWrapMiddleware, WithPersistProps } from "../createState";
 import type { StorageState } from "../tools";
 
-const temp = new Set<Controller>();
-
 const defaultCompare = () => false;
 
 /**
@@ -158,7 +156,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
           }
         };
 
-        const ControllerInstance = new Controller(subscribe, defaultCompare, createLifeCycle(), temp, InternalNameSpace.$$__persist__$$, onUpdate);
+        const ControllerInstance = new Controller(subscribe, defaultCompare, createLifeCycle(), InternalNameSpace.$$__persist__$$, onUpdate);
 
         ControllerInstance.run();
 
