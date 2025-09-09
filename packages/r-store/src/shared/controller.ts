@@ -8,6 +8,9 @@ import type { LifeCycle } from "./lifeCycle";
 
 let currentController: Controller | null = null;
 
+/**
+ * @public
+ */
 export function getCurrentController(): Controller | null {
   return currentController;
 }
@@ -59,6 +62,9 @@ const catchError = <T>(cb: () => T, instance: Controller) => {
   };
 };
 
+/**
+ * @public
+ */
 export class Controller<T = any> {
   readonly _listeners = new Set<() => void>();
 

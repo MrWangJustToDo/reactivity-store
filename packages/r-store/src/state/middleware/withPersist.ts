@@ -66,10 +66,32 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
         );
       }
 
+      const getMigrateState = (storage: Storage) => {
+        try {
+          if (options.migrateVersion) {
+            const migrateKey = persistKey + options.key + `_${options.migrateVersion}`;
+
+            const migrateStateString = storage.getItem(migrateKey) as string;
+
+            if (migrateStateString) {
+              const migrateState = JSON.parse(migrateStateString) as StorageState;
+
+              if (migrateState?.version === options.migrateVersion && migrateState.data) {
+                return options.migrateState(migrateState, () => storage.removeItem?.(migrateKey));
+              }
+            }
+          }
+
+          return null;
+        } catch {
+          void 0;
+        }
+      };
+
       if (!isServer && !hasSet) {
         let re = initialState;
 
-        const storageKey = persistKey + options.key;
+        const storageKey = persistKey + options.key + (options.version ? `_${options.version}` : "");
 
         let storage: Storage | null = null;
 
@@ -94,10 +116,20 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           const storageState = JSON.parse(storageStateString) as StorageState;
 
+          const migrateState = getMigrateState(storage);
+
+          if (__DEV__ && migrateState && storageState) {
+            console.warn(
+              `[reactivity-store/persist] found both migrate state and current version state, you may forget to remove the old version state from storage, please check it, current version: ${options.version}, migrate version: ${options.migrateVersion}`
+            );
+          }
+
           if (storageState?.version === (options.version || options.key) && storageState.data) {
             const cachedState = options?.parse?.(storageState.data) || JSON.parse(storageState.data);
 
             re = options?.merge?.(initialState, cachedState) || Object.assign(initialState, cachedState);
+          } else if (migrateState) {
+            re = options?.merge?.(initialState, migrateState) || Object.assign(initialState, migrateState);
           }
         } catch (e) {
           if (__DEV__) {

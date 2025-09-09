@@ -4,6 +4,9 @@ import { ReactiveEffect } from '@vue/reactivity';
 import type { ReactNode } from 'react';
 import type { UnwrapNestedRefs } from '@vue/reactivity';
 
+/**
+ * @public
+ */
 export declare class Controller<T = any> {
     readonly _getState: () => T;
     readonly _compare: (prev: T, next: T) => boolean;
@@ -11,7 +14,6 @@ export declare class Controller<T = any> {
     readonly _namespace?: string;
     readonly _onUpdate?: () => void;
     readonly _listeners: Set<() => void>;
-    readonly _list: Set<Controller>;
     _getStateSafe: () => T;
     _effect: ReactiveEffect<T>;
     _state: T;
@@ -29,7 +31,7 @@ export declare class Controller<T = any> {
     _devRunCount: number;
     _updateCount: number;
     _isActive: boolean;
-    constructor(_getState: () => T, _compare: (prev: T, next: T) => boolean, _lifeCycle: LifeCycle, _list: Set<Controller>, _namespace?: string, _onUpdate?: () => void);
+    constructor(_getState: () => T, _compare: (prev: T, next: T) => boolean, _lifeCycle: LifeCycle, _namespace?: string, _onUpdate?: () => void);
     notify: () => void;
     _scheduler: () => void;
     subscribe: (listener: () => void) => () => boolean;
@@ -276,6 +278,9 @@ export declare type Creator<T extends Record<string, unknown>> = () => T;
  */
 export declare const getBatch: () => (cb: () => void) => void;
 
+/**
+ * @public
+ */
 export declare function getCurrentController(): Controller | null;
 
 /**
@@ -356,6 +361,11 @@ export declare type StateWithMiddleware<T, P> = {
     ["$$__actions__$$"]: P;
     ["$$__namespace__$$"]: WithNamespaceProps<T>;
     ["$$__selectorOptions__$$"]: WithSelectorOptionsProps;
+};
+
+declare type StorageState = {
+    version: string;
+    data: any;
 };
 
 /**
@@ -568,6 +578,8 @@ export declare type WithPersistProps<T> = {
     stringify?: (s: T) => string;
     parse?: (s: string) => Partial<T>;
     merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
+    migrateVersion?: string;
+    migrateState?: (prevState: StorageState | null, onDeleteFromStorage: () => void) => Partial<T> | null;
     devLog?: boolean;
     shallow?: boolean;
     listener?: (state: T) => any;

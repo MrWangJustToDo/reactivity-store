@@ -46,6 +46,10 @@ export type WithPersistProps<T> = {
   stringify?: (s: T) => string;
   parse?: (s: string) => Partial<T>;
   merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
+  // version to migrate from
+  migrateVersion?: string;
+  // function to get needed migrate state, you should delete the old state from storage in this function by yourself
+  migrateState?: (prevState: StorageState | null, onDeleteFromStorage: () => void) => Partial<T> | null;
   devLog?: boolean;
   // shallow subscribe the state change
   shallow?: boolean;
