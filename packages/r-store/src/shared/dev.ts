@@ -6,7 +6,7 @@ import { InternalNameSpace } from "./env";
 import { createLifeCycle } from "./lifeCycle";
 import { traverse, traverseShallow } from "./tools";
 
-const namespaceMap: Record<string, unknown> = {};
+const namespaceMap: Record<string, unknown> = Object.create(null);
 
 const defaultCompare = () => false;
 
@@ -32,9 +32,9 @@ export const checkHasKey = (key: string) => {
 };
 
 // cache state which has connect to devtool
-const devToolMap: Record<string, any> = {};
+const devToolMap: Record<string, any> = Object.create(null);
 
-const devController: Record<string, Controller> = {};
+const devController: Record<string, Controller> = Object.create(null);
 
 const globalName = "__reactivity-store-redux-devtools__";
 
@@ -45,20 +45,33 @@ let globalDevTools = null;
 /**
  * @internal
  */
-const getDevToolInstance = () => globalDevTools || window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
-
-/**
- * @internal
- */
 const sendToDevTools = (action: Action) => {
   const { getUpdatedState, ...rest } = action;
   try {
     const state = getUpdatedState();
 
-    getDevToolInstance().send(rest, state);
+    globalDevTools?.send?.(rest, state);
   } catch (e) {
     console.log(e);
   }
+};
+
+const initDevTools = () => {
+  const devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
+
+  devTools.subscribe((message) => {
+    switch (message.type) {
+      case "DISPATCH":
+      case "ACTION":
+        console.warn(`[reactivity-store] currently don't support time-travel or dispatch action in devtools`);
+
+        devTools.init({ ...devToolMap });
+
+        break;
+    }
+  });
+
+  return devTools;
 };
 
 /**
@@ -76,7 +89,7 @@ export const connectDevTool = (
 ) => {
   if (window && window.__REDUX_DEVTOOLS_EXTENSION__ && typeof window.__REDUX_DEVTOOLS_EXTENSION__.connect === "function") {
     try {
-      const devTools = globalDevTools || window.__REDUX_DEVTOOLS_EXTENSION__.connect({ name: globalName });
+      const devTools = globalDevTools || initDevTools();
 
       globalDevTools = devTools;
 
