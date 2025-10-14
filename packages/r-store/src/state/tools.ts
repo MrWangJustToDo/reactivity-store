@@ -50,6 +50,7 @@ export type WithPersistProps<T> = {
   migrateVersion?: string;
   // function to get needed migrate state, you should delete the old state from storage in this function by yourself
   migrateState?: (prevState: StorageState | null, onDeleteFromStorage: () => void) => Partial<T> | null;
+  // log for cache need update
   devLog?: boolean;
   // shallow subscribe the state change
   shallow?: boolean;
