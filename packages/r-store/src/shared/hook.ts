@@ -95,6 +95,10 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   namespace = namespace || InternalNameSpace.$$__ignore__$$;
 
+  let name = namespace !== InternalNameSpace.$$__ignore__$$ ? namespace : "RStoreAnonymous";
+
+  name = name.startsWith("use") ? name : `use${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+
   // tool function to generate `useSelector` hook
   const generateUseHook = <P>(type: "default" | "deep" | "deep-stable" | "shallow" | "shallow-stable") => {
     const currentIsDeep = type === "default" ? deepSelector : type === "deep" || type === "deep-stable";
@@ -208,6 +212,12 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     return defaultHook(selector, compare);
   }
 
+  const obj = {
+    [name]: function (...args) {
+      return useSelector.call(this, ...args);
+    },
+  };
+
   const typedUseSelector = useSelector as typeof useSelector & {
     /**
      * @deprecated
@@ -291,5 +301,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     active = false;
   };
 
-  return typedUseSelector;
+  // make happy for react dev tool
+  return obj[name] as typeof typedUseSelector;
 };
