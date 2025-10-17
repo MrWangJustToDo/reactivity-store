@@ -214,7 +214,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   const obj = {
     [name]: function (...args) {
-      return useSelector.call(this, ...args);
+      return useSelector.call(null, ...args);
     },
   };
 
@@ -301,6 +301,10 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     active = false;
   };
 
-  // make happy for react dev tool
-  return obj[name] as typeof typedUseSelector;
+  if (__DEV__) {
+    // make happy for react dev tool
+    return obj[name] as typeof typedUseSelector;
+  } else {
+    return typedUseSelector;
+  }
 };
