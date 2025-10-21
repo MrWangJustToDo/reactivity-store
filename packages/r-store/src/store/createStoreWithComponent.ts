@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 
+import { useReactiveState } from "../hook/useReactiveState";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasSameField } from "../shared/tools";
 
@@ -14,6 +15,7 @@ import type { ReactNode, ReactElement } from "react";
  */
 export type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
   setup: Creator<T>;
+  deepWatchProps?: boolean;
   render?: (props: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
 };
 
@@ -40,7 +42,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
  * not recommend to use this function, use `createStore` instead
  */
 export function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>) {
-  const { setup, render } = props;
+  const { setup, render, deepWatchProps } = props;
 
   const ComponentWithState = (props: P & { children?: CreateStoreWithComponentProps<P, T>["render"] }) => {
     const useSelector = useMemo(() => {
@@ -110,6 +112,15 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
     }, [lifeCycleInstance]);
 
     useEffect(() => () => useSelector.scope?.stop(), [useSelector]);
+
+    if (deepWatchProps) {
+      const [, setState] = useReactiveState(() => ({ p: props }));
+      useEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        setState((last) => (last.p = props));
+      }, [props]);
+    }
 
     const renderedChildren = targetRender({ ...last, ...state } as P & DeepReadonly<UnwrapNestedRefs<T>>) || null;
 

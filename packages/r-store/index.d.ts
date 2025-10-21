@@ -263,6 +263,7 @@ export declare function createStoreWithComponent<P extends Record<string, unknow
  */
 export declare type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
     setup: Creator<T>;
+    deepWatchProps?: boolean;
     render?: (props: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
 };
 

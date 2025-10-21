@@ -303,7 +303,20 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
 
   if (__DEV__) {
     // make happy for react dev tool
-    return obj[name] as typeof typedUseSelector;
+    const wrapperUseSelector = obj[name] as typeof typedUseSelector;
+    wrapperUseSelector.getState = typedUseSelector.getState;
+    wrapperUseSelector.getActions = typedUseSelector.getActions;
+    wrapperUseSelector.getIsActive = typedUseSelector.getIsActive;
+    wrapperUseSelector.subscribe = typedUseSelector.subscribe;
+    wrapperUseSelector.getLifeCycle = typedUseSelector.getLifeCycle;
+    wrapperUseSelector.getReactiveState = typedUseSelector.getReactiveState;
+    wrapperUseSelector.getReadonlyState = typedUseSelector.getReadonlyState;
+    wrapperUseSelector.useDeepSelector = typedUseSelector.useDeepSelector;
+    wrapperUseSelector.useDeepStableSelector = typedUseSelector.useDeepStableSelector;
+    wrapperUseSelector.useShallowSelector = typedUseSelector.useShallowSelector;
+    wrapperUseSelector.useShallowStableSelector = typedUseSelector.useShallowStableSelector;
+    wrapperUseSelector.clear = typedUseSelector.clear;
+    return wrapperUseSelector;
   } else {
     return typedUseSelector;
   }
