@@ -171,6 +171,8 @@ export function createState<T extends Record<string, unknown>, P extends Record<
     withActions: WithActionsProps<T, P>["generateActions"];
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
+    // TODO think about this later
+    // withReactive?: (state: Reactive<T>) => void;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
   }
@@ -201,6 +203,7 @@ export function createState<T extends Record<string, unknown>, P extends Record<
     withActions: WithActionsProps<T, P>["generateActions"];
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
+    // withReactive?: (state: Reactive<T>) => void;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
   }
@@ -231,6 +234,7 @@ export function createState<T extends Record<string, unknown>, P extends Record<
   options: {
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
+    // withReactive?: (state: Reactive<T>) => void;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
   }
@@ -260,6 +264,7 @@ export function createState<T extends Record<string, unknown>>(
   options: {
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
+    // withReactive?: (state: Reactive<T>) => void;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
   }
@@ -291,6 +296,7 @@ export function createState<T extends Record<string, unknown>, P extends Record<
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
+    // withReactive?: (state: Reactive<T>) => void;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
   }

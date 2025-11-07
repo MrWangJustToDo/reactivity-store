@@ -1,17 +1,9 @@
-const defaultBatch = (cb: () => void) => cb();
-
-/**
- * @internal
- */
-const batchObject: { current: (cb: () => void) => void } = { current: defaultBatch };
-
 /**
  * @public
  * @deprecated
  * no need to use this function
  */
-export const setBatch = (batch: (cb: () => void) => void) => {
-  batchObject.current = batch;
+export const setBatch = (_batch: (cb: () => void) => void) => {
 };
 
 /**
@@ -20,7 +12,6 @@ export const setBatch = (batch: (cb: () => void) => void) => {
  * no need to use this function
  */
 export const getBatch = () => {
-  return batchObject.current;
 };
 
 /**
@@ -29,7 +20,6 @@ export const getBatch = () => {
  * no need to use this function
  */
 export const resetBatch = () => {
-  batchObject.current = defaultBatch;
 };
 
 /**
@@ -38,6 +28,6 @@ export const resetBatch = () => {
  * no need to use this function
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export const wrapperBatchUpdate = <T extends Function>(cb: T): T => {
-  return ((...args: any[]) => batchObject.current(() => (args.length ? cb.call(null, ...args) : cb.call(null)))) as unknown as T;
+export const wrapperBatchUpdate = <T extends Function>(_cb: T): T => {
+  return _cb;
 };

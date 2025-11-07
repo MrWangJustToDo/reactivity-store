@@ -61,7 +61,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
       if (__DEV__ && checkHasReactive(initialState)) {
         console.error(
-          `[reactivity-store/persist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object %o, you may use 'reactiveApi' in the 'setup' function`,
+          `[reactivity-store/withPersist] the 'setup' which from 'withPersist' should return a plain object, but current is a reactive object %o, you may use 'reactiveApi' in the 'setup' function`,
           initialState
         );
       }
@@ -100,7 +100,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           if (!storage) {
             if (__DEV__) {
-              console.error(`[reactivity-store/persist] can't find storage, please check your environment`);
+              console.error(`[reactivity-store/withPersist] can't find storage, please check your environment`);
             }
 
             return {
@@ -120,7 +120,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
           if (__DEV__ && migrateState && storageState) {
             console.warn(
-              `[reactivity-store/persist] found both migrate state and current version state, you may forget to remove the old version state from storage, please check it, current version: ${options.version}, migrate version: ${options.migrateVersion}`
+              `[reactivity-store/withPersist] found both migrate state and current version state, you may forget to remove the old version state from storage, please check it, current version: ${options.version}, migrate version: ${options.migrateVersion}`
             );
           }
 
@@ -133,7 +133,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
           }
         } catch (e) {
           if (__DEV__) {
-            console.error(`[reactivity-store/persist] middleware failed, error: ${e.message}`);
+            console.error(`[reactivity-store/withPersist] middleware failed, error: ${e.message}`);
           }
 
           try {
@@ -152,13 +152,13 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             const cache = { data: stringifyState, version: options.version || options.key };
 
             if (__DEV__ && options.devLog) {
-              console.log(`[reactivity-store/persist] state changed, try to cache newState: %o`, cache);
+              console.log(`[reactivity-store/withPersist] state changed, try to cache newState: %o`, cache);
             }
 
             storage.setItem?.(storageKey, JSON.stringify(cache));
           } catch (e) {
             if (__DEV__) {
-              console.error(`[reactivity-store/persist] cache newState error, error: %o`, e);
+              console.error(`[reactivity-store/withPersist] cache newState error, error: %o`, e);
             }
 
             try {
@@ -177,7 +177,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
           }
 
           if (__DEV__ && isPromise(_re)) {
-            console.error(`[reactivity-store/persist] listener should return a plain object, but current is a promise`);
+            console.error(`[reactivity-store/withPersist] listener should return a plain object, but current is a promise`);
             return;
           }
 

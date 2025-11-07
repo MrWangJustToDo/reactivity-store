@@ -277,7 +277,7 @@ export declare type Creator<T extends Record<string, unknown>> = () => T;
  * @deprecated
  * no need to use this function
  */
-export declare const getBatch: () => (cb: () => void) => void;
+export declare const getBatch: () => void;
 
 /**
  * @public
@@ -346,7 +346,7 @@ export declare const resetBatch: () => void;
  * @deprecated
  * no need to use this function
  */
-export declare const setBatch: (batch: (cb: () => void) => void) => void;
+export declare const setBatch: (_batch: (cb: () => void) => void) => void;
 
 /**
  * @public
@@ -610,7 +610,7 @@ declare type WithSelectorOptionsProps = {
  * @deprecated
  * no need to use this function
  */
-export declare const wrapperBatchUpdate: <T extends Function>(cb: T) => T;
+export declare const wrapperBatchUpdate: <T extends Function>(_cb: T) => T;
 
 
 export * from "@vue/reactivity";

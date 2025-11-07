@@ -7,11 +7,12 @@ import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasFunction, checkHasReactive, checkHasSameField } from "../shared/tools";
 
-import { withActions, withSelectorOptions, withNamespace, withPersist } from "./middleware";
+import { withActions, withSelectorOptions, withNamespace, withPersist, withReactive } from "./middleware";
 import { getFinalActions, getFinalSelectorOptions, getFinalNamespace, getFinalState } from "./tools";
 
 import type { Setup, WithNamespaceProps, WithPersistProps } from "./createState";
 import type { MaybeStateWithMiddleware, WithActionsProps, UnWrapMiddleware } from "./tools";
+import type { Reactive} from "@vue/reactivity";
 
 /**
  * @internal
@@ -25,6 +26,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
+    withReactive?: (state: Reactive<T>) => void;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
   }
@@ -47,6 +49,10 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (typeof option?.withDeepSelector !== "undefined" || typeof option?.withStableSelector !== "undefined") {
     creator = withSelectorOptions(creator, { deepSelector: option.withDeepSelector, stableSelector: option.withStableSelector });
+  }
+
+  if (option?.withReactive) {
+    creator = withReactive(creator, option.withReactive);
   }
 
   const lifeCycle = createLifeCycle();

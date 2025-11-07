@@ -16,10 +16,8 @@ export type LifeCycle = {
 
   hasHookInstall: boolean;
 
-  // TODO!
   canUpdateComponent: boolean;
 
-  // TODO!
   syncUpdateComponent: boolean;
 };
 
