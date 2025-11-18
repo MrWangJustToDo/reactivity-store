@@ -6,13 +6,14 @@ import { isServer } from "../shared/env";
 import { createHook } from "../shared/hook";
 import { createLifeCycle } from "../shared/lifeCycle";
 import { checkHasFunction, checkHasReactive, checkHasSameField } from "../shared/tools";
+import { setGlobalStoreLifeCycle } from "../store/_internal";
 
-import { withActions, withSelectorOptions, withNamespace, withPersist, withReactive } from "./middleware";
+import { withActions, withSelectorOptions, withNamespace, withPersist, withReactive, withLifeCycle } from "./middleware";
 import { getFinalActions, getFinalSelectorOptions, getFinalNamespace, getFinalState } from "./tools";
 
 import type { Setup, WithNamespaceProps, WithPersistProps } from "./createState";
 import type { MaybeStateWithMiddleware, WithActionsProps, UnWrapMiddleware } from "./tools";
-import type { Reactive} from "@vue/reactivity";
+import type { Reactive } from "@vue/reactivity";
 
 /**
  * @internal
@@ -27,6 +28,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     withNamespace?: string | WithNamespaceProps<T>;
     withActions?: WithActionsProps<UnWrapMiddleware<T>, P>["generateActions"];
     withReactive?: (state: Reactive<T>) => void;
+    withLifeCycle?: (state: Reactive<T>) => void;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
   }
@@ -55,9 +57,17 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
     creator = withReactive(creator, option.withReactive);
   }
 
+  if (option?.withLifeCycle) {
+    creator = withLifeCycle(creator, option.withLifeCycle);
+  }
+
   const lifeCycle = createLifeCycle();
 
+  setGlobalStoreLifeCycle(lifeCycle);
+
   const state = creator();
+
+  setGlobalStoreLifeCycle(null);
 
   if (__DEV__ && !isObject(state)) {
     console.error(

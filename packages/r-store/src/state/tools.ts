@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { toRaw } from "@vue/reactivity";
 
+import { checkMiddlewareValid } from "../shared/tools";
+
 import type { Setup } from "./createState";
 
 /**
@@ -17,10 +19,12 @@ export type StorageState = {
  * @public
  */
 export type StateWithMiddleware<T, P> = {
-  ["$$__state__$$"]: T;
+  // field to check duplicate middleware
   ["$$__middleware__$$"]: Record<string, unknown>;
+  ["$$__state__$$"]: T;
   ["$$__actions__$$"]: P;
   ["$$__namespace__$$"]: WithNamespaceProps<T>;
+  ["$$__lifeCycle__$$"]: Function;
   ["$$__selectorOptions__$$"]: WithSelectorOptionsProps;
 };
 
@@ -148,6 +152,17 @@ export const getFinalSelectorOptions = <T extends Record<string, unknown>, P ext
   return {} as WithSelectorOptionsProps;
 };
 
+/**
+ * @internal
+ */
+export const getFinalLifeCycle = <T extends Record<string, unknown>, P extends Record<string, Function>>(
+  state: MaybeStateWithMiddleware<T, P>
+): Function | null => {
+  if (state["$$__state__$$"]) return (state["$$__lifeCycle__$$"] || null) as Function | null;
+
+  return null;
+};
+
 // function for help to build external middleware
 
 /**
@@ -165,10 +180,16 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
 
     const namespace = getFinalNamespace(state);
 
+    const lifeCycle = getFinalLifeCycle(state);
+
     const selectorOptions = getFinalSelectorOptions(state);
 
     if (__DEV__ && middleware[options.name]) {
       console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is a unexpected usage`);
+    }
+
+    if (__DEV__ && !checkMiddlewareValid(state)) {
+      console.warn(`[reactivity-store/middleware] the middleware:${options.name} you created is invalid, please check your code for '%o'`, state);
     }
 
     middleware[options.name] = true;
@@ -179,6 +200,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
       // field to check duplicate middleware
       ["$$__middleware__$$"]: middleware,
       ["$$__namespace__$$"]: namespace,
+      ["$$__lifeCycle__$$"]: lifeCycle,
       ["$$__selectorOptions__$$"]: selectorOptions,
     } as T;
   };

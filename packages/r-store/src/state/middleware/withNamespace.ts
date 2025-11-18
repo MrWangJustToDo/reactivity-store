@@ -15,6 +15,7 @@ import {
   getFinalActions,
   getFinalNamespace,
   getFinalSelectorOptions,
+  getFinalLifeCycle,
 } from "../tools";
 
 import type { Setup } from "../createState";
@@ -47,6 +48,8 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
       const middleware = getFinalMiddleware(_initialState);
 
       const actions = getFinalActions(_initialState);
+
+      const lifeCycle = getFinalLifeCycle(_initialState);
 
       const namespace = getFinalNamespace(_initialState);
 
@@ -81,6 +84,7 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         ["$$__state__$$"]: toRaw(initialState),
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
+        ['$$__lifeCycle__$$']: lifeCycle,
         ["$$__namespace__$$"]: { ...namespace, ...options },
         ["$$__selectorOptions__$$"]: selectorOptions,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P>;

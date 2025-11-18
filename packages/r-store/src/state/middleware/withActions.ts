@@ -8,6 +8,7 @@ import {
   getFinalMiddleware,
   getFinalNamespace,
   getFinalState,
+  getFinalLifeCycle,
 } from "../tools";
 
 import type { Setup } from "../createState";
@@ -47,6 +48,8 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
       const actions = getFinalActions(_initialState);
 
       const namespace = getFinalNamespace(_initialState);
+
+      const lifeCycle = getFinalLifeCycle(_initialState);
 
       const selectorOptions = getFinalSelectorOptions(_initialState);
 
@@ -89,6 +92,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         ["$$__actions__$$"]: { ...actions, ...batchActions },
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,
+        ['$$__lifeCycle__$$']: lifeCycle,
         ["$$__selectorOptions__$$"]: selectorOptions,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
     },

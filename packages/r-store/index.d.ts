@@ -357,10 +357,11 @@ export declare type Setup<T> = () => T;
  * @public
  */
 export declare type StateWithMiddleware<T, P> = {
-    ["$$__state__$$"]: T;
     ["$$__middleware__$$"]: Record<string, unknown>;
+    ["$$__state__$$"]: T;
     ["$$__actions__$$"]: P;
     ["$$__namespace__$$"]: WithNamespaceProps<T>;
+    ["$$__lifeCycle__$$"]: Function;
     ["$$__selectorOptions__$$"]: WithSelectorOptionsProps;
 };
 

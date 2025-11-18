@@ -3,6 +3,8 @@ import { isProxy, isReactive, isRef, ReactiveFlags } from "@vue/reactivity";
 import { isArray, isFunction, isMap, isObject, isPlainObject, isSet } from "@vue/shared";
 import { isValidElement } from "react";
 
+import type { StateWithMiddleware } from "../state/tools";
+
 function _traverse(value: unknown, seen?: Set<unknown>) {
   if (!isObject(value) || (value as any)[ReactiveFlags.SKIP] || isValidElement(value)) {
     return value;
@@ -160,4 +162,17 @@ export function checkHasMiddleware(value: unknown) {
   if (value && value?.["$$__state__$$"] && value?.["$$__middleware__$$"]) {
     return true;
   }
+}
+
+const allMiddlewareKeys = ["$$__state__$$", "$$__actions__$$", "$$__namespace__$$", "$$__lifeCycle__$$", "$$__selectorOptions__$$"];
+
+/**
+ * @internal
+ */
+export function checkMiddlewareValid(value: StateWithMiddleware<any, any>) {
+  if (allMiddlewareKeys.every((key) => key in value)) {
+    return true;
+  }
+
+  return false;
 }

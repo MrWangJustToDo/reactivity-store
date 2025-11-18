@@ -9,7 +9,7 @@ import type { Reactive } from "@vue/reactivity";
 /**
  * @public
  */
-export function withReactive<T extends Record<string, unknown>, P extends Record<string, Function>>(
+export function withLifeCycle<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>,
   options: (state: Reactive<T>) => void
 ): Setup<StateWithMiddleware<T, P>>;
@@ -17,11 +17,11 @@ export function withReactive<T extends Record<string, unknown>, P extends Record
  * @public
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export function withReactive<T extends Record<string, unknown>>(setup: Setup<T>, options: (state: Reactive<T>) => void): Setup<StateWithMiddleware<T, {}>>;
+export function withLifeCycle<T extends Record<string, unknown>>(setup: Setup<T>, options: (state: Reactive<T>) => void): Setup<StateWithMiddleware<T, {}>>;
 /**
  * @public
  */
-export function withReactive<T extends Record<string, unknown>, P extends Record<string, Function>>(
+export function withLifeCycle<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>,
   options: (state: Reactive<T>) => void
 ): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P>> {
@@ -35,7 +35,7 @@ export function withReactive<T extends Record<string, unknown>, P extends Record
 
       const actions = getFinalActions(_initialState);
 
-      const lifeCycle = getFinalLifeCycle(_initialState);
+      let lifeCycle = getFinalLifeCycle(_initialState);
 
       const namespace = getFinalNamespace(_initialState);
 
@@ -43,12 +43,13 @@ export function withReactive<T extends Record<string, unknown>, P extends Record
 
       const reactiveState = reactive(initialState);
 
-      try {
-        options(reactiveState);
-      } catch (error) {
-        if (__DEV__) {
-          console.error(`[reactivity-store/withReactive] something wrong when execute the 'options' callback: %o`, error);
+      if (lifeCycle) {
+        lifeCycle = () => {
+          lifeCycle(reactiveState);
+          options(reactiveState);
         }
+      } else {
+        lifeCycle = () => options(reactiveState);
       }
 
       return {

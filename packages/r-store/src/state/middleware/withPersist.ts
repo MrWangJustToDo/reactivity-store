@@ -15,6 +15,7 @@ import {
   getFinalNamespace,
   getFinalState,
   persistKey,
+  getFinalLifeCycle,
 } from "../tools";
 
 import type { MaybeStateWithMiddleware, Setup, StateWithMiddleware, UnWrapMiddleware, WithPersistProps } from "../createState";
@@ -50,6 +51,8 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
       const middleware = getFinalMiddleware(_initialState);
 
       const auctions = getFinalActions(_initialState);
+
+      const lifeCycle = getFinalLifeCycle(_initialState);
 
       const namespace = getFinalNamespace(_initialState);
 
@@ -107,6 +110,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
               ["$$__state__$$"]: toRaw(initialState),
               ["$$__middleware__$$"]: middleware,
               ["$$__actions__$$"]: auctions,
+              ["$$__lifeCycle__$$"]: lifeCycle,
               ["$$__namespace__$$"]: namespace,
               ["$$__selectorOptions__$$"]: selectorOptions,
             } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
@@ -200,6 +204,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
           ["$$__state__$$"]: toRaw(re),
           ["$$__middleware__$$"]: middleware,
           ["$$__actions__$$"]: auctions,
+          ["$$__lifeCycle__$$"]: lifeCycle,
           ["$$__namespace__$$"]: namespace,
           ["$$__selectorOptions__$$"]: selectorOptions,
         } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
@@ -208,6 +213,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
           ["$$__state__$$"]: toRaw(initialState),
           ["$$__middleware__$$"]: middleware,
           ["$$__actions__$$"]: auctions,
+          ["$$__lifeCycle__$$"]: lifeCycle,
           ["$$__namespace__$$"]: namespace,
           ["$$__selectorOptions__$$"]: selectorOptions,
         } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
