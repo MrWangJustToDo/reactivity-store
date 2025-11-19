@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { toRaw } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // SEE https://github.com/facebook/react/pull/25231
 import { useSyncExternalStore } from "use-sync-external-store/shim/index.js";
 
@@ -196,6 +196,37 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     return useReactiveHookWithSelector;
   };
 
+  const useLifeCycle = () => {
+    const [isMount, setIsMount] = useState(false);
+
+    useEffect(() => {
+      if (lifeCycle.hasHookInstall) {
+        if (!isMount) {
+          lifeCycle.onBeforeMount.forEach((f) => f());
+          lifeCycle.onMounted.forEach((f) => f());
+          setIsMount(true);
+        } else {
+          const lastSync = lifeCycle.syncUpdateComponent;
+          lifeCycle.syncUpdateComponent = true;
+          lifeCycle.canUpdateComponent = false;
+          lifeCycle.onBeforeUpdate.forEach((f) => f());
+          lifeCycle.canUpdateComponent = true;
+          lifeCycle.syncUpdateComponent = lastSync;
+          lifeCycle.onUpdated.forEach((f) => f());
+        }
+      }
+    });
+
+    useEffect(() => {
+      return () => {
+        if (lifeCycle.hasHookInstall) {
+          lifeCycle.onBeforeUnmount.forEach((f) => f());
+          lifeCycle.onUnmounted.forEach((f) => f());
+        }
+      };
+    }, [lifeCycle]);
+  };
+
   const defaultHook = generateUseHook("default");
 
   const deepHook = generateUseHook("deep");
@@ -230,6 +261,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+    useLifeCycle: typeof useLifeCycle;
     useStableSelector: typeof useSelector;
     useDeepSelector: typeof useSelector;
     useDeepStableSelector: typeof useSelector;
@@ -253,6 +285,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.getReactiveState = () => reactiveState;
 
   typedUseSelector.getReadonlyState = () => readonlyState;
+
+  typedUseSelector.useLifeCycle = useLifeCycle;
 
   typedUseSelector.useDeepSelector = deepHook as typeof useSelector;
 
@@ -311,6 +345,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     wrapperUseSelector.getLifeCycle = typedUseSelector.getLifeCycle;
     wrapperUseSelector.getReactiveState = typedUseSelector.getReactiveState;
     wrapperUseSelector.getReadonlyState = typedUseSelector.getReadonlyState;
+    wrapperUseSelector.useLifeCycle = typedUseSelector.useLifeCycle;
     wrapperUseSelector.useDeepSelector = typedUseSelector.useDeepSelector;
     wrapperUseSelector.useDeepStableSelector = typedUseSelector.useDeepStableSelector;
     wrapperUseSelector.useShallowSelector = typedUseSelector.useShallowSelector;
