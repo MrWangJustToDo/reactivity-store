@@ -1,322 +1,396 @@
-# How to create a State
+# createState
 
-## Description
+::: tip 🔵 React Approach
+This API is recommended for **React developers** who want simpler state management without learning Vue APIs. If you're familiar with Vue and want fine-grained reactivity, see [createStore](/createStore) instead.
+:::
 
-`RStore` also provide a `createState` function, this function have some difference for `createStore`
+## Overview
 
-1. `createStore` need a `creator` function as params, you can use `reactiveApi` in the `creator` function what export from `RStore`. `createState` also need a `setup` function as params, the different is `setup` function only need return a plain object not a reactive, and we can define the change function in the middleware.
+`createState` provides a **React-friendly way** to manage state with:
+- Plain JavaScript objects (no `ref()` or `reactive()`)
+- Actions for mutations
+- Built-in middleware (persist, DevTools, etc.)
 
-2. `createState` support middleware, currently `createState` support two middleware: 1. `withPersist` middleware support automatic sync state to the `localStorage` or `getStorage` provider in the `withPersist` options params. 2. `withActions` middleware support you define action for current `state`, and also can be get the action from `selector`.
+**Signature:**
+```ts
+function createState<T>(
+  setup: () => T,
+  options?: StateOptions<T>
+): UseState<T>
+```
 
-## v0.1.9 Update
+---
 
-the state which in the `selector` function is a readonly state, so the only way to change state is in the `action` middleware function.
+## Basic Usage
 
-## v0.2.4 update
+### Simple Counter
 
-new middleware `withDeepSelector` for `createState` support config the selector behavior
-
-## v0.2.6 update
-
-new middleware `withNamespace` for `createState` support `reduxDevTools`
-
-## v0.3.5 update
-
-middleware `withDeepSelector` change to `withSelectorOptions`, also add `stableSelector` config for this middleware
-
-## All build in middleware for `createState`
-
-1. `withPersist(setup, options)` make the state auto sync to storage when some data change
-2. `withActions(setup, options)` add actions for current state, then you can get the action in the `selector` function
-3. `withNamespace(setup, options)` make the state and change action tracked by `reduxDevTools`, you need install `redux-devtools-extension` on your browser first
-4. `withDeepSelector(setup, options)` make the selector support deep selector, when the deep state change, the selector will also be trigger, the default value for the `withDeepSelector` is `true`
-5. `withComputed(setup, options)` TODO (maybe won't)
-
-## Simple Code Example
-
-```tsx twoslash
-import * as React from "react";
+```tsx
 import { createState } from "reactivity-store";
 
-// a simple `createState` store, there are not any change function, so the state will never change
-const useCount = createState(() => {
-  const data = { count: 0 };
+const useCounter = createState(
+  () => ({ count: 0 }),
+  {
+    withActions: (state) => ({
+      increment: () => state.count++,
+      decrement: () => state.count--,
+      reset: () => state.count = 0
+    })
+  }
+);
 
-  return { data };
-});
-
-const App = () => {
-  const data = useCount((state) => state.data);
+// In component
+function Counter() {
+  const { count, increment, decrement } = useCounter();
 
   return (
     <div>
-      <p>React Reactive Count</p>
-      <p>{data.count}</p>
-      {/* there are also have a escape hatch to change the state  */}
-      <button onClick={() => useCount.getReactiveState().data.count++}>Add</button>
+      <p>Count: {count}</p>
+      <button onClick={increment}>+1</button>
+      <button onClick={decrement}>-1</button>
     </div>
   );
-};
+}
 ```
 
-## Online Example
+---
+
+## Built-in Middleware
+
+### 💾 Persistent State (`withPersist`)
+
+Automatically save state to localStorage:
+
+```tsx
+import { createState } from "reactivity-store";
+
+const useSettings = createState(
+  () => ({
+    theme: "light",
+    language: "en"
+  }),
+  {
+    // Simple: just provide a key
+    withPersist: "app-settings",
+
+    withActions: (state) => ({
+      setTheme: (theme: string) => state.theme = theme,
+      setLanguage: (lang: string) => state.language = lang
+    })
+  }
+);
+```
+
+**Advanced persist options:**
+
+```tsx
+const useSettings = createState(
+  () => ({ theme: "light" }),
+  {
+    withPersist: {
+      key: "settings",
+      getStorage: () => sessionStorage,  // Use sessionStorage
+      stringify: (state) => JSON.stringify(state),
+      parse: (str) => JSON.parse(str),
+      merge: (fromCreator, fromStorage) => ({ ...fromCreator, ...fromStorage })
+    }
+  }
+);
+```
+
+### 🎬 Actions (`withActions`)
+
+Define how to mutate state:
+
+```tsx
+const useTodos = createState(
+  () => ({
+    todos: [],
+    filter: "all"
+  }),
+  {
+    withActions: (state) => ({
+      addTodo: (text: string) => {
+        state.todos.push({
+          id: Date.now(),
+          text,
+          done: false
+        });
+      },
+
+      toggleTodo: (id: number) => {
+        const todo = state.todos.find(t => t.id === id);
+        if (todo) todo.done = !todo.done;
+      },
+
+      removeTodo: (id: number) => {
+        state.todos = state.todos.filter(t => t.id !== id);
+      },
+
+      setFilter: (filter: string) => {
+        state.filter = filter;
+      }
+    })
+  }
+);
+
+// In component
+const { todos, addTodo, toggleTodo } = useTodos();
+```
+
+### 🛠️ Redux DevTools (`withNamespace`)
+
+Debug with Redux DevTools:
+
+```tsx
+const useCounter = createState(
+  () => ({ count: 0 }),
+  {
+    withNamespace: "Counter",  // Shows up in DevTools
+
+    withActions: (state) => ({
+      increment: () => state.count++  // Tracked in DevTools
+    })
+  }
+);
+```
+
+### ⚡ Performance Options
+
+Control how deeply state changes are tracked:
+
+```tsx
+const useStore = createState(
+  () => ({ nested: { count: 0 } }),
+  {
+    // Track nested property changes (default: true)
+    withDeepSelector: true,
+
+    // Stable selector for performance (default: false)
+    withStableSelector: false,
+
+    withActions: (state) => ({
+      increment: () => state.nested.count++
+    })
+  }
+);
+```
+
+**Deep Selector Explained:**
+
+::: code-group
+
+```tsx [withDeepSelector: true]
+// Component updates when nested.count changes
+const { nested } = useStore(state => ({
+  nested: state.nested
+}));
+
+// nested.count++ triggers re-render ✅
+```
+
+```tsx [withDeepSelector: false]
+// Component ONLY updates when nested object ref changes
+const { nested } = useStore(state => ({
+  nested: state.nested
+}));
+
+// nested.count++ does NOT trigger re-render ❌
+// state.nested = {...} triggers re-render ✅
+```
+
+:::
+
+---
+
+## Combining Middleware
+
+You can use multiple middleware together:
+
+::: code-group
+
+```tsx [Options API (Recommended)]
+const useSettings = createState(
+  () => ({ theme: "light", fontSize: 16 }),
+  {
+    withPersist: "settings",
+    withNamespace: "Settings",
+    withActions: (state) => ({
+      setTheme: (theme) => state.theme = theme,
+      increaseFontSize: () => state.fontSize++
+    })
+  }
+);
+```
+
+```tsx [Composition API]
+import { withActions, withPersist, withNamespace } from "reactivity-store";
+
+const useSettings = createState(
+  withActions(
+    withPersist(
+      () => ({ theme: "light", fontSize: 16 }),
+      { key: "settings" }
+    ),
+    {
+      generateActions: (state) => ({
+        setTheme: (theme) => state.theme = theme,
+        increaseFontSize: () => state.fontSize++
+      })
+    }
+  ),
+  { withNamespace: "Settings" }
+);
+```
+
+:::
+
+**Recommendation:** Use the Options API for better readability!
+
+---
+
+## Comparison with Other Solutions
+
+::: code-group
+
+```tsx [RStore (createState)]
+import { createState } from "reactivity-store";
+
+const useCounter = createState(
+  () => ({ count: 0 }),
+  {
+    withActions: (state) => ({
+      increment: () => state.count++
+    })
+  }
+);
+
+// In component
+const { count, increment } = useCounter();
+```
+
+```tsx [createStore]
+import { createStore, ref } from "reactivity-store";
+
+const useCounter = createStore(() => {
+  const count = ref(0);
+  const increment = () => count.value++;
+  return { count, increment };
+});
+
+// In component
+const { count, increment } = useCounter();
+```
+
+```tsx [Zustand]
+import { create } from "zustand";
+
+const useCounter = create((set) => ({
+  count: 0,
+  increment: () => set(state => ({
+    count: state.count + 1
+  }))
+}));
+
+// In component
+const { count, increment } = useCounter();
+```
+
+:::
+
+**Key Differences:**
+- **RStore createState**: Direct mutation in actions, built-in middleware
+- **RStore createStore**: Vue APIs (`ref`, `reactive`, `computed`)
+- **Zustand**: Immutable updates with `set` function
+
+---
+
+## Using Selectors
+
+Pick only the state you need:
+
+```tsx
+// Get everything
+const { count, increment } = useCounter();
+
+// Pick specific fields
+const count = useCounter(state => state.count);
+
+// Pick multiple fields
+const { count, increment } = useCounter(state => ({
+  count: state.count,
+  increment: state.increment
+}));
+```
+
+---
+
+## Available Middleware Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `withActions` | `(state) => Actions` | Define state mutations |
+| `withPersist` | `string \| PersistOptions` | Auto-save to localStorage |
+| `withNamespace` | `string` | Redux DevTools integration |
+| `withDeepSelector` | `boolean` | Track nested changes (default: `true`) |
+| `withStableSelector` | `boolean` | Stable selector for performance |
+
+---
+
+## Important Notes
+
+::: warning State is Read-Only in Components
+State is **read-only** outside of actions. Mutations must happen inside `withActions`:
+
+```tsx
+// ❌ Wrong - mutating state in component
+const { count } = useCounter();
+count++; // Won't work!
+
+// ✅ Correct - use actions
+const { count, increment } = useCounter();
+increment(); // Works!
+```
+:::
+
+::: tip Escape Hatch
+For advanced cases, you can access the reactive state directly:
+
+```tsx
+useCounter.getReactiveState().count++; // Use sparingly!
+```
+
+But this bypasses type safety and DevTools tracking. Prefer using actions!
+:::
+
+---
+
+## Live Demos
 
 <script setup>
   import Create from '@theme/components/createState.vue'
   import CreateStorageMiddleware from '@theme/components/createStateWithStorageMiddleware.vue'
   import CreateActionsMiddleware from '@theme/components/createStateWithActionsMiddleware.vue'
-  import DeepSelectorMiddleware from '@theme/components/createStateWithDeepSelectorMiddleware.vue'
   import CreateAllMiddleware from '@theme/components/createStateWithAllMiddleware.vue'
 </script>
 
+### Basic Example
 <Create />
 
-## Code Example with localStorage middleware
-
-```tsx twoslash
-import * as React from "react";
-import { createState, withPersist } from "reactivity-store";
-
-const _useCount = createState(
-  withPersist(
-    () => {
-      const data = { count: 0 };
-
-      return { data };
-    },
-    /**
-     * key: string;  // the unique key what can be used for cache current state
-     * getStorage?: () => Storage; // customer Storage support, only happen in the client side
-     * stringify?: (state: T) => string; // when state change, how to cache the state
-     * parse?: (s: string) => T; // how to parse the string state to object
-     * merge?: (fromCreator: T, fromStorage: Partial<T>) => T; // merge two part of state to the final state
-     */
-    { key: "count", getStorage: undefined, stringify: undefined, parse: undefined, merge: undefined, shallow: undefined }
-  )
-);
-
-// or you can use the `option` api
-
-const useCount = createState(
-  () => {
-    const data = { count: 0 };
-
-    return { data };
-  },
-  { withPersist: "count" }
-);
-
-const App = () => {
-  const data = useCount((state) => state.data);
-
-  return (
-    <div>
-      <p>React Reactive Count</p>
-      <p>{data.count}</p>
-      {/* also use escape hatch or you can define change function in the action middleware */}
-      <button onClick={() => useCount.getReactiveState().data.count++}>Add</button>
-    </div>
-  );
-};
-```
-
-## Online Example
-
+### With localStorage
 <CreateStorageMiddleware />
 
-## Code Example with action middleware
-
-```tsx twoslash
-import * as React from "react";
-import { createState, withActions } from "reactivity-store";
-
-const _useCount = createState(
-  withActions(
-    () => {
-      const data = { count: 0 };
-
-      return data;
-    },
-    { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
-  )
-);
-
-// or you can use the `option` api
-
-const useCount = createState(
-  () => {
-    const data = { count: 0 };
-
-    return data;
-  },
-  { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
-);
-
-const App = () => {
-  const { count, add } = useCount((state) => ({ count: state.count, add: state.add }));
-
-  return (
-    <div>
-      <p>React Reactive Count</p>
-      <p>{count}</p>
-      <button onClick={add}>Add</button>
-    </div>
-  );
-};
-```
-
-::: details Click to show zustand code with same logic
-
-```tsx twoslash
-// r-store
-import { createState } from "reactivity-store";
-const useCount_1 = createState(() => ({ count: 0 }), { withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) });
-
-// zustand
-import { create } from "zustand";
-const useCount_2 = create<{ data: { count: number } }>((set, get) => ({
-  data: { count: 0 },
-  add: () => set((state) => ({ data: { count: state.data.count + 1 } })),
-  del: () => set((state) => ({ data: { count: state.data.count - 1 } })),
-}));
-```
-
-:::
-
-## Online Example
-
+### With Actions
 <CreateActionsMiddleware />
 
-## Code Example with all the middleware
-
-```tsx twoslash
-import * as React from "react";
-import { createState, withActions, withPersist, withSelectorOptions, withNamespace } from "reactivity-store";
-
-const _useCount = createState(
-  withSelectorOptions(
-    withNamespace(
-      withActions(
-        withPersist(
-          () => {
-            const data = { count: 0 };
-
-            return data;
-          },
-          { key: "foo" }
-        ),
-        { generateActions: (state) => ({ add: () => state.count++, del: () => state.count-- }) }
-      ),
-      { namespace: "_useCount", reduxDevTool: true, shallow: true }
-    ),
-    { stableSelector: true, deepSelector: false }
-  )
-);
-
-// or you can use the `option` api
-
-const useCount = createState(
-  () => {
-    const data = { count: 0 };
-
-    return data;
-  },
-  {
-    withActions: (state) => ({ add: () => state.count++, del: () => state.count-- }),
-    withPersist: "foo",
-    withDeepSelector: false,
-    withStableSelector: true,
-    withNamespace: "useCount",
-  }
-);
-
-const App = () => {
-  const { count, add } = useCount((state) => ({ count: state.count, add: state.add }));
-
-  return (
-    <div>
-      <p>React Reactive Count</p>
-      <p>{count}</p>
-      <button onClick={add}>Add</button>
-    </div>
-  );
-};
-```
-
-## Online Example
-
+### All Middleware Combined
 <CreateAllMiddleware />
 
-## Code Example with deepSelector
+---
 
-```tsx twoslash
-import * as React from "react";
-import { createState, withActions, withPersist } from "reactivity-store";
+## Next Steps
 
-const useCount = createState(
-  withActions(
-    () => {
-      const data = { re: { count: 0 } };
-
-      return data;
-    },
-    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
-  ),
-  {
-    // make the selector support deep selector
-    /**
-     * state is `{a: {b: '1'}}`
-     * select is `const re = (state) => state.a;`
-     * if `withDeepSelector` is true, when the `re.b` state change, the selector will also be trigger
-     * if `withDeepSelector` is false, when the `re.b` state change, the selector will not be trigger
-     *
-     * the default value for the `withDeepSelector` is true
-     */
-    withDeepSelector: true,
-  }
-);
-
-const Foo = () => {
-  // the `withDeepSelector` option is true, the selector will be trigger when the `re.count` state change, so the component will update normally
-  const { re, add } = useCount((state) => ({ re: state.re, add: state.add }));
-
-  return (
-    <div>
-      <p>React Reactive Count</p>
-      <p>{re.count}</p>
-      <button onClick={add}>Add</button>
-    </div>
-  );
-};
-
-const useCount_2 = createState(
-  withActions(
-    () => {
-      const data = { re: { count: 0 } };
-
-      return data;
-    },
-    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
-  ),
-  {
-    withDeepSelector: false,
-  }
-);
-
-const Bar = () => {
-  //the `withDeepSelector` option is false, the selector will not be trigger when the `re.count` state change, so the component will not update
-  const { re, add } = useCount_2((state) => ({ re: state.re, add: state.add }));
-
-  return (
-    <div>
-      <p>React Reactive Count</p>
-      <p>{re.count}</p>
-      <button onClick={add}>Add</button>
-    </div>
-  );
-};
-```
-
-## Online Example
-
-<DeepSelectorMiddleware />
+- Learn about [subscriptions](/subscribe) for listening to state changes
+- Explore [useReactiveState](/reactiveHook) for component-local state
+- See [more examples](/use-cases#react-approach)
+- Try the [Vue approach with createStore](/createStore)

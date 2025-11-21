@@ -3,9 +3,9 @@ import { transformerTwoslash } from "@shikijs/vitepress-twoslash";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Reactivity Store",
+  title: "RStore",
   base: "/reactivity-store/",
-  description: "A React state-management tool power by Reactive api",
+  description: "Vue-inspired Reactive State Management for React - Bring Vue's reactivity system to React with zustand-like simplicity",
   markdown: {
     codeTransformers: [transformerTwoslash()],
   },
@@ -13,52 +13,74 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
-      { text: "Install", link: "/install" },
-      { text: "Usage", link: "/createStore" },
-      { text: "Projects", items: [{ text: "git-diff-view", target: "_blank", link: "https://github.com/MrWangJustToDo/git-diff-view" }] },
+      { text: "Guide", link: "/what" },
+      { text: "API Reference", link: "/api-reference" },
+      { text: "Examples", link: "/use-cases" },
+      {
+        text: "More",
+        items: [
+          { text: "Installation", link: "/install" },
+          { text: "TodoList Demo", link: "/todoList" },
+          { text: "git-diff-view", link: "https://github.com/MrWangJustToDo/git-diff-view", target: "_blank" }
+        ]
+      },
     ],
 
     sidebar: [
       {
-        text: "Introduction",
+        text: "Getting Started",
+        collapsed: false,
         items: [
           { text: "What is RStore?", link: "/what" },
-          { text: "Why need RStore?", link: "/why" },
+          { text: "Why RStore?", link: "/why" },
+          { text: "Installation", link: "/install" },
         ],
       },
       {
-        text: "Install",
-        items: [{ text: "Install", link: "/install" }],
-      },
-      {
-        text: "Usage",
+        text: "Core Concepts",
+        collapsed: false,
         items: [
-          { text: "Create Store", link: "/createStore" },
-          { text: "Create Store with lifeCycle", link: "/createStoreWithLifeCycle" },
-          { text: "Create State", link: "/createState" },
-          { text: "Subscribe", link: "/subscribe" },
+          { text: "createStore", link: "/createStore" },
+          { text: "createState", link: "/createState" },
+          { text: "createStoreWithComponent", link: "/createStoreWithLifeCycle" },
+          { text: "Subscriptions", link: "/subscribe" },
+          { text: "Reactive Hooks", link: "/reactiveHook" },
         ],
       },
       {
-        text: "Example",
+        text: "Examples",
+        collapsed: false,
         items: [
+          { text: "Use Cases", link: "/use-cases" },
           { text: "TodoList", link: "/todoList" },
-          { text: "Reactive Hook", link: "/reactiveHook" },
         ],
       },
       {
-        text: "TODO",
+        text: "Reference",
+        collapsed: false,
+        items: [
+          { text: "API Reference", link: "/api-reference" },
+        ],
       },
-      // {
-      //   text: "Examples",
-      //   items: [
-      //     { text: "Markdown Examples", link: "/markdown-examples" },
-      //     { text: "Runtime API Examples", link: "/api-examples" },
-      //   ],
-      // },
     ],
 
-    socialLinks: [{ icon: "github", link: "https://github.com/MrWangJustToDo/r-store" }],
+    socialLinks: [
+      { icon: "github", link: "https://github.com/MrWangJustToDo/r-store" }
+    ],
+
+    search: {
+      provider: "local"
+    },
+
+    footer: {
+      message: "Released under the MIT License.",
+      copyright: "Copyright © 2024-present MrWangJustToDo"
+    },
+
+    editLink: {
+      pattern: "https://github.com/MrWangJustToDo/r-store/edit/main/app/:path",
+      text: "Edit this page on GitHub"
+    }
   },
   head: [
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],

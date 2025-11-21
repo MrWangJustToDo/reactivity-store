@@ -1,302 +1,279 @@
-# RStore
+<div align="center">
+
+# 🚀 RStore
+
+**Vue-inspired Reactive State Management for React**
 
 [![Deploy](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml/badge.svg)](https://github.com/MrWangJustToDo/r-store/actions/workflows/deploy.yml)
 [![npm](https://img.shields.io/npm/v/reactivity-store)](https://www.npmjs.com/package/reactivity-store)
-[![Release](https://img.shields.io/github/v/release/MrWangJustToDo/r-store)](https://github.com/MrWangJustToDo/r-store)
+![downloads](https://img.shields.io/npm/dm/reactivity-store)
 
-## A React state-management, inspired by the `Vue` and `zustand`
+Bring Vue's reactivity system to React with zustand-like simplicity.
+**Direct mutation, automatic UI updates - no manual subscriptions needed!**
 
-a React state-management power by Reactive api, which mean you can use Vue Reactive api in React app, any change of the state will make then UI auto update!
+[Documentation](https://mrwangjusttodo.github.io/r-store/) · [Getting Started](#installation) · [Examples](#quick-start)
 
-## Install
+</div>
+
+---
+
+## Why RStore?
+
+- 🎯 **Direct Mutation** - No `setState`, just mutate and UI updates automatically
+- ⚡ **Vue Reactivity** - Use `ref()`, `reactive()`, `computed()` from @vue/reactivity
+- 🪝 **Zustand-like API** - Clean, minimal API design
+- 🔌 **Built-in Middleware** - Persist, actions, Redux DevTools out of the box
+- 📘 **TypeScript First** - Full type safety and excellent IntelliSense
+- 🚀 **Zero Boilerplate** - No reducers, no dispatch, no manual subscriptions
+
+## Installation
 
 ```bash
-# use pnpm
+npm install reactivity-store
+# or
 pnpm add reactivity-store
-
-# or use npm/yarn
 ```
 
-## Example
+## Quick Start
+
+### 🟢 Vue Approach
+
+For **Vue developers** or those wanting fine-grained reactivity:
 
 ```tsx
-import { createStore, ref } from "reactivity-store";
+import { createStore, ref, computed } from "reactivity-store";
 
-// simple reactive store
-const useCount = createStore(() => {
-  const refValue = ref(0);
+const useCounter = createStore(() => {
+  const count = ref(0);
+  const doubled = computed(() => count.value * 2);
 
-  // this is the only valid way to define the change state function (in the `createStore` function)
-  const changeRef = (v) => (refValue.value = v);
+  const increment = () => count.value++; // Direct mutation!
 
-  return { refValue, changeRef };
+  return { count, doubled, increment };
 });
 
-const App = () => {
-  const { ref, change } = useCount((state) => ({
-    // the state is a readonly value, so we can't change state here
-    // the `ref` value which return from `createStore` will be auto unwrap
-    ref: state.refValue,
-    change: state.changeRef,
-  }));
-
+function App() {
+  const { count, doubled, increment } = useCounter();
   return (
     <div>
-      <p>{ref}</p>
-      <button onClick={() => change(ref + 1)}>add</button>
+      <p>Count: {count}</p>
+      <p>Doubled: {doubled}</p>
+      <button onClick={increment}>+1</button>
     </div>
   );
-};
+}
 ```
 
-### `createState` support middleware
+### 🔵 React Approach
+
+For **React developers** who want simplicity without learning Vue APIs:
 
 ```tsx
-import { createState, withPersist, withActions } from "reactivity-store";
+import { createState } from "reactivity-store";
 
-// simple reactive state, but we can't change the state
-const useCount = createState(() => {
-  return { count: 0 };
-});
+const useCounter = createState(
+  () => ({ count: 0 }),
+  {
+    withActions: (state) => ({
+      increment: () => state.count++,
+      decrement: () => state.count--
+    })
+  }
+);
 
-// simple reactive state with middleware
-// the `withPersist` middleware support auto cache the `state` to the `Storage` when the `state` change
-const useCount = createState(withPersist(() => ({ count: 0 }), { key: "count" }));
-
-// the `withActions` middleware support define the action for the state
-const useCount = createState(withActions(() => ({ count: 0 }), { generateActions: (state) => ({ add: () => state.count++ }) }));
-// then you can get the action from the `selector`
-const { count, add } = useCount((state) => ({ count: state.count, add: state.add }));
-
-// you can also compose this two middleware
-
-// or you can use the `option` api with full type support, it is very simple to use
-const useCount = createState(() => ({ count: 0 }), { withActions: (state) => ({ add: () => state.count++ }), withPersist: "count" });
-
-// the createState have the same usage with createStore
-const App = () => {
-  const { count, add } = useCount();
-
+function App() {
+  const { count, increment, decrement } = useCounter();
   return (
     <div>
-      <p>{count}</p>
-      <button onClick={add}>add</button>
+      <p>Count: {count}</p>
+      <button onClick={increment}>+1</button>
+      <button onClick={decrement}>-1</button>
     </div>
   );
-};
+}
 ```
 
-### `createStoreWithComponent` support lifeCycle
+## Two Approaches, One Library
+
+| | 🟢 Vue Approach | 🔵 React Approach |
+|---|---------------|------------------|
+| **Best for** | Vue developers | React developers |
+| **APIs** | `ref`, `reactive`, `computed` | Plain objects + actions |
+| **Features** | Auto-computed, lifecycle hooks | Middleware: persist, DevTools |
+| **Use** | `createStore` | `createState` |
+
+## Built-in Middleware
+
+### 💾 Persistent State
 
 ```tsx
-import { createStoreWithComponent, onMounted, onUpdated, ref } from "reactivity-store";
+const useSettings = createState(
+  () => ({ theme: "light", language: "en" }),
+  {
+    withPersist: "app-settings", // Auto-saves to localStorage
+    withActions: (state) => ({
+      setTheme: (theme) => state.theme = theme
+    })
+  }
+);
+```
 
-// reactive store with component lifeCycle
-const Count = createStoreWithComponent({
+### 🛠️ Redux DevTools
+
+```tsx
+const useCounter = createState(
+  () => ({ count: 0 }),
+  {
+    withNamespace: "Counter", // Shows up in Redux DevTools
+    withActions: (state) => ({
+      increment: () => state.count++
+    })
+  }
+);
+```
+
+### ⚡ Performance Options
+
+```tsx
+const useStore = createState(
+  () => ({ nested: { count: 0 } }),
+  {
+    withDeepSelector: true,      // Track nested changes (default: true)
+    withStableSelector: false,   // Stable selector for performance
+    withActions: (state) => ({
+      increment: () => state.nested.count++
+    })
+  }
+);
+```
+
+## Advanced Features
+
+### Lifecycle Hooks
+
+```tsx
+import { createStoreWithComponent, ref, onMounted, onUnmounted } from "reactivity-store";
+
+const Timer = createStoreWithComponent({
   setup: () => {
-    const refValue = ref(0);
-
-    const changeRef = (v) => (refValue.value = v);
-
-    onUpdated(() => {
-      console.log("component updated");
-    });
+    const seconds = ref(0);
+    let timer;
 
     onMounted(() => {
-      console.log("component mounted");
+      timer = setInterval(() => seconds.value++, 1000);
     });
 
-    return { refValue, changeRef };
-  },
+    onUnmounted(() => {
+      clearInterval(timer);
+    });
+
+    return { seconds };
+  }
 });
 
-const App = () => {
-  return (
-    <div>
-      <Count>
-        {({ refValue, changeRef }) => (
-          <>
-            <p>{refValue}</p>
-            <button onClick={() => changeRef(refValue + 1)}>add</button>
-          </>
-        )}
-      </Count>
-    </div>
-  );
-};
+function App() {
+  return <Timer>{({ seconds }) => <div>{seconds}s</div>}</Timer>;
+}
 ```
 
-# v0.1.9 update
-
-### Pure hook api for `reactive` state;
+### Component-local Reactive State
 
 ```tsx
-import { useReactiveEffect, useReactiveState } from "reactivity-store";
+import { useReactiveState } from "reactivity-store";
 
-const usePosition = () => {
-  // the `state` object will be a reactive object;
-  // so every change for this object will cause the component auto update
-  // also support a function as the params
-  const [state, setState] = useReactiveState({ x: 0, y: 0 });
-
-  // the second value is a `setState` function, this function expect receive a callback function which has the reactiveState as params
-  // so we can update the state in the callback function
-  const [xPosition, setXPosition] = useReactiveState({ x: 0 });
-
-  useReactiveEffect(() => {
-    const listener = (e: MouseEvent) => {
-      setState((state) => {
-        state.x = e.clientX;
-        state.y = e.clientY;
-      });
-    };
-
-    window.addEventListener("mousemove", listener);
-
-    // same behavior as `useEffect`
-    return () => window.removeEventListener("mousemove", listener);
+function TodoList() {
+  const [state, setState] = useReactiveState({
+    todos: [],
+    filter: "all"
   });
 
-  // when the component mount or the `state.x` has changed, the effect callback will be invoked
-  // because of the `xPosition` is a `state` which create by `useReactiveState`, so the change will cause component auto update
-  // no need deps for reactive hook
-  useReactiveEffect(() => {
-    // update the state
-    // callback / object
-    setXPosition({
-      x = state.x;
+  const addTodo = (text) => {
+    setState((s) => {
+      s.todos.push({ id: Date.now(), text, done: false });
     });
-  });
+  };
 
-  return { y: state.y, x: xPosition.x };
-};
+  return <div>{/* ... */}</div>;
+}
 ```
 
-### Subscribe a state change
+### State Subscriptions
 
 ```tsx
-import { createState } from "reactivity-store";
+const useCounter = createState(
+  () => ({ count: 0 }),
+  { withActions: (s) => ({ increment: () => s.count++ }) }
+);
 
-const useCount = createState(() => ({ count: 0 }), { withActions: (s) => ({ add: () => s.count++ }) });
-
-// you can use subscribe anywhere
-const unSubscribe = useCount.subscribe((s) => s.count, callback);
+// Subscribe anywhere in your app
+useCounter.subscribe(
+  (state) => state.count,
+  (count) => console.log("Count changed:", count)
+);
 ```
 
-# v0.2.4 update
+## Comparison
 
-### `createState` support `withDeepSelector` option
+<table>
+<tr>
+<td width="33%">
 
+**Traditional React**
 ```tsx
-import { createState, withActions, withPersist } from "reactivity-store";
+const [count, setCount] =
+  useState(0);
 
+setCount(prev => prev + 1);
+```
+
+</td>
+<td width="33%">
+
+**RStore (Vue Approach)**
+```tsx
+const count = ref(0);
+
+count.value++;
+```
+
+</td>
+<td width="33%">
+
+**RStore (React Approach)**
+```tsx
 const useCount = createState(
-  withActions(
-    () => {
-      const data = { re: { count: 0 } };
-
-      return data;
-    },
-    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
-  ),
-  {
-    // make the selector support deep selector
-    /**
-     * state is `{a: {b: '1'}}`
-     * select is `const re = (state) => state.a;`
-     * if `withDeepSelector` is true, when the `re.b` state change, the selector will also be trigger
-     * if `withDeepSelector` is false, when the `re.b` state change, the selector will not be trigger
-     *
-     * the default value for the `withDeepSelector` is true
-     */
-    withDeepSelector: true;
-  }
-);
-
-const App = () => {
-  // the `withDeepSelector` option is true, the selector will be trigger when the `re.count` state change, so the component will update normally
-  const { re, add } = useCount((state) => ({ re: state.re, add: state.add }));
-
-  return (
-    <div>
-      <p>React Reactive Count</p>
-      <p>{re.count}</p>
-      <button onClick={add}>Add</button>
-    </div>
-  );
-};
-
-const useCount_2 = createState(
-  withActions(
-    () => {
-      const data = { re: { count: 0 } };
-
-      return data;
-    },
-    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
-  ),
-  {
-    withDeepSelector: false;
-  }
-);
-
-const App = () => {
-  //the `withDeepSelector` option is false, the selector will not be trigger when the `re.count` state change, so the component will not update
-  const { re, add } = useCount_2((state) => ({ re: state.re, add: state.add }));
-
-  return (
-    <div>
-      <p>React Reactive Count</p>
-      <p>{re.count}</p>
-      <button onClick={add}>Add</button>
-    </div>
-  );
-};
-```
-
-# v0.2.6 update
-
-### `createState` support `withNameSpace` option for `reduxDevTools` in develop mode
-
-```tsx
-import { createState, withActions, withNameSpace } from "reactivity-store";
-
-const useCount = createState(
-  withActions(
-    withNameSpace(
-      () => {
-        const data = { re: { count: 0 } };
-
-        return data;
-      },
-      {
-        namespace: "useCount",
-        reduxDevTool: true,
-      }
-    ),
-    { generateActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }) }
-  )
+  () => ({ count: 0 }),
+  { withActions: (s) => ({
+    increment: () => s.count++
+  })}
 );
 ```
 
-or
+</td>
+</tr>
+</table>
 
-```tsx
-import { createState } from "reactivity-store";
+## API Overview
 
-const useCount = createState(
-  () => {
-    const data = { re: { count: 0 } };
+| API | Purpose |
+|-----|---------|
+| `createStore` | Vue-style reactive stores with `ref()`, `reactive()`, `computed()` |
+| `createState` | React-style state with actions and middleware |
+| `createStoreWithComponent` | Component-scoped stores with lifecycle hooks |
+| `useReactiveState` | Component-local reactive state (like `useState` but reactive) |
+| `useReactiveEffect` | Side effects with automatic dependency tracking |
 
-    return data;
-  },
-  {
-    withNamespace: "useCount",
-    withActions: (state) => ({ add: () => state.re.count++, del: () => state.re.count-- }),
-  }
-);
-```
+## Documentation
+
+Visit [https://mrwangjusttodo.github.io/r-store/](https://mrwangjusttodo.github.io/r-store/) for complete documentation:
+
+- [What is RStore?](https://mrwangjusttodo.github.io/r-store/what)
+- [Why RStore?](https://mrwangjusttodo.github.io/r-store/why)
+- [Vue Approach - createStore](https://mrwangjusttodo.github.io/r-store/createStore)
+- [React Approach - createState](https://mrwangjusttodo.github.io/r-store/createState)
+- [Lifecycle Hooks](https://mrwangjusttodo.github.io/r-store/createStoreWithLifeCycle)
+- [Use Cases](https://mrwangjusttodo.github.io/r-store/use-cases)
 
 ## License
 
-MIT
+MIT © [MrWangJustToDo](https://github.com/MrWangJustToDo)

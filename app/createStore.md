@@ -1,132 +1,254 @@
-# How to create a Store
+# createStore
 
-## Description
+::: tip 🟢 Vue Approach
+This API is recommended for **Vue developers** or those familiar with Vue's reactivity system. If you're a React developer looking for simpler patterns, see [createState](/createState) instead.
+:::
 
-The `RStore` package export a `createStore` function which can be used to create a store.
+## Overview
 
-Only the `createStore` is not enough, we also need make the data have the ability to be responsive, so the `RStore` also export the reactive api like `ref`、`reactive`、`computed`... which provide by [`@vue/reactivity`](https://www.npmjs.com/package/@vue/reactivity),
+`createStore` allows you to use Vue's reactivity APIs (`ref`, `reactive`, `computed`) directly in React. It feels just like writing Vue Composition API!
 
-The hook which return by `createStore` can be used in the `React` component just like a custom hook, and this hook also could expect a `selector` function which can be pick a part of state from the store.
+**Signature:**
+```ts
+function createStore<T>(setup: () => T): UseStore<T>
+```
 
-## v0.1.9 Update
+---
 
-the state which in the `selector` function is a readonly state, so the only way to change state is in the `createStore` function.
+## Basic Usage
 
-## Code Example
+### Using `ref()`
 
-```tsx twoslash
-import * as React from "react";
-import { createStore, reactive, ref } from "reactivity-store";
+The simplest way to create reactive state:
 
-// here we create a `count` store
-const _useCount = createStore(() => {
-  // state
-  const reactiveCount = reactive({ count: 0 });
+```tsx
+import { createStore, ref } from "reactivity-store";
 
-  // define change state function
-  const changeCount = (c: number) => {
-    reactiveCount.count = c;
-  };
+const useCounter = createStore(() => {
+  const count = ref(0);
 
-  // the returned value which from the `createStore` should contain reactive filed, so the component can update when the state change
-  return { reactiveCount, changeCount };
+  // Direct mutation - no setState needed!
+  const increment = () => count.value++;
+  const decrement = () => count.value--;
+
+  return { count, increment, decrement };
 });
 
-// return a reactive filed need we unwrap the field, so we can use the `ref` to make the unwrap automatic
-const useCount = createStore(() => {
-  // state
-  const reactiveCount = ref(0);
-
-  // define change state function
-  const changeCount = (c: number) => {
-    reactiveCount.value = c;
-  };
-
-  return { reactiveCount, changeCount };
-});
-
-const App = () => {
-  // the ref field which return from `useSelector` will be unwrap ref automatic
-  const { reactiveCount, changeCount } = useCount((state) => state);
+// In component - ref auto-unwraps
+function Counter() {
+  const { count, increment } = useCounter();
 
   return (
     <div>
-      <p>React Reactive Count</p>
-      <p>{reactiveCount}</p>
-      <button onClick={() => changeCount(reactiveCount + 1)}>Add</button>
+      <p>Count: {count}</p>
+      <button onClick={increment}>+1</button>
     </div>
   );
-};
+}
 ```
 
-::: details Click to show `zustand` code with same logic
+::: info Auto Unwrapping
+`ref` values are **automatically unwrapped** when returned from the store, so you can use `count` directly instead of `count.value` in components!
+:::
 
-```tsx twoslash
-// ==== r-store ====
+### Using `reactive()`
 
-// 1. use createStore
-import { createStore, ref } from "reactivity-store";
+For objects, use `reactive()`:
 
-// step1 create store
-const useCount_1 = createStore(() => {
-  const reactiveCount = ref(0);
+```tsx
+import { createStore, reactive } from "reactivity-store";
 
-  const changeCount = (c: number) => {
-    reactiveCount.value = c;
+const useUser = createStore(() => {
+  const user = reactive({
+    name: "",
+    email: "",
+    profile: {
+      bio: "",
+      avatar: ""
+    }
+  });
+
+  // Mutate nested properties directly!
+  const updateName = (name: string) => {
+    user.name = name;
   };
 
-  return { reactiveCount, changeCount };
-});
-// step2 use store
-const { reactiveCount: c1, changeCount: _c1 } = useCount_1((s) => s);
+  const updateBio = (bio: string) => {
+    user.profile.bio = bio;
+  };
 
-// 2. use createState
+  return { user, updateName, updateBio };
+});
+```
+
+### Using `computed()`
+
+Computed values automatically track dependencies:
+
+```tsx
+import { createStore, ref, computed } from "reactivity-store";
+
+const useCart = createStore(() => {
+  const items = ref([
+    { id: 1, name: "Apple", price: 1.5, quantity: 2 },
+    { id: 2, name: "Banana", price: 0.8, quantity: 3 }
+  ]);
+
+  // Automatically recalculates when items change
+  const total = computed(() =>
+    items.value.reduce((sum, item) =>
+      sum + item.price * item.quantity, 0
+    )
+  );
+
+  const addItem = (item) => {
+    items.value.push(item);
+  };
+
+  return { items, total, addItem };
+});
+```
+
+---
+
+## Using Selectors
+
+Pick only the state you need for better performance:
+
+```tsx
+// Get everything
+const { count, increment } = useCounter();
+
+// Pick specific fields
+const count = useCounter(state => state.count);
+
+// Pick multiple fields
+const { count, doubled } = useCounter(state => ({
+  count: state.count,
+  doubled: state.doubled
+}));
+```
+
+---
+
+## Comparison with Other Solutions
+
+::: code-group
+
+```tsx [RStore (createStore)]
+import { createStore, ref } from "reactivity-store";
+
+const useCount = createStore(() => {
+  const count = ref(0);
+  const increment = () => count.value++;
+
+  return { count, increment };
+});
+
+// In component
+const { count, increment } = useCount();
+```
+
+```tsx [createState]
 import { createState } from "reactivity-store";
 
-// step1 create store
-const useCount_2 = createState(() => ({ reactiveCount: 0 }), { withActions: (s) => ({ changeCount: (c: number) => (s.reactiveCount = c) }) });
-// step2 use store
-const { reactiveCount: c2, changeCount: _c2 } = useCount_2((s) => s);
+const useCount = createState(
+  () => ({ count: 0 }),
+  {
+    withActions: (state) => ({
+      increment: () => state.count++
+    })
+  }
+);
 
-// ==== zustand ====
+// In component
+const { count, increment } = useCount();
+```
+
+```tsx [Zustand]
 import { create } from "zustand";
 
-// step1 create store
-const useCount_3 = create<{ reactiveCount: number; changeCount: (c: number) => void }>((set, get) => ({
-  reactiveCount: 0,
-  changeCount: (c: number) => set({ reactiveCount: c }),
+const useCount = create((set) => ({
+  count: 0,
+  increment: () => set((state) => ({
+    count: state.count + 1
+  }))
 }));
-// step2 use store
-const { reactiveCount: c_3, changeCount: _c3 } = useCount_3((s) => s);
+
+// In component
+const { count, increment } = useCount();
 ```
 
 :::
 
-<!-- ::: warning
-I recommend provide a memo select to the hook which pick the state if we do not need all of the store state, like:
+**Key Differences:**
+- **RStore createStore**: Direct mutation with Vue APIs (`ref`, `reactive`, `computed`)
+- **RStore createState**: Actions-based with middleware support
+- **Zustand**: Immutable updates with `set` function
+
+---
+
+## Available Vue APIs
+
+All Vue reactivity APIs are available:
+
+| API | Description | Example |
+|-----|-------------|---------|
+| `ref()` | Reactive primitive value | `const count = ref(0)` |
+| `reactive()` | Reactive object | `const user = reactive({ name: '' })` |
+| `computed()` | Derived state | `const doubled = computed(() => count.value * 2)` |
+| `watch()` | Side effects | `watch(() => count.value, (val) => console.log(val))` |
+| `watchEffect()` | Auto-tracking side effects | `watchEffect(() => console.log(count.value))` |
+
+See [@vue/reactivity docs](https://vuejs.org/api/reactivity-core.html) for complete API reference.
+
+---
+
+## Important Rules
+
+::: warning State is Read-Only in Components
+State returned from the selector is **read-only**. You must define mutation functions inside `createStore`:
 
 ```tsx
-const App = () => {
-  const reactiveObj = useCount(useCallback((state) => state.reactiveCount, []));
+// ❌ Wrong - mutating state in component
+const { count } = useCount();
+count.value++; // Won't work!
 
-  return (
-    <div style={containerStyle}>
-      <p>React Reactive Count</p>
-      <p style={{ color: "red" }}>{reactiveObj.count}</p>
-      <button onClick={() => reactiveObj.count++} style={buttonStyle}>
-        Add
-      </button>
-    </div>
-  );
-};
+// ✅ Correct - use mutation functions
+const { count, increment } = useCount();
+increment(); // Works!
 ```
+:::
 
-::: -->
+::: tip Ref Auto-Unwrapping
+When you return `ref()` values from the store, they are automatically unwrapped in components:
 
-## Online Example
+```tsx
+const useStore = createStore(() => {
+  const count = ref(0);
+  return { count }; // count.value inside
+});
+
+// In component
+const { count } = useStore();
+console.log(count); // No .value needed!
+```
+:::
+
+---
+
+## Live Demo
 
 <script setup>
   import Create from '@theme/components/createStore.vue'
 </script>
 
 <Create />
+
+---
+
+## Next Steps
+
+- Learn about [lifecycle hooks with createStoreWithComponent](/createStoreWithLifeCycle)
+- Explore the [React approach with createState](/createState)
+- See [more examples](/use-cases)
