@@ -224,8 +224,6 @@ RStore's unique value proposition is bridging the Vue and React ecosystems. If y
 
 RStore brings the best of both worlds together.
 
----
-
 ## Ready to Try RStore?
 
 If any of these use cases resonate with you, give RStore a try:

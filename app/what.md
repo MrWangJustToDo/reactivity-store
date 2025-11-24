@@ -93,8 +93,6 @@ const useStore = createState(
 );
 ```
 
----
-
 ## Who is RStore For?
 
 | Your Background | Recommended Approach |
@@ -114,42 +112,6 @@ const useStore = createState(
 | 🔌 **Middleware System** | Built-in middleware for persistence, actions, DevTools, and more |
 | 🪝 **Lifecycle Hooks** | Component lifecycle hooks like `onMounted`, `onUpdated` |
 | 🚀 **Performance Optimized** | Fine-grained reactivity with optional deep/stable selectors |
-
-## Quick Comparison
-
-::: code-group
-
-```tsx [RStore]
-import { createStore, ref } from "reactivity-store";
-
-const useCounter = createStore(() => {
-  const count = ref(0);
-  const increment = () => count.value++;
-  return { count, increment };
-});
-
-// In component
-const { count, increment } = useCounter();
-```
-
-```tsx [Traditional React]
-import { useState } from "react";
-
-function useCounter() {
-  const [count, setCount] = useState(0);
-  const increment = () => setCount(c => c + 1);
-  return { count, increment };
-}
-
-// In component
-const { count, increment } = useCounter();
-```
-
-:::
-
-**The difference?** With RStore, you can mutate state directly and it just works. With traditional React, you must use `setState` for every update.
-
----
 
 ## What's Next?
 

@@ -13,8 +13,6 @@ This API is recommended for **Vue developers** or those familiar with Vue's reac
 function createStore<T>(setup: () => T): UseStore<T>
 ```
 
----
-
 ## Basic Usage
 
 ### Using `ref()`
@@ -109,9 +107,7 @@ const useCart = createStore(() => {
 });
 ```
 
----
-
-## Using Selectors
+## ⚡ Using Selectors (performance)
 
 Pick only the state you need for better performance:
 
@@ -128,8 +124,6 @@ const { count, doubled } = useCounter(state => ({
   doubled: state.doubled
 }));
 ```
-
----
 
 ## Comparison with Other Solutions
 
@@ -186,8 +180,6 @@ const { count, increment } = useCount();
 - **RStore createState**: Actions-based with middleware support
 - **Zustand**: Immutable updates with `set` function
 
----
-
 ## Available Vue APIs
 
 All Vue reactivity APIs are available:
@@ -201,8 +193,6 @@ All Vue reactivity APIs are available:
 | `watchEffect()` | Auto-tracking side effects | `watchEffect(() => console.log(count.value))` |
 
 See [@vue/reactivity docs](https://vuejs.org/api/reactivity-core.html) for complete API reference.
-
----
 
 ## Important Rules
 
@@ -234,18 +224,14 @@ const { count } = useStore();
 console.log(count); // No .value needed!
 ```
 :::
-
----
-
+<!-- 
 ## Live Demo
 
 <script setup>
   import Create from '@theme/components/createStore.vue'
 </script>
 
-<Create />
-
----
+<Create /> -->
 
 ## Next Steps
 

@@ -43,7 +43,8 @@ RStore adapts to your background:
 
 ::: code-group
 
-```tsx [🟢 Vue Approach]
+```tsx [🟢 Vue Approach] twoslash
+import React from "react";
 import { createStore, ref } from "reactivity-store";
 
 // Use Vue APIs: ref, reactive, computed
@@ -60,7 +61,8 @@ function App() {
 }
 ```
 
-```tsx [🔵 React Approach]
+```tsx [🔵 React Approach] twoslash
+import React from "react";
 import { createState } from "reactivity-store";
 
 // Use actions - no Vue APIs needed

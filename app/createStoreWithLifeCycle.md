@@ -22,8 +22,6 @@ function createStoreWithComponent<T>(config: {
 }): Component<T>
 ```
 
----
-
 ## Quick Example
 
 ```tsx
@@ -62,8 +60,6 @@ function App() {
 }
 ```
 
----
-
 ## Available Lifecycle Hooks
 
 All Vue lifecycle hooks are supported:
@@ -76,8 +72,6 @@ All Vue lifecycle hooks are supported:
 | `onUpdated` | After component updates | React to state changes |
 | `onBeforeUnmount` | Before component unmounts | Save data |
 | `onUnmounted` | After component unmounts | Cleanup timers, listeners |
-
----
 
 ## Complete Example
 
@@ -143,8 +137,6 @@ function App() {
 }
 ```
 
----
-
 ## Comparison with createStore
 
 ::: code-group
@@ -203,8 +195,6 @@ function App() {
 - **createStoreWithComponent**: Component-scoped, render props, Vue lifecycle
 - **createStore**: Global store, hook-based, use React's useEffect
 
----
-
 ## Important Notes
 
 ::: warning Render Props Pattern
@@ -229,8 +219,6 @@ Each instance of the component has **its own state**. If you need global state, 
 ```
 :::
 
----
-
 ## When to Use This API
 
 ### ✅ Use `createStoreWithComponent` when:
@@ -245,8 +233,6 @@ Each instance of the component has **its own state**. If you need global state, 
 - State should persist across component unmount/remount
 - You want simpler API
 
----
-
 ## Live Demo
 
 <script setup>
@@ -255,15 +241,11 @@ Each instance of the component has **its own state**. If you need global state, 
 
 <CreateWithComponent />
 
----
-
 ## Related APIs
 
 - [createStore](/createStore) - Global stores with Vue APIs
 - [createState](/createState) - React approach with actions
 - [Reactive Hooks](/reactiveHook) - Component-local reactive state
-
----
 
 ## For React Developers
 

@@ -19,8 +19,6 @@ export default defineConfig({
       {
         text: "More",
         items: [
-          { text: "Installation", link: "/install" },
-          { text: "TodoList Demo", link: "/todoList" },
           { text: "git-diff-view", link: "https://github.com/MrWangJustToDo/git-diff-view", target: "_blank" }
         ]
       },

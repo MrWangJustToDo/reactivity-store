@@ -7,8 +7,6 @@ RStore provides two approaches based on your background:
 - **🔵 React Approach**: Use `createState` with middleware - no need to learn Vue APIs
 :::
 
----
-
 ## 🟢 Vue Approach
 
 ### Best for: Developers familiar with Vue, or who want fine-grained reactivity control
@@ -210,8 +208,6 @@ function App() {
 ```
 
 :::
-
----
 
 ## 🔵 React Approach
 
@@ -495,8 +491,6 @@ function UserList() {
 
 :::
 
----
-
 ## Comparison
 
 | Feature | Vue Approach | React Approach |
@@ -507,8 +501,6 @@ function UserList() {
 | **Lifecycle Hooks** | ✅ `onMounted`, `onUpdated` | ❌ Use React hooks |
 | **Middleware** | ❌ Not available | ✅ Persist, DevTools, etc |
 | **Best For** | Vue devs, fine control | React devs, simplicity |
-
----
 
 ## More Examples
 

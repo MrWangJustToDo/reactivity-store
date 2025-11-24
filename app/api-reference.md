@@ -146,8 +146,6 @@ function App() {
 }
 ```
 
----
-
 ## Reactivity APIs
 
 All Vue reactivity APIs are re-exported from `@vue/reactivity`:
@@ -228,8 +226,6 @@ watchEffect(() => {
 });
 ```
 
----
-
 ## React Hooks
 
 ### useReactiveState
@@ -286,8 +282,6 @@ function MouseTracker() {
   return <div>Mouse: ({position.x}, {position.y})</div>;
 }
 ```
-
----
 
 ## Middleware
 
@@ -420,8 +414,6 @@ const useStore = createState(
 );
 ```
 
----
-
 ## Lifecycle Hooks
 
 Available inside `createStoreWithComponent`:
@@ -461,8 +453,6 @@ onUnmounted(() => {
   console.log("Component will unmount");
 });
 ```
-
----
 
 ## Store Methods
 
@@ -514,8 +504,6 @@ const useCounter = createState(() => ({ count: 0 }));
 useCounter.getReactiveState().count++;
 ```
 
----
-
 ## TypeScript Support
 
 RStore has excellent TypeScript support with full type inference:
@@ -552,8 +540,6 @@ const useUsers = createStore(() => {
 });
 ```
 
----
-
 ## Best Practices
 
 ### ✅ Do
@@ -570,8 +556,6 @@ const useUsers = createStore(() => {
 - Don't forget `.value` when accessing refs in setup functions
 - Don't use `getReactiveState()` unless absolutely necessary
 - Don't create too many small stores (prefer composition)
-
----
 
 ## Common Patterns
 
