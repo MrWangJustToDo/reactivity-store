@@ -30,14 +30,14 @@
   },
   "devDependencies": {
     "@algolia/client-search": "^4.25.2",
-    "@shikijs/twoslash": "^3.13.0",
-    "@shikijs/vitepress-twoslash": "^3.13.0",
+    "@shikijs/twoslash": "^3.15.0",
+    "@shikijs/vitepress-twoslash": "^3.15.0",
     "@swc/core": "^1.10.15",
     "@types/lodash": "^4.17.20",
     "@types/node": "^22.18.10",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
-    "@vue/reactivity": "~3.5.22",
+    "@vue/reactivity": "~3.5.25",
     "eslint": "^8.57.0",
     "husky": "^8.0.2",
     "lodash": "^4.17.21",
@@ -47,12 +47,12 @@
     "react-dom": "^18.2.0",
     "reactivity-store": "workspaces: *",
     "search-insights": "^2.17.0",
-    "shiki": "^3.13.0",
+    "shiki": "^3.15.0",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.0",
     "typescript": "^5.3.3",
     "vitepress": "^1.6.4",
-    "vue": "^3.5.22",
+    "vue": "^3.5.25",
     "zustand": "^5.0.8"
   }
 }
