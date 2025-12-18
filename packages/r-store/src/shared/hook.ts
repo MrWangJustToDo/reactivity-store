@@ -243,12 +243,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     return defaultHook(selector, compare);
   }
 
-  const obj = {
-    [name]: function (...args) {
-      return useSelector.call(null, ...args);
-    },
-  };
-
   const typedUseSelector = useSelector as typeof useSelector & {
     /**
      * @deprecated
@@ -336,6 +330,11 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   };
 
   if (__DEV__) {
+    const obj = {
+      [name]: function (...args) {
+        return useSelector.call(null, ...args);
+      },
+    };
     // make happy for react dev tool
     const wrapperUseSelector = obj[name] as typeof typedUseSelector;
     wrapperUseSelector.getState = typedUseSelector.getState;
