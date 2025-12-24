@@ -463,7 +463,7 @@ Subscribe to state changes outside of React components.
 ```tsx
 store.subscribe<K extends keyof T>(
   selector: (state: T) => K,
-  callback: (value: K) => void
+  callback: () => void
 ): () => void
 ```
 
@@ -478,8 +478,8 @@ const useCounter = createState(
 // Subscribe anywhere
 const unsubscribe = useCounter.subscribe(
   (state) => state.count,
-  (count) => {
-    console.log("Count changed to:", count);
+  () => {
+    console.log("Count changed");
   }
 );
 

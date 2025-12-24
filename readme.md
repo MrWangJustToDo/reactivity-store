@@ -208,7 +208,7 @@ const useCounter = createState(
 // Subscribe anywhere in your app
 useCounter.subscribe(
   (state) => state.count,
-  (count) => console.log("Count changed:", count)
+  () => console.log("Count changed")
 );
 ```
 
