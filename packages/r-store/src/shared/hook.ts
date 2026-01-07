@@ -120,7 +120,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
         }
       });
 
-      const memoCompare = useCallbackRef((p, n) => {
+      const memoCompare = useCallbackRef((p: P, n: P) => {
         if (compare && typeof compare === "function") {
           return compare(p, n);
         }
