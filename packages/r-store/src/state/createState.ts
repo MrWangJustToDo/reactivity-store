@@ -58,6 +58,22 @@ export type UseSelectorWithState<T, C> = {
    * @returns a unsubscribe function
    */
   subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
+  /**
+   * wait for a specific key in the reactive state to reach the target value, return a promise that resolves when the value matches
+   *
+   * @param params - the params object
+   * @param params.key - the key of the reactive state to watch
+   * @param params.value - the target value to wait for
+   * @param params.single - an AbortSignal to cancel the waiting, when aborted the returned promise will reject
+   * @param params.compare - a custom compare function, defaults to `Object.is`
+   * @returns a promise that resolves when the value matches, or rejects if the AbortSignal is aborted
+   */
+  waitingValueTo: <K extends keyof UnwrapNestedRefs<T> = keyof UnwrapNestedRefs<T>>(params: {
+    key: K;
+    value: UnwrapNestedRefs<T>[K];
+    single: AbortSignal;
+    compare?: (exist: UnwrapNestedRefs<T>[K], target: UnwrapNestedRefs<T>[K]) => boolean;
+  }) => Promise<void>;
   useDeepSelector: {
     (): DeepReadonly<UnwrapNestedRefs<T>> & C;
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { toRaw } from "@vue/reactivity";
+import { toRaw, watch } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // SEE https://github.com/facebook/react/pull/25231
@@ -28,10 +28,7 @@ export const useCallbackRef = <T extends Function>(callback: T) => {
   return memoCallback;
 };
 
-/**
- * @internal
- */
-export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSelector?: boolean) => {
+const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSelector?: boolean) => {
   const callbackRef = useRef<Function>();
 
   callbackRef.current = typeof callback === "function" ? callback : null;
@@ -60,10 +57,7 @@ export const useSubscribeCallbackRef = <T, K>(callback?: (arg?: T) => K, deepSel
   return memoCallback;
 };
 
-/**
- * @internal
- */
-export const usePrevValue = <T>(v: T) => {
+const usePrevValue = <T>(v: T) => {
   const vRef = useRef(v);
 
   useEffect(() => {
@@ -227,6 +221,55 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     }, [lifeCycle]);
   };
 
+  const waitingValueTo = <K extends keyof UnwrapNestedRefs<T> = keyof UnwrapNestedRefs<T>, V extends UnwrapNestedRefs<T>[K] = UnwrapNestedRefs<T>[K]>({
+    key,
+    value,
+    single,
+    compare = Object.is,
+  }: {
+    key: K;
+    value: V;
+    single?: AbortSignal;
+    compare?: (exist: V, target: V) => boolean;
+  }) => {
+    return new Promise<void>((resolve, reject) => {
+      if (single?.aborted) {
+        reject(single.reason);
+        return;
+      }
+
+      const getter = () => reactiveState[key];
+
+      const checkValue = ({ cb }: { cb?: () => void } = {}) => {
+        const v = getter();
+
+        if (compare(toRaw(v) as V, toRaw(value) as V)) {
+          cb?.();
+
+          resolve();
+
+          return true;
+        }
+
+        return false;
+      };
+
+      const res = checkValue();
+
+      if (!res) {
+        const handler = watch(getter, () => checkValue({ cb: () => handler.stop() }));
+
+        if (single) {
+          const onAbort = () => {
+            handler.stop();
+            reject(single.reason);
+          };
+          single.addEventListener("abort", onAbort, { once: true });
+        }
+      }
+    });
+  };
+
   const defaultHook = generateUseHook("default");
 
   const deepHook = generateUseHook("deep");
@@ -252,6 +295,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     getActions: () => C;
     getIsActive: () => boolean;
     subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void) => () => void;
+    waitingValueTo: typeof waitingValueTo;
     getLifeCycle: () => LifeCycle;
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
@@ -279,6 +323,8 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
   typedUseSelector.getReactiveState = () => reactiveState;
 
   typedUseSelector.getReadonlyState = () => readonlyState;
+
+  typedUseSelector.waitingValueTo = waitingValueTo;
 
   typedUseSelector.useLifeCycle = useLifeCycle;
 
@@ -342,6 +388,7 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     wrapperUseSelector.getIsActive = typedUseSelector.getIsActive;
     wrapperUseSelector.subscribe = typedUseSelector.subscribe;
     wrapperUseSelector.getLifeCycle = typedUseSelector.getLifeCycle;
+    wrapperUseSelector.waitingValueTo = typedUseSelector.waitingValueTo;
     wrapperUseSelector.getReactiveState = typedUseSelector.getReactiveState;
     wrapperUseSelector.getReadonlyState = typedUseSelector.getReadonlyState;
     wrapperUseSelector.useLifeCycle = typedUseSelector.useLifeCycle;
