@@ -16,6 +16,14 @@ export { useReactiveEffect } from "./hook/useReactiveEffect";
 
 export { useReactiveState } from "./hook/useReactiveState";
 
+// Non-browser environment support
+export { configureEnv, isBrowser, isServer } from "./shared/env";
+export type { EnvConfigOptions } from "./shared/env";
+export { createStorageAdapter } from "./state/storage";
+export type { CreateStorageAdapterOptions } from "./state/storage";
+export type { StorageAdapter, StorageState, WithSelectorOptionsProps } from "./state/tools";
+export type { LifeCycle } from "./shared/lifeCycle";
+
 export * from "@vue/reactivity";
 
 /**

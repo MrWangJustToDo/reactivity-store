@@ -1,7 +1,7 @@
 import { ReactiveEffect } from "@vue/reactivity";
 import { isPromise } from "@vue/shared";
 
-import { isServer } from "./env";
+import { isServer, envConfig } from "./env";
 import { queueJob } from "./queue";
 
 import type { LifeCycle } from "./lifeCycle";
@@ -124,9 +124,11 @@ export class Controller<T = any> {
   notify = () => {
     if (!this._isActive) return;
 
-    // TODO implement server side initialState
-    if (__DEV__ && isServer) {
-      console.error(`[reactivity-store] unexpected update for reactivity-store, should not update a state on the server`);
+    // Warn about unexpected server-side updates, but allow it for non-browser environments
+    if (__DEV__ && isServer && !envConfig.allowNonBrowserUpdates) {
+      console.error(
+        `[reactivity-store] unexpected update for reactivity-store, should not update a state on the server. If you are using a terminal UI framework, call configureEnv({ allowNonBrowserUpdates: true })`
+      );
     }
 
     this._updateCount++;
@@ -201,7 +203,7 @@ export class Controller<T = any> {
     currentController = this;
 
     this._state = this._effect.run();
-    
+
     currentController = p;
   }
 
