@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": false,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "octane",
+    "skipLibCheck": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationDir": "./dist/octane-types",
+    "types": ["node"]
+  },
+  "include": ["./src/octane/**/*.ts", "./global.d.ts"]
+}

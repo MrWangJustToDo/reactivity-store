@@ -4,11 +4,35 @@
   "author": "MrWangJustToDo",
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app just like zustand",
+  "octane": {
+    "hookSlots": {
+      "manual": [
+        "dist/octane",
+        "src/octane"
+      ]
+    }
+  },
   "main": "index.js",
   "module": "./dist/esm/index.mjs",
   "unpkg": "./dist/umd/index.development.js",
   "jsdelivr": "./dist/umd/index.development.js",
   "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./index.js"
+    },
+    "./octane": {
+      "types": "./dist/octane/index.d.ts",
+      "browser": "./dist/octane/client.mjs",
+      "node": "./dist/octane/server.mjs",
+      "import": "./dist/octane/client.mjs",
+      "default": "./dist/octane/client.mjs"
+    },
+    "./package.json": "./package.json",
+    "./*": "./*"
+  },
   "files": [
     "index.js",
     "index.d.ts",
@@ -52,22 +76,53 @@
           "name": "RStore"
         }
       ]
+    },
+    {
+      "input": "./src/octane/index.ts",
+      "output": [
+        {
+          "dir": "./dist",
+          "entryFileNames": "octane/client.mjs",
+          "format": "esm",
+          "compact": true
+        }
+      ]
+    },
+    {
+      "input": "./src/octane/index.ts",
+      "output": [
+        {
+          "dir": "./dist",
+          "entryFileNames": "octane/server.mjs",
+          "format": "esm",
+          "compact": true
+        }
+      ]
     }
   ],
   "keywords": [
-    "state-management, reactive, vue, react"
+    "state-management, reactive, vue, react, octane"
   ],
   "dependencies": {
     "@vue/reactivity": "~3.5.40",
-    "@vue/shared": "~3.5.40",
-    "use-sync-external-store": "^1.6.0"
+    "@vue/shared": "~3.5.40"
   },
   "peerDependencies": {
+    "octane": ">=0.1.36 <0.2.0",
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "octane": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.57.7",
     "@redux-devtools/extension": "^3.3.0",
-    "@types/use-sync-external-store": "^1.5.0"
+    "@types/use-sync-external-store": "^1.5.0",
+    "use-sync-external-store": "^1.6.0"
   }
 }
