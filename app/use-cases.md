@@ -165,7 +165,7 @@ function UserForm() {
 ::: code-group
 
 ```tsx [Component Store]
-import { createStoreWithComponent, ref, onMounted, onUpdated } from "reactivity-store";
+import { createStoreWithComponent, ref, onMounted, onUpdated, onUnmounted } from "reactivity-store";
 
 const Timer = createStoreWithComponent({
   setup: () => {
@@ -181,7 +181,9 @@ const Timer = createStoreWithComponent({
       console.log("Timer updated:", seconds.value);
     });
 
-    return () => clearInterval(timer);
+    onUnmounted(() => clearInterval(timer));
+
+    return { seconds };
   },
 });
 ```

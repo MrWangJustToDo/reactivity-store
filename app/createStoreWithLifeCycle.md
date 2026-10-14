@@ -1,5 +1,9 @@
 # createStoreWithComponent
 
+::: warning Deprecated
+`createStoreWithComponent` is **deprecated** and not recommended for new code. Use [createStore](/createStore) instead — it covers the same reactive store needs with a simpler hook-based API. The content below is kept for reference and existing users.
+:::
+
 ::: tip 🟢 Vue Approach - Advanced
 This is an **advanced feature** of the Vue approach. Make sure you understand [createStore](/createStore) first!
 
@@ -132,12 +136,13 @@ function App() {
 const Timer = createStoreWithComponent({
   setup: () => {
     const seconds = ref(0);
+    let timer;
 
     onMounted(() => {
-      // Lifecycle hook!
-      const timer = setInterval(() => seconds.value++, 1000);
-      return () => clearInterval(timer);
+      timer = setInterval(() => seconds.value++, 1000);
     });
+
+    onUnmounted(() => clearInterval(timer));
 
     return { seconds };
   },

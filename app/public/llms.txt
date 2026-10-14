@@ -1,0 +1,28 @@
+# reactivity-store (RStore)
+
+> AI-friendly index of the RStore documentation site.
+> RStore is a React state management library powered by Vue's reactivity system (@vue/reactivity).
+> Direct state mutation → automatic UI updates; middleware for persistence/DevTools; TypeScript-first.
+
+## Key concepts
+- [What is RStore?](/what)
+- [Why RStore?](/why)
+- [Installation](/install)
+
+## Core APIs
+- [createStore](/createStore)
+- [createState](/createState)
+- [createStoreWithComponent (deprecated)](/createStoreWithLifeCycle)
+- [Subscriptions](/subscribe)
+- [Reactive Hooks](/reactiveHook)
+
+## Examples
+- [Use Cases](/use-cases)
+- [TodoList](/todoList)
+
+## Reference
+- [API Reference](/api-reference)
+- [AI Guide](/ai)
+
+## Legal
+- Released under the MIT License.

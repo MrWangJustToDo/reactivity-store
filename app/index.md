@@ -14,7 +14,7 @@ hero:
       link: /createStore
     - theme: alt
       text: View on GitHub
-      link: https://github.com/MrWangJustToDo/r-store
+      link: https://github.com/MrWangJustToDo/reactivity-store
 
 features:
   - icon: ⚡
@@ -98,7 +98,7 @@ function App() {
   <a href="https://www.npmjs.com/package/reactivity-store" target="_blank" rel="noopener">
     <img src="https://img.shields.io/npm/v/reactivity-store?style=flat&logo=npm&label=version&color=green" alt="npm version" style="display: inline-block; margin: 0 0.5rem;" />
   </a>
-  <a href="https://github.com/MrWangJustToDo/r-store" target="_blank" rel="noopener">
-    <img src="https://img.shields.io/github/stars/MrWangJustToDo/r-store?style=flat&logo=github&label=stars&color=yellow" alt="GitHub stars" style="display: inline-block; margin: 0 0.5rem;" />
+  <a href="https://github.com/MrWangJustToDo/reactivity-store" target="_blank" rel="noopener">
+    <img src="https://img.shields.io/github/stars/MrWangJustToDo/reactivity-store?style=flat&logo=github&label=stars&color=yellow" alt="GitHub stars" style="display: inline-block; margin: 0 0.5rem;" />
   </a>
 </div>

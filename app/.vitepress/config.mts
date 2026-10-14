@@ -56,9 +56,14 @@ export default defineConfig({
         collapsed: false,
         items: [{ text: "API Reference", link: "/api-reference" }],
       },
+      {
+        text: "AI",
+        collapsed: false,
+        items: [{ text: "AI Guide", link: "/ai" }],
+      },
     ],
 
-    socialLinks: [{ icon: "github", link: "https://github.com/MrWangJustToDo/r-store" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/MrWangJustToDo/reactivity-store" }],
 
     search: {
       provider: "local",
@@ -70,7 +75,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: "https://github.com/MrWangJustToDo/r-store/edit/main/app/:path",
+      pattern: "https://github.com/MrWangJustToDo/reactivity-store/edit/main/app/:path",
       text: "Edit this page on GitHub",
     },
   },

@@ -15,7 +15,17 @@ This API is recommended for **React developers** who want simpler state manageme
 **Signature:**
 
 ```ts
-function createState<T>(setup: () => T, options?: StateOptions<T>): UseState<T>;
+// Simplified signature. The hook also exposes methods like getState, getReactiveState, etc.
+function createState<T extends Record<string, unknown>>(
+  setup: () => T,
+  options?: {
+    withActions?: (state: T) => Record<string, Function>;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
+    withDeepSelector?: boolean;
+    withStableSelector?: boolean;
+  }
+): UseSelectorWithState<T, {}>;
 ```
 
 ## Basic Usage

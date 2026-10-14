@@ -54,7 +54,16 @@ function App() {
 Create a state with middleware support for persistence, actions, and more.
 
 ```tsx
-function createState<T>(setup: () => T, options?: StateOptions<T>): UseState<T>;
+function createState<T>(
+  setup: () => T,
+  options?: {
+    withPersist?: string | WithPersistProps<T>;
+    withActions?: (state: T) => Record<string, Function>;
+    withNamespace?: string | WithNamespaceProps<T>;
+    withDeepSelector?: boolean;
+    withStableSelector?: boolean;
+  }
+): UseSelectorWithState<T, {}>;
 ```
 
 **Parameters:**
@@ -100,10 +109,14 @@ const { theme, toggleTheme } = useSettings();
 
 ### createStoreWithComponent
 
+::: warning Deprecated
+`createStoreWithComponent` is **deprecated** and not recommended for new code. Use [createStore](/createStore) instead.
+:::
+
 Create a component-scoped store with lifecycle hooks.
 
 ```tsx
-function createStoreWithComponent<T>(config: { setup: () => T }): Component<T>;
+function createStoreWithComponent<T>(config: { setup: () => T }): (props: { children?: (state) => ReactNode }) => ReactElement;
 ```
 
 **Parameters:**

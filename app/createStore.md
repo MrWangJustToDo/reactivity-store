@@ -11,7 +11,8 @@ This API is recommended for **Vue developers** or those familiar with Vue's reac
 **Signature:**
 
 ```ts
-function createStore<T>(setup: () => T): UseStore<T>;
+// Simplified signature. The hook also exposes methods like getState, getReactiveState, etc.
+function createStore<T extends Record<string, unknown>>(setup: () => T): UseSelectorWithStore<T>;
 ```
 
 ## Basic Usage
