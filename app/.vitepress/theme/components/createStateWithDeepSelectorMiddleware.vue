@@ -52,20 +52,18 @@ const App_2 = () => {
   );
 };
 
-let root: ReturnType<(typeof ReactDOM)["createRoot"]> | null = null;
+const roots: ReturnType<(typeof ReactDOM)["createRoot"]>[] = [];
 
 onMounted(() => {
-  root = ReactDOM.createRoot(divRef_1.value as HTMLElement);
+  roots.push(ReactDOM.createRoot(divRef_1.value as HTMLElement));
+  roots[0].render(React.createElement(App_1));
 
-  root.render(React.createElement(App_1));
-
-  root = ReactDOM.createRoot(divRef_2.value as HTMLElement);
-
-  root.render(React.createElement(App_2));
+  roots.push(ReactDOM.createRoot(divRef_2.value as HTMLElement));
+  roots[1].render(React.createElement(App_2));
 });
 
 onBeforeUnmount(() => {
-  root?.unmount();
+  roots.forEach((root) => root.unmount());
 });
 </script>
 

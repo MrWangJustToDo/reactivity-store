@@ -224,14 +224,13 @@ console.log(count); // No .value needed!
 
 :::
 
-<!--
 ## Live Demo
 
 <script setup>
   import Create from '@theme/components/createStore.vue'
 </script>
 
-<Create /> -->
+<Create />
 
 ## Next Steps
 

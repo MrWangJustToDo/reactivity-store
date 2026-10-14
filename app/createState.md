@@ -340,13 +340,14 @@ useCounter.getReactiveState().count++; // Use sparingly!
 But this bypasses type safety and DevTools tracking. Prefer using actions!
 :::
 
-<!-- ## Live Demos
+## Live Demos
 
 <script setup>
   import Create from '@theme/components/createState.vue'
   import CreateStorageMiddleware from '@theme/components/createStateWithStorageMiddleware.vue'
   import CreateActionsMiddleware from '@theme/components/createStateWithActionsMiddleware.vue'
   import CreateAllMiddleware from '@theme/components/createStateWithAllMiddleware.vue'
+  import CreateDeepSelectorMiddleware from '@theme/components/createStateWithDeepSelectorMiddleware.vue'
 </script>
 
 ### Basic Example
@@ -359,7 +360,10 @@ But this bypasses type safety and DevTools tracking. Prefer using actions!
 <CreateActionsMiddleware />
 
 ### All Middleware Combined
-<CreateAllMiddleware /> -->
+<CreateAllMiddleware />
+
+### With / Without Deep Selector
+<CreateDeepSelectorMiddleware />
 
 ## Next Steps
 
