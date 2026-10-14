@@ -3,24 +3,21 @@
  * @deprecated
  * no need to use this function
  */
-export const setBatch = (_batch: (cb: () => void) => void) => {
-};
+export const setBatch = (_batch: (cb: () => void) => void) => {};
 
 /**
  * @public
  * @deprecated
  * no need to use this function
  */
-export const getBatch = () => {
-};
+export const getBatch = () => {};
 
 /**
  * @public
  * @deprecated
  * no need to use this function
  */
-export const resetBatch = () => {
-};
+export const resetBatch = () => {};
 
 /**
  * @public

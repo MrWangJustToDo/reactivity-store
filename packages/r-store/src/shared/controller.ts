@@ -45,14 +45,14 @@ const catchError = <T>(cb: () => T, instance: Controller) => {
       const res = cb();
 
       if (isPromise(res)) {
-        throw new Error(`[reactivity-store] selector should be a pure function, but current is a async function`);
+        throw new Error(`[reactivity-store] selector should be a pure function, but current is an async function`);
       }
 
       return res;
     } catch (e) {
       if (__DEV__) {
         console.error(
-          `[reactivity-store] have an error for current selector, ${(e as Error)?.message}, maybe you use the middleware with wrong usage, %o`,
+          `[reactivity-store] an error occurred in the current selector: ${(e as Error)?.message}. You may be using the middleware incorrectly, %o`,
           instance
         );
       }
@@ -137,7 +137,7 @@ export class Controller<T = any> {
       this._onUpdate?.();
     } catch (e) {
       if (__DEV__) {
-        console.error(`[reactivity-store] have an error for current updater, ${(e as Error)?.message}, please check your subscribe, %o`, this);
+        console.error(`[reactivity-store] an error occurred in the current updater: ${(e as Error)?.message}. Please check your subscribe, %o`, this);
       }
 
       this._lifeCycle.canUpdateComponent = false;

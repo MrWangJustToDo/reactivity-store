@@ -63,7 +63,7 @@ export function createStoreWithComponent<P extends Record<string, unknown>, T ex
 
     if (__DEV__) {
       const sameField = checkHasSameField(state, props);
-      sameField.forEach((key) => console.warn(`[reactivity-store] duplicate key: [${key}] in Component props and RStore state, this is a unexpected usage`));
+      sameField.forEach((key) => console.warn(`[reactivity-store] duplicate key: [${key}] in Component props and RStore state, this is an unexpected usage`));
     }
 
     const lifeCycleInstance = useSelector.getLifeCycle();

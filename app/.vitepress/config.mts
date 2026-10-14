@@ -18,9 +18,7 @@ export default defineConfig({
       { text: "Examples", link: "/use-cases" },
       {
         text: "More",
-        items: [
-          { text: "git-diff-view", link: "https://github.com/MrWangJustToDo/git-diff-view", target: "_blank" }
-        ]
+        items: [{ text: "git-diff-view", link: "https://github.com/MrWangJustToDo/git-diff-view", target: "_blank" }],
       },
     ],
 
@@ -56,29 +54,25 @@ export default defineConfig({
       {
         text: "Reference",
         collapsed: false,
-        items: [
-          { text: "API Reference", link: "/api-reference" },
-        ],
+        items: [{ text: "API Reference", link: "/api-reference" }],
       },
     ],
 
-    socialLinks: [
-      { icon: "github", link: "https://github.com/MrWangJustToDo/r-store" }
-    ],
+    socialLinks: [{ icon: "github", link: "https://github.com/MrWangJustToDo/r-store" }],
 
     search: {
-      provider: "local"
+      provider: "local",
     },
 
     footer: {
       message: "Released under the MIT License.",
-      copyright: "Copyright © 2024-present MrWangJustToDo"
+      copyright: "Copyright © 2024-present MrWangJustToDo",
     },
 
     editLink: {
       pattern: "https://github.com/MrWangJustToDo/r-store/edit/main/app/:path",
-      text: "Edit this page on GitHub"
-    }
+      text: "Edit this page on GitHub",
+    },
   },
   head: [
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],

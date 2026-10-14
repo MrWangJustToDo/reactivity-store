@@ -23,7 +23,7 @@ const flushQueue = () => {
   if (jobs.size) {
     updateCount++;
     if (updateCount > MAX_UPDATE) {
-      throw new Error(`[reactivity-store] have a infinity update for current store, pendingJobs: ${new Set(jobs)}`);
+      throw new Error(`[reactivity-store] detected an infinite update loop, pendingJobs: ${[...jobs].map((j) => j._namespace || "unknown").join(", ")}`);
     }
     flushQueue();
   }

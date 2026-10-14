@@ -236,18 +236,18 @@ export type UseSelectorWithState<T, C> = {
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>
 ): UseSelectorWithState<T, P>;
-/** 
- * @public 
+/**
+ * @public
  */
 export function createState<T extends Record<string, unknown>>(setup: Setup<T>): UseSelectorWithState<T, {}>;
-/** 
- * @public 
+/**
+ * @public
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, P>>
 ): UseSelectorWithState<UnWrapMiddleware<T>, P>;
-/** 
- * @public 
+/**
+ * @public
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, L>>,
@@ -259,8 +259,8 @@ export function createState<T extends Record<string, unknown>, P extends Record<
     withStableSelector?: boolean;
   }
 ): UseSelectorWithState<T, P & L>;
-/** 
- * @public 
+/**
+ * @public
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<T>,
@@ -272,8 +272,8 @@ export function createState<T extends Record<string, unknown>, P extends Record<
     withStableSelector?: boolean;
   }
 ): UseSelectorWithState<T, P>;
-/** 
- * @public 
+/**
+ * @public
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
   setup: Setup<StateWithMiddleware<T, P>>,
@@ -284,8 +284,8 @@ export function createState<T extends Record<string, unknown>, P extends Record<
     withStableSelector?: boolean;
   }
 ): UseSelectorWithState<T, P>;
-/** 
- * @public 
+/**
+ * @public
  */
 export function createState<T extends Record<string, unknown>>(
   setup: Setup<T>,
@@ -296,8 +296,8 @@ export function createState<T extends Record<string, unknown>>(
     withStableSelector?: boolean;
   }
 ): UseSelectorWithState<T, {}>;
-/** 
- * @public 
+/**
+ * @public
  */
 export function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
   setup: Setup<MaybeStateWithMiddleware<T, L>>,

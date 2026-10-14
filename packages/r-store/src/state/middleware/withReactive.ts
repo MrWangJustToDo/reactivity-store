@@ -57,7 +57,7 @@ export function withReactive<T extends Record<string, unknown>, P extends Record
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,
         ["$$__lifeCycle__$$"]: lifeCycle,
-        ["$$__selectorOptions__$$"]: { ...selectorOptions, ...options },
+        ["$$__selectorOptions__$$"]: selectorOptions,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
     },
     {

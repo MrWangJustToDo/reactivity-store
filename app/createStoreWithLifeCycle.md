@@ -11,15 +11,15 @@ For React developers, this API may feel unusual. Consider using [createState](/c
 `createStoreWithComponent` extends `createStore` with **Vue-like lifecycle hooks**. It creates a component that manages its own reactive state with lifecycle methods like `onMounted`, `onUpdated`, etc.
 
 **When to use:**
+
 - You want component-scoped state (not global)
 - You need Vue's lifecycle hooks in React
 - You're building reusable components with internal state
 
 **Signature:**
+
 ```ts
-function createStoreWithComponent<T>(config: {
-  setup: () => T
-}): Component<T>
+function createStoreWithComponent<T>(config: { setup: () => T }): Component<T>;
 ```
 
 ## Quick Example
@@ -45,18 +45,12 @@ const Timer = createStoreWithComponent({
     });
 
     return { seconds };
-  }
+  },
 });
 
 // Use as a component with render props
 function App() {
-  return (
-    <Timer>
-      {({ seconds }) => (
-        <div>Time elapsed: {seconds}s</div>
-      )}
-    </Timer>
-  );
+  return <Timer>{({ seconds }) => <div>Time elapsed: {seconds}s</div>}</Timer>;
 }
 ```
 
@@ -64,27 +58,21 @@ function App() {
 
 All Vue lifecycle hooks are supported:
 
-| Hook | When it runs | Use case |
-|------|-------------|----------|
-| `onBeforeMount` | Before component mounts | Setup before DOM |
-| `onMounted` | After component mounts | Start timers, fetch data |
-| `onBeforeUpdate` | Before component updates | Track update count |
-| `onUpdated` | After component updates | React to state changes |
-| `onBeforeUnmount` | Before component unmounts | Save data |
-| `onUnmounted` | After component unmounts | Cleanup timers, listeners |
+| Hook              | When it runs              | Use case                  |
+| ----------------- | ------------------------- | ------------------------- |
+| `onBeforeMount`   | Before component mounts   | Setup before DOM          |
+| `onMounted`       | After component mounts    | Start timers, fetch data  |
+| `onBeforeUpdate`  | Before component updates  | Track update count        |
+| `onUpdated`       | After component updates   | React to state changes    |
+| `onBeforeUnmount` | Before component unmounts | Save data                 |
+| `onUnmounted`     | After component unmounts  | Cleanup timers, listeners |
 
 ## Complete Example
 
 Real-world timer with lifecycle hooks:
 
 ```tsx
-import {
-  createStoreWithComponent,
-  ref,
-  onMounted,
-  onBeforeUpdate,
-  onUnmounted
-} from "reactivity-store";
+import { createStoreWithComponent, ref, onMounted, onBeforeUpdate, onUnmounted } from "reactivity-store";
 
 const Clock = createStoreWithComponent({
   setup: () => {
@@ -109,7 +97,7 @@ const Clock = createStoreWithComponent({
     });
 
     return { time, updateCount };
-  }
+  },
 });
 
 // Usage
@@ -118,9 +106,7 @@ function App() {
 
   return (
     <div>
-      <button onClick={() => setShow(!show)}>
-        {show ? "Hide" : "Show"} Clock
-      </button>
+      <button onClick={() => setShow(!show)}>{show ? "Hide" : "Show"} Clock</button>
 
       {show && (
         <Clock>
@@ -154,13 +140,11 @@ const Timer = createStoreWithComponent({
     });
 
     return { seconds };
-  }
+  },
 });
 
 // Used as component
-<Timer>
-  {({ seconds }) => <div>{seconds}s</div>}
-</Timer>
+<Timer>{({ seconds }) => <div>{seconds}s</div>}</Timer>;
 ```
 
 ```tsx [createStore]
@@ -192,6 +176,7 @@ function App() {
 :::
 
 **Key Differences:**
+
 - **createStoreWithComponent**: Component-scoped, render props, Vue lifecycle
 - **createStore**: Global store, hook-based, use React's useEffect
 
@@ -201,9 +186,7 @@ function App() {
 `createStoreWithComponent` uses **render props** pattern, which may feel unusual in React:
 
 ```tsx
-<MyComponent>
-  {(state) => <div>{state.value}</div>}
-</MyComponent>
+<MyComponent>{(state) => <div>{state.value}</div>}</MyComponent>
 ```
 
 If you prefer hooks, use [createStore](/createStore) instead.
@@ -217,17 +200,20 @@ Each instance of the component has **its own state**. If you need global state, 
 <Timer>{({ seconds }) => <div>Timer 1: {seconds}</div>}</Timer>
 <Timer>{({ seconds }) => <div>Timer 2: {seconds}</div>}</Timer>
 ```
+
 :::
 
 ## When to Use This API
 
 ### ✅ Use `createStoreWithComponent` when:
+
 - Building reusable components with internal state
 - You need Vue's lifecycle hooks
 - State should be scoped to each component instance
 - You're familiar with Vue Composition API
 
 ### ❌ Use `createStore` instead when:
+
 - You need global/shared state
 - You prefer React hooks over render props
 - State should persist across component unmount/remount
@@ -255,14 +241,11 @@ If the render props pattern feels awkward, consider using **React's built-in hoo
 import { createState } from "reactivity-store";
 import { useEffect } from "react";
 
-const useTimer = createState(
-  () => ({ seconds: 0 }),
-  {
-    withActions: (state) => ({
-      tick: () => state.seconds++
-    })
-  }
-);
+const useTimer = createState(() => ({ seconds: 0 }), {
+  withActions: (state) => ({
+    tick: () => state.seconds++,
+  }),
+});
 
 function Timer() {
   const { seconds, tick } = useTimer();

@@ -21,14 +21,14 @@ const _internalCreateStore = <T extends Record<string, unknown>>(creator: Creato
 
   if (__DEV__ && isPromise(state)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a reactive object but got a promise %o, this is a unexpected usage. should not return a promise in this 'creator' function`,
+      `[reactivity-store] '${name}' expects to receive a reactive object but got a promise %o, this is an unexpected usage. should not return a promise in this 'creator' function`,
       state
     );
   }
 
   if (__DEV__ && !isObject(state)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a reactive object but got a ${state}, this is a unexpected usage. should return a reactive object in this 'creator' function`
+      `[reactivity-store] '${name}' expects to receive a reactive object but got a ${state}, this is an unexpected usage. should return a reactive object in this 'creator' function`
     );
   }
 
@@ -38,7 +38,7 @@ const _internalCreateStore = <T extends Record<string, unknown>>(creator: Creato
 
   if (__DEV__ && !checkHasReactive(state)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a reactive object but got a plain object %o, this is a unexpected usage. should return a reactive object in this 'creator' function`,
+      `[reactivity-store] '${name}' expects to receive a reactive object but got a plain object %o, this is an unexpected usage. should return a reactive object in this 'creator' function`,
       state
     );
   }

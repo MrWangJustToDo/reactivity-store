@@ -3,9 +3,10 @@
 RStore provides two approaches based on your background:
 
 ::: tip Two Approaches
+
 - **🟢 Vue Approach**: Use `createStore` / `createStoreWithComponent` with Vue APIs (`ref`, `reactive`, `computed`)
 - **🔵 React Approach**: Use `createState` with middleware - no need to learn Vue APIs
-:::
+  :::
 
 ## 🟢 Vue Approach
 
@@ -65,12 +66,10 @@ export const useCart = createStore(() => {
   const items = ref<CartItem[]>([]);
 
   // Auto-calculated total
-  const total = computed(() =>
-    items.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  );
+  const total = computed(() => items.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
 
   const addItem = (product: Omit<CartItem, "quantity">) => {
-    const existing = items.value.find(i => i.id === product.id);
+    const existing = items.value.find((i) => i.id === product.id);
     if (existing) {
       existing.quantity++;
     } else {
@@ -79,7 +78,7 @@ export const useCart = createStore(() => {
   };
 
   const removeItem = (id: number) => {
-    items.value = items.value.filter(item => item.id !== id);
+    items.value = items.value.filter((item) => item.id !== id);
   };
 
   return { items, total, addItem, removeItem };
@@ -93,7 +92,7 @@ function ShoppingCart() {
   return (
     <div>
       <h2>Cart</h2>
-      {items.map(item => (
+      {items.map((item) => (
         <div key={item.id}>
           {item.name} - ${item.price} x {item.quantity}
           <button onClick={() => removeItem(item.id)}>Remove</button>
@@ -118,12 +117,12 @@ export const useUserForm = createStore(() => {
   const form = reactive({
     personal: {
       name: "",
-      email: ""
+      email: "",
     },
     address: {
       street: "",
-      city: ""
-    }
+      city: "",
+    },
   });
 
   // Direct mutation - no setState needed!
@@ -152,16 +151,8 @@ function UserForm() {
 
   return (
     <form>
-      <input
-        value={form.personal.name}
-        onChange={e => updateName(e.target.value)}
-        placeholder="Name"
-      />
-      <input
-        value={form.address.city}
-        onChange={e => updateCity(e.target.value)}
-        placeholder="City"
-      />
+      <input value={form.personal.name} onChange={(e) => updateName(e.target.value)} placeholder="Name" />
+      <input value={form.address.city} onChange={(e) => updateCity(e.target.value)} placeholder="City" />
     </form>
   );
 }
@@ -191,19 +182,13 @@ const Timer = createStoreWithComponent({
     });
 
     return () => clearInterval(timer);
-  }
+  },
 });
 ```
 
 ```tsx [Usage]
 function App() {
-  return (
-    <Timer>
-      {({ seconds }) => (
-        <div>Time elapsed: {seconds}s</div>
-      )}
-    </Timer>
-  );
+  return <Timer>{({ seconds }) => <div>Time elapsed: {seconds}s</div>}</Timer>;
 }
 ```
 
@@ -220,21 +205,18 @@ function App() {
 ```tsx [Store]
 import { createState } from "reactivity-store";
 
-export const useCounter = createState(
-  () => ({ count: 0, doubled: 0 }),
-  {
-    withActions: (state) => ({
-      increment: () => {
-        state.count++;
-        state.doubled = state.count * 2;
-      },
-      decrement: () => {
-        state.count--;
-        state.doubled = state.count * 2;
-      }
-    })
-  }
-);
+export const useCounter = createState(() => ({ count: 0, doubled: 0 }), {
+  withActions: (state) => ({
+    increment: () => {
+      state.count++;
+      state.doubled = state.count * 2;
+    },
+    decrement: () => {
+      state.count--;
+      state.doubled = state.count * 2;
+    },
+  }),
+});
 ```
 
 ```tsx [Component]
@@ -270,30 +252,26 @@ interface CartItem {
 export const useCart = createState(
   () => ({
     items: [] as CartItem[],
-    total: 0
+    total: 0,
   }),
   {
     withActions: (state) => ({
       addItem: (product: Omit<CartItem, "quantity">) => {
-        const existing = state.items.find(i => i.id === product.id);
+        const existing = state.items.find((i) => i.id === product.id);
         if (existing) {
           existing.quantity++;
         } else {
           state.items.push({ ...product, quantity: 1 });
         }
         // Update total
-        state.total = state.items.reduce((sum, item) =>
-          sum + item.price * item.quantity, 0
-        );
+        state.total = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
       },
 
       removeItem: (id: number) => {
-        state.items = state.items.filter(item => item.id !== id);
-        state.total = state.items.reduce((sum, item) =>
-          sum + item.price * item.quantity, 0
-        );
-      }
-    })
+        state.items = state.items.filter((item) => item.id !== id);
+        state.total = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      },
+    }),
   }
 );
 ```
@@ -305,7 +283,7 @@ function ShoppingCart() {
   return (
     <div>
       <h2>Cart</h2>
-      {items.map(item => (
+      {items.map((item) => (
         <div key={item.id}>
           {item.name} - ${item.price} x {item.quantity}
           <button onClick={() => removeItem(item.id)}>Remove</button>
@@ -329,7 +307,7 @@ import { createState } from "reactivity-store";
 export const useTheme = createState(
   () => ({
     mode: "light" as "light" | "dark",
-    primaryColor: "#007bff"
+    primaryColor: "#007bff",
   }),
   {
     // Auto-save to localStorage
@@ -341,8 +319,8 @@ export const useTheme = createState(
       },
       setColor: (color: string) => {
         state.primaryColor = color;
-      }
-    })
+      },
+    }),
   }
 );
 ```
@@ -355,11 +333,7 @@ function ThemeSettings() {
     <div>
       <p>Current theme: {mode}</p>
       <button onClick={toggleTheme}>Toggle Theme</button>
-      <input
-        type="color"
-        value={primaryColor}
-        onChange={e => setColor(e.target.value)}
-      />
+      <input type="color" value={primaryColor} onChange={(e) => setColor(e.target.value)} />
     </div>
   );
 }
@@ -380,12 +354,12 @@ export const useUserForm = createState(
   () => ({
     personal: {
       name: "",
-      email: ""
+      email: "",
     },
     address: {
       street: "",
-      city: ""
-    }
+      city: "",
+    },
   }),
   {
     withActions: (state) => ({
@@ -401,8 +375,8 @@ export const useUserForm = createState(
       reset: () => {
         state.personal = { name: "", email: "" };
         state.address = { street: "", city: "" };
-      }
-    })
+      },
+    }),
   }
 );
 ```
@@ -413,16 +387,8 @@ function UserForm() {
 
   return (
     <form>
-      <input
-        value={personal.name}
-        onChange={e => updateName(e.target.value)}
-        placeholder="Name"
-      />
-      <input
-        value={address.city}
-        onChange={e => updateCity(e.target.value)}
-        placeholder="City"
-      />
+      <input value={personal.name} onChange={(e) => updateName(e.target.value)} placeholder="Name" />
+      <input value={address.city} onChange={(e) => updateCity(e.target.value)} placeholder="City" />
     </form>
   );
 }
@@ -446,7 +412,7 @@ export const useUsers = createState(
   () => ({
     users: [] as User[],
     loading: false,
-    error: null as string | null
+    error: null as string | null,
   }),
   {
     withActions: (state) => ({
@@ -462,8 +428,8 @@ export const useUsers = createState(
         } finally {
           state.loading = false;
         }
-      }
-    })
+      },
+    }),
   }
 );
 ```
@@ -481,7 +447,7 @@ function UserList() {
 
   return (
     <ul>
-      {users.map(user => (
+      {users.map((user) => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
@@ -493,14 +459,14 @@ function UserList() {
 
 ## Comparison
 
-| Feature | Vue Approach | React Approach |
-|---------|-------------|----------------|
-| **APIs** | `ref()`, `reactive()`, `computed()` | Plain objects + actions |
-| **Learning Curve** | Need to know Vue APIs | Familiar React patterns |
-| **Auto-computed** | ✅ `computed()` auto-tracks | ❌ Manual in actions |
-| **Lifecycle Hooks** | ✅ `onMounted`, `onUpdated` | ❌ Use React hooks |
-| **Middleware** | ❌ Not available | ✅ Persist, DevTools, etc |
-| **Best For** | Vue devs, fine control | React devs, simplicity |
+| Feature             | Vue Approach                        | React Approach            |
+| ------------------- | ----------------------------------- | ------------------------- |
+| **APIs**            | `ref()`, `reactive()`, `computed()` | Plain objects + actions   |
+| **Learning Curve**  | Need to know Vue APIs               | Familiar React patterns   |
+| **Auto-computed**   | ✅ `computed()` auto-tracks         | ❌ Manual in actions      |
+| **Lifecycle Hooks** | ✅ `onMounted`, `onUpdated`         | ❌ Use React hooks        |
+| **Middleware**      | ❌ Not available                    | ✅ Persist, DevTools, etc |
+| **Best For**        | Vue devs, fine control              | React devs, simplicity    |
 
 ## More Examples
 

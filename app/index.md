@@ -66,14 +66,11 @@ import React from "react";
 import { createState } from "reactivity-store";
 
 // Use actions - no Vue APIs needed
-const useCounter = createState(
-  () => ({ count: 0 }),
-  {
-    withActions: (state) => ({
-      increment: () => state.count++
-    })
-  }
-);
+const useCounter = createState(() => ({ count: 0 }), {
+  withActions: (state) => ({
+    increment: () => state.count++,
+  }),
+});
 
 function App() {
   const { count, increment } = useCounter();
@@ -85,12 +82,12 @@ function App() {
 
 ### Choose Your Path
 
-| | Vue Approach | React Approach |
-|---|--------------|----------------|
-| **Best for** | Vue developers | React developers |
-| **APIs** | `ref`, `reactive`, `computed` | Plain objects + actions |
-| **Features** | Auto-computed, lifecycle hooks | Middleware: persist, DevTools |
-| **Learn more** | [createStore](/createStore) | [createState](/createState) |
+|                | Vue Approach                   | React Approach                |
+| -------------- | ------------------------------ | ----------------------------- |
+| **Best for**   | Vue developers                 | React developers              |
+| **APIs**       | `ref`, `reactive`, `computed`  | Plain objects + actions       |
+| **Features**   | Auto-computed, lifecycle hooks | Middleware: persist, DevTools |
+| **Learn more** | [createStore](/createStore)    | [createState](/createState)   |
 
 ---
 
