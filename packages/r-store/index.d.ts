@@ -1,8 +1,8 @@
-import type { DeepReadonly } from "@vue/reactivity";
-import type { ReactElement } from "react";
-import { ReactiveEffect } from "@vue/reactivity";
-import type { ReactNode } from "react";
-import type { UnwrapNestedRefs } from "@vue/reactivity";
+import type { DeepReadonly } from '@vue/reactivity';
+import type { ReactElement } from 'react';
+import { ReactiveEffect } from '@vue/reactivity';
+import type { ReactNode } from 'react';
+import type { UnwrapNestedRefs } from '@vue/reactivity';
 
 /**
  * @public
@@ -23,40 +23,40 @@ export declare function configureEnv(options: Partial<EnvConfigOptions>): void;
  * @public
  */
 export declare class Controller<T = any> {
-  readonly _getState: () => T;
-  readonly _compare: (prev: T, next: T) => boolean;
-  readonly _lifeCycle: LifeCycle;
-  readonly _namespace?: string;
-  readonly _onUpdate?: () => void;
-  readonly _listeners: Set<() => void>;
-  _getStateSafe: () => T;
-  _effect: ReactiveEffect<T>;
-  _state: T;
-  _devState: any;
-  _devCompare: any;
-  _devSelector: any;
-  _devActions: any;
-  _devWithDeep: any;
-  _devWithStable: any;
-  _devVersion: string;
-  _devReduxOptions: any;
-  _devPersistOptions: any;
-  _devType: any;
-  _devResult: any;
-  _devRunCount: number;
-  _updateCount: number;
-  _isActive: boolean;
-  constructor(_getState: () => T, _compare: (prev: T, next: T) => boolean, _lifeCycle: LifeCycle, _namespace?: string, _onUpdate?: () => void);
-  notify: () => void;
-  _scheduler: () => void;
-  subscribe: (listener: () => void) => () => boolean;
-  getState: () => number;
-  getEffect: () => ReactiveEffect<T>;
-  getSelectorState: () => T;
-  getLifeCycle: () => LifeCycle;
-  run(): void;
-  stop(): void;
-  setActive(d: boolean): void;
+    readonly _getState: () => T;
+    readonly _compare: (prev: T, next: T) => boolean;
+    readonly _lifeCycle: LifeCycle;
+    readonly _namespace?: string;
+    readonly _onUpdate?: () => void;
+    readonly _listeners: Set<() => void>;
+    _getStateSafe: () => T;
+    _effect: ReactiveEffect<T>;
+    _state: T;
+    _devState: any;
+    _devCompare: any;
+    _devSelector: any;
+    _devActions: any;
+    _devWithDeep: any;
+    _devWithStable: any;
+    _devVersion: string;
+    _devReduxOptions: any;
+    _devPersistOptions: any;
+    _devType: any;
+    _devResult: any;
+    _devRunCount: number;
+    _updateCount: number;
+    _isActive: boolean;
+    constructor(_getState: () => T, _compare: (prev: T, next: T) => boolean, _lifeCycle: LifeCycle, _namespace?: string, _onUpdate?: () => void);
+    notify: () => void;
+    _scheduler: () => void;
+    subscribe: (listener: () => void) => () => boolean;
+    getState: () => number;
+    getEffect: () => ReactiveEffect<T>;
+    getSelectorState: () => T;
+    getLifeCycle: () => LifeCycle;
+    run(): void;
+    stop(): void;
+    setActive(d: boolean): void;
 }
 
 /**
@@ -179,9 +179,7 @@ export declare class Controller<T = any> {
  * );
  * ```
  */
-export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<StateWithMiddleware<T, P>>
-): UseSelectorWithState<T, P>;
+export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>): UseSelectorWithState<T, P>;
 
 /**
  * @public
@@ -191,63 +189,49 @@ export declare function createState<T extends Record<string, unknown>>(setup: Se
 /**
  * @public
  */
-export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<MaybeStateWithMiddleware<T, P>>
-): UseSelectorWithState<UnWrapMiddleware<T>, P>;
+export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<MaybeStateWithMiddleware<T, P>>): UseSelectorWithState<UnWrapMiddleware<T>, P>;
 
 /**
  * @public
  */
-export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(
-  setup: Setup<StateWithMiddleware<T, L>>,
-  options: {
+export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, L>>, options: {
     withActions: WithActionsProps<T, P>["generateActions"];
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
-  }
-): UseSelectorWithState<T, P & L>;
+}): UseSelectorWithState<T, P & L>;
 
 /**
  * @public
  */
-export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<T>,
-  options: {
+export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<T>, options: {
     withActions: WithActionsProps<T, P>["generateActions"];
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
-  }
-): UseSelectorWithState<T, P>;
+}): UseSelectorWithState<T, P>;
 
 /**
  * @public
  */
-export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<StateWithMiddleware<T, P>>,
-  options: {
+export declare function createState<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: {
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
-  }
-): UseSelectorWithState<T, P>;
+}): UseSelectorWithState<T, P>;
 
 /**
  * @public
  */
-export declare function createState<T extends Record<string, unknown>>(
-  setup: Setup<T>,
-  options: {
+export declare function createState<T extends Record<string, unknown>>(setup: Setup<T>, options: {
     withPersist?: string | WithPersistProps<T>;
     withNamespace?: string | WithNamespaceProps<T>;
     withDeepSelector?: boolean;
     withStableSelector?: boolean;
-  }
-): UseSelectorWithState<T, {}>;
+}): UseSelectorWithState<T, {}>;
 
 /**
  * @public
@@ -300,12 +284,12 @@ export declare function createStorageAdapter(options?: CreateStorageAdapterOptio
  * Options for creating a custom storage adapter
  */
 export declare interface CreateStorageAdapterOptions {
-  /** Read value by key, return null if not found */
-  read: (key: string) => string | null;
-  /** Write value by key */
-  write: (key: string, value: string) => void;
-  /** Remove value by key */
-  remove: (key: string) => void;
+    /** Read value by key, return null if not found */
+    read: (key: string) => string | null;
+    /** Write value by key */
+    write: (key: string, value: string) => void;
+    /** Remove value by key */
+    remove: (key: string) => void;
 }
 
 /**
@@ -415,30 +399,26 @@ export declare const createStore: <T extends Record<string, unknown>>(creator: C
  * @deprecated
  * not recommend to use this function, use `createStore` instead
  */
-export declare function createStoreWithComponent<T extends Record<string, unknown>>(
-  props: CreateStoreWithComponentProps<NonNullable<unknown>, T>
-): ({ children }: { children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode }) => ReactElement;
+export declare function createStoreWithComponent<T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<NonNullable<unknown>, T>): ({ children }: {
+    children?: (p: DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
+}) => ReactElement;
 
 /**
  * @public
  * @deprecated
  * not recommend to use this function, use `createStore` instead
  */
-export declare function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(
-  props: CreateStoreWithComponentProps<P, T>
-): ({
-  children,
-}: {
-  children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
+export declare function createStoreWithComponent<P extends Record<string, unknown>, T extends Record<string, unknown>>(props: CreateStoreWithComponentProps<P, T>): ({ children }: {
+    children?: (p: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
 } & P) => ReactElement;
 
 /**
  * @public
  */
 export declare type CreateStoreWithComponentProps<P extends Record<string, unknown>, T extends Record<string, unknown>> = {
-  setup: Creator<T>;
-  deepWatchProps?: boolean;
-  render?: (props: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
+    setup: Creator<T>;
+    deepWatchProps?: boolean;
+    render?: (props: P & DeepReadonly<UnwrapNestedRefs<T>>) => ReactNode;
 };
 
 /**
@@ -452,16 +432,16 @@ export declare type Creator<T extends Record<string, unknown>> = () => T;
  * Environment configuration options for non-browser usage
  */
 export declare interface EnvConfigOptions {
-  /**
-   * When true, suppresses warnings about state updates in non-browser environments.
-   * Set to true for terminal UI frameworks.
-   */
-  allowNonBrowserUpdates: boolean;
-  /**
-   * When true, enables persistence even without browser localStorage.
-   * Requires custom storage via getStorage option.
-   */
-  allowCustomStorage: boolean;
+    /**
+     * When true, suppresses warnings about state updates in non-browser environments.
+     * Set to true for terminal UI frameworks.
+     */
+    allowNonBrowserUpdates: boolean;
+    /**
+     * When true, enables persistence even without browser localStorage.
+     * Requires custom storage via getStorage option.
+     */
+    allowCustomStorage: boolean;
 }
 
 /**
@@ -494,15 +474,15 @@ export declare const isServer: boolean;
  * @public
  */
 export declare type LifeCycle = {
-  onBeforeMount: Array<() => void>;
-  onMounted: Array<() => void>;
-  onBeforeUpdate: Array<() => void>;
-  onUpdated: Array<() => void>;
-  onBeforeUnmount: Array<() => void>;
-  onUnmounted: Array<() => void>;
-  hasHookInstall: boolean;
-  canUpdateComponent: boolean;
-  syncUpdateComponent: boolean;
+    onBeforeMount: Array<() => void>;
+    onMounted: Array<() => void>;
+    onBeforeUpdate: Array<() => void>;
+    onUpdated: Array<() => void>;
+    onBeforeUnmount: Array<() => void>;
+    onUnmounted: Array<() => void>;
+    hasHookInstall: boolean;
+    canUpdateComponent: boolean;
+    syncUpdateComponent: boolean;
 };
 
 /**
@@ -574,12 +554,12 @@ export declare type Setup<T> = () => T;
  * @typeParam P - The actions type
  */
 export declare type StateWithMiddleware<T, P> = {
-  ["$$__middleware__$$"]: Record<string, unknown>;
-  ["$$__state__$$"]: T;
-  ["$$__actions__$$"]: P;
-  ["$$__namespace__$$"]: WithNamespaceProps<T>;
-  ["$$__lifeCycle__$$"]: Function;
-  ["$$__selectorOptions__$$"]: WithSelectorOptionsProps;
+    ["$$__middleware__$$"]: Record<string, unknown>;
+    ["$$__state__$$"]: T;
+    ["$$__actions__$$"]: P;
+    ["$$__namespace__$$"]: WithNamespaceProps<T>;
+    ["$$__lifeCycle__$$"]: Function;
+    ["$$__selectorOptions__$$"]: WithSelectorOptionsProps;
 };
 
 /**
@@ -610,12 +590,12 @@ export declare type StateWithMiddleware<T, P> = {
  * ```
  */
 export declare interface StorageAdapter {
-  /** Get a value by key. Returns null if not found. */
-  getItem(key: string): string | null;
-  /** Set a value by key */
-  setItem(key: string, value: string): void;
-  /** Remove a value by key */
-  removeItem(key: string): void;
+    /** Get a value by key. Returns null if not found. */
+    getItem(key: string): string | null;
+    /** Set a value by key */
+    setItem(key: string, value: string): void;
+    /** Remove a value by key */
+    removeItem(key: string): void;
 }
 
 /**
@@ -623,10 +603,10 @@ export declare interface StorageAdapter {
  * Represents the persisted state structure stored in storage
  */
 export declare type StorageState = {
-  /** Version identifier for the stored state */
-  version: string;
-  /** The serialized state data */
-  data: any;
+    /** Version identifier for the stored state */
+    version: string;
+    /** The serialized state data */
+    data: any;
 };
 
 /**
@@ -647,9 +627,7 @@ export declare const useReactiveEffect: (effectCallback: () => void | (() => voi
 /**
  * @public
  */
-export declare const useReactiveState: <T extends Record<string, unknown>>(
-  initialState: T | (() => T)
-) => [DeepReadonly<UnwrapNestedRefs<T>>, (payload: UnwrapNestedRefs<T> | ((t: UnwrapNestedRefs<T>) => void)) => void];
+export declare const useReactiveState: <T extends Record<string, unknown>>(initialState: T | (() => T)) => [DeepReadonly<UnwrapNestedRefs<T>>, (payload: UnwrapNestedRefs<T> | ((t: UnwrapNestedRefs<T>) => void)) => void];
 
 /**
  * @public
@@ -660,93 +638,93 @@ export declare const useReactiveState: <T extends Record<string, unknown>>(
  * @typeParam C - The actions type (from `withActions` middleware)
  */
 export declare type UseSelectorWithState<T, C> = {
-  /**
-   * Use the entire state (called without arguments)
-   * @returns The full readonly state merged with actions
-   */
-  (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-  /**
-   * Use a selected slice of the state (called with selector)
-   * @param selector - A function to select part of the state
-   * @param compare - Optional comparison function. If returns `true`, component won't re-render
-   * @returns The selected state slice
-   */
-  <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  /**
-   * @deprecated Use `getReactiveState` or `getReadonlyState` instead
-   */
-  getState: () => T;
-  /**
-   * Get the actions defined in `withActions` middleware
-   * @returns The actions object
-   */
-  getActions: () => C;
-  /**
-   * Get the internal lifecycle object (advanced usage)
-   * @returns The lifecycle object
-   */
-  getLifeCycle: () => LifeCycle;
-  /**
-   * Get the mutable reactive state. Changes will trigger component updates.
-   * @returns The reactive state (mutable)
-   */
-  getReactiveState: () => UnwrapNestedRefs<T>;
-  /**
-   * Get a readonly version of the state. Safe to use anywhere without causing mutations.
-   * @returns The readonly state
-   */
-  getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
-  /**
-   * Subscribe to state changes outside of React components
-   * @param selector - A function to select part of the state to watch
-   * @param cb - Callback function invoked when selected state changes
-   * @param shallow - If true, only shallow compare the selected state
-   * @returns An unsubscribe function
-   */
-  subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
-  /**
-   * Wait for a specific state value to be reached. Useful for async flows.
-   * @param params - Configuration object with key, value, single (AbortSignal), and optional compare function
-   * @returns A promise that resolves when the value matches, or rejects if aborted
-   */
-  waitingValueTo: <K extends keyof UnwrapNestedRefs<T> = keyof UnwrapNestedRefs<T>>(params: {
-    key: K;
-    value: UnwrapNestedRefs<T>[K];
-    single?: AbortSignal;
-    compare?: (exist: UnwrapNestedRefs<T>[K], target: UnwrapNestedRefs<T>[K]) => boolean;
-  }) => Promise<void>;
-  /**
-   * Hook variant that deeply tracks all nested state changes
-   */
-  useDeepSelector: {
+    /**
+     * Use the entire state (called without arguments)
+     * @returns The full readonly state merged with actions
+     */
     (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+    /**
+     * Use a selected slice of the state (called with selector)
+     * @param selector - A function to select part of the state
+     * @param compare - Optional comparison function. If returns `true`, component won't re-render
+     * @returns The selected state slice
+     */
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Hook variant with deep tracking and stable selector reference
-   */
-  useDeepStableSelector: {
-    (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Hook variant that only shallowly tracks state changes (better performance)
-   */
-  useShallowSelector: {
-    (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Hook variant with shallow tracking and stable selector reference
-   */
-  useShallowStableSelector: {
-    (): DeepReadonly<UnwrapNestedRefs<T>> & C;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Clear/reset the state subscription. Useful for cleanup.
-   */
-  clear: () => void;
+    /**
+     * @deprecated Use `getReactiveState` or `getReadonlyState` instead
+     */
+    getState: () => T;
+    /**
+     * Get the actions defined in `withActions` middleware
+     * @returns The actions object
+     */
+    getActions: () => C;
+    /**
+     * Get the internal lifecycle object (advanced usage)
+     * @returns The lifecycle object
+     */
+    getLifeCycle: () => LifeCycle;
+    /**
+     * Get the mutable reactive state. Changes will trigger component updates.
+     * @returns The reactive state (mutable)
+     */
+    getReactiveState: () => UnwrapNestedRefs<T>;
+    /**
+     * Get a readonly version of the state. Safe to use anywhere without causing mutations.
+     * @returns The readonly state
+     */
+    getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+    /**
+     * Subscribe to state changes outside of React components
+     * @param selector - A function to select part of the state to watch
+     * @param cb - Callback function invoked when selected state changes
+     * @param shallow - If true, only shallow compare the selected state
+     * @returns An unsubscribe function
+     */
+    subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
+    /**
+     * Wait for a specific state value to be reached. Useful for async flows.
+     * @param params - Configuration object with key, value, single (AbortSignal), and optional compare function
+     * @returns A promise that resolves when the value matches, or rejects if aborted
+     */
+    waitingValueTo: <K extends keyof UnwrapNestedRefs<T> = keyof UnwrapNestedRefs<T>>(params: {
+        key: K;
+        value: UnwrapNestedRefs<T>[K];
+        single?: AbortSignal;
+        compare?: (exist: UnwrapNestedRefs<T>[K], target: UnwrapNestedRefs<T>[K]) => boolean;
+    }) => Promise<void>;
+    /**
+     * Hook variant that deeply tracks all nested state changes
+     */
+    useDeepSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Hook variant with deep tracking and stable selector reference
+     */
+    useDeepStableSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Hook variant that only shallowly tracks state changes (better performance)
+     */
+    useShallowSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Hook variant with shallow tracking and stable selector reference
+     */
+    useShallowStableSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>> & C;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>> & C) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Clear/reset the state subscription. Useful for cleanup.
+     */
+    clear: () => void;
 };
 
 /**
@@ -758,88 +736,88 @@ export declare type UseSelectorWithState<T, C> = {
  * @typeParam T - The state type returned by the creator function
  */
 export declare type UseSelectorWithStore<T> = {
-  /**
-   * Use the entire state (called without arguments)
-   * @returns The full readonly state
-   */
-  (): DeepReadonly<UnwrapNestedRefs<T>>;
-  /**
-   * Use a selected slice of the state (called with selector)
-   * @param selector - A function to select part of the state
-   * @param compare - Optional comparison function. If returns `true`, component won't re-render
-   * @returns The selected state slice
-   */
-  <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  /**
-   * @deprecated Use `getReactiveState` or `getReadonlyState` instead
-   */
-  getState: () => T;
-  /**
-   * Get the internal lifecycle object (advanced usage)
-   * @returns The lifecycle object
-   */
-  getLifeCycle: () => LifeCycle;
-  /**
-   * Get the mutable reactive state. Changes will trigger component updates.
-   * @returns The reactive state (mutable)
-   */
-  getReactiveState: () => UnwrapNestedRefs<T>;
-  /**
-   * Get a readonly version of the state. Safe to use anywhere without causing mutations.
-   * @returns The readonly state
-   */
-  getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
-  /**
-   * Subscribe to state changes outside of React components
-   * @param selector - A function to select part of the state to watch
-   * @param cb - Callback function invoked when selected state changes
-   * @param shallow - If true, only shallow compare the selected state
-   * @returns An unsubscribe function
-   */
-  subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
-  /**
-   * Wait for a specific state value to be reached. Useful for async flows.
-   * @param params - Configuration object with key, value, single (AbortSignal), and optional compare function
-   * @returns A promise that resolves when the value matches, or rejects if aborted
-   */
-  waitingValueTo: <K extends keyof UnwrapNestedRefs<T> = keyof UnwrapNestedRefs<T>>(params: {
-    key: K;
-    value: UnwrapNestedRefs<T>[K];
-    single?: AbortSignal;
-    compare?: (exist: UnwrapNestedRefs<T>[K], target: UnwrapNestedRefs<T>[K]) => boolean;
-  }) => Promise<void>;
-  /**
-   * Hook variant that only shallowly tracks state changes (better performance)
-   */
-  useShallowSelector: {
+    /**
+     * Use the entire state (called without arguments)
+     * @returns The full readonly state
+     */
     (): DeepReadonly<UnwrapNestedRefs<T>>;
+    /**
+     * Use a selected slice of the state (called with selector)
+     * @param selector - A function to select part of the state
+     * @param compare - Optional comparison function. If returns `true`, component won't re-render
+     * @returns The selected state slice
+     */
     <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Hook variant with shallow tracking and stable selector reference
-   */
-  useShallowStableSelector: {
-    (): DeepReadonly<UnwrapNestedRefs<T>>;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Hook variant that deeply tracks all nested state changes
-   */
-  useDeepSelector: {
-    (): DeepReadonly<UnwrapNestedRefs<T>>;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Hook variant with deep tracking and stable selector reference
-   */
-  useDeepStableSelector: {
-    (): DeepReadonly<UnwrapNestedRefs<T>>;
-    <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
-  };
-  /**
-   * Clear/reset the state subscription. Useful for cleanup.
-   */
-  clear: () => void;
+    /**
+     * @deprecated Use `getReactiveState` or `getReadonlyState` instead
+     */
+    getState: () => T;
+    /**
+     * Get the internal lifecycle object (advanced usage)
+     * @returns The lifecycle object
+     */
+    getLifeCycle: () => LifeCycle;
+    /**
+     * Get the mutable reactive state. Changes will trigger component updates.
+     * @returns The reactive state (mutable)
+     */
+    getReactiveState: () => UnwrapNestedRefs<T>;
+    /**
+     * Get a readonly version of the state. Safe to use anywhere without causing mutations.
+     * @returns The readonly state
+     */
+    getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
+    /**
+     * Subscribe to state changes outside of React components
+     * @param selector - A function to select part of the state to watch
+     * @param cb - Callback function invoked when selected state changes
+     * @param shallow - If true, only shallow compare the selected state
+     * @returns An unsubscribe function
+     */
+    subscribe: <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, cb?: () => void, shallow?: boolean) => () => void;
+    /**
+     * Wait for a specific state value to be reached. Useful for async flows.
+     * @param params - Configuration object with key, value, single (AbortSignal), and optional compare function
+     * @returns A promise that resolves when the value matches, or rejects if aborted
+     */
+    waitingValueTo: <K extends keyof UnwrapNestedRefs<T> = keyof UnwrapNestedRefs<T>>(params: {
+        key: K;
+        value: UnwrapNestedRefs<T>[K];
+        single?: AbortSignal;
+        compare?: (exist: UnwrapNestedRefs<T>[K], target: UnwrapNestedRefs<T>[K]) => boolean;
+    }) => Promise<void>;
+    /**
+     * Hook variant that only shallowly tracks state changes (better performance)
+     */
+    useShallowSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Hook variant with shallow tracking and stable selector reference
+     */
+    useShallowStableSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Hook variant that deeply tracks all nested state changes
+     */
+    useDeepSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Hook variant with deep tracking and stable selector reference
+     */
+    useDeepStableSelector: {
+        (): DeepReadonly<UnwrapNestedRefs<T>>;
+        <P>(selector: (state: DeepReadonly<UnwrapNestedRefs<T>>) => P, compare?: <Q extends P = P>(prev: Q, next: Q) => boolean): P;
+    };
+    /**
+     * Clear/reset the state subscription. Useful for cleanup.
+     */
+    clear: () => void;
 };
 
 /**
@@ -850,20 +828,12 @@ export declare const version: string;
 /**
  * @public
  */
-export declare function withActions<
-  T extends StateWithMiddleware<Q, L>,
-  Q extends Record<string, unknown>,
-  P extends Record<string, Function>,
-  L extends Record<string, Function>,
->(setup: Setup<StateWithMiddleware<Q, L>>, options: WithActionsProps<Q, P>): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>>;
+export declare function withActions<T extends StateWithMiddleware<Q, L>, Q extends Record<string, unknown>, P extends Record<string, Function>, L extends Record<string, Function>>(setup: Setup<StateWithMiddleware<Q, L>>, options: WithActionsProps<Q, P>): Setup<StateWithMiddleware<UnWrapMiddleware<T>, P & L>>;
 
 /**
  * @public
  */
-export declare function withActions<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<T>,
-  options: WithActionsProps<T, P>
-): Setup<StateWithMiddleware<T, P>>;
+export declare function withActions<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<T>, options: WithActionsProps<T, P>): Setup<StateWithMiddleware<T, P>>;
 
 /**
  * @public
@@ -888,12 +858,12 @@ export declare function withActions<T extends Record<string, unknown>, P extends
  * ```
  */
 export declare type WithActionsProps<T, P> = {
-  /** Function that receives the reactive state and returns an object of action functions */
-  generateActions?: (state: T) => P;
-  /**
-   * @deprecated No longer needed, actions are automatically batched
-   */
-  automaticBatchAction?: boolean;
+    /** Function that receives the reactive state and returns an object of action functions */
+    generateActions?: (state: T) => P;
+    /**
+     * @deprecated No longer needed, actions are automatically batched
+     */
+    automaticBatchAction?: boolean;
 };
 
 /**
@@ -906,10 +876,7 @@ export declare const withDeepSelector: typeof withSelectorOptions;
 /**
  * @public
  */
-export declare function withNamespace<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<StateWithMiddleware<T, P>>,
-  options: WithNamespaceProps<T>
-): Setup<StateWithMiddleware<T, P>>;
+export declare function withNamespace<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithNamespaceProps<T>): Setup<StateWithMiddleware<T, P>>;
 
 /**
  * @public
@@ -940,23 +907,20 @@ export declare function withNamespace<T extends Record<string, unknown>>(setup: 
  * ```
  */
 export declare type WithNamespaceProps<T> = {
-  /** Unique namespace identifier for this state */
-  namespace: string;
-  /** Enable Redux DevTools integration (browser only) */
-  reduxDevTool?: boolean;
-  /** Use shallow comparison for detecting state changes */
-  shallow?: boolean;
-  /** Custom listener to select which part of state to track */
-  listener?: (state: T) => any;
+    /** Unique namespace identifier for this state */
+    namespace: string;
+    /** Enable Redux DevTools integration (browser only) */
+    reduxDevTool?: boolean;
+    /** Use shallow comparison for detecting state changes */
+    shallow?: boolean;
+    /** Custom listener to select which part of state to track */
+    listener?: (state: T) => any;
 };
 
 /**
  * @public
  */
-export declare function withPersist<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<StateWithMiddleware<T, P>>,
-  options: WithPersistProps<T>
-): Setup<StateWithMiddleware<T, P>>;
+export declare function withPersist<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithPersistProps<T>): Setup<StateWithMiddleware<T, P>>;
 
 /**
  * @public
@@ -1004,54 +968,48 @@ export declare function withPersist<T extends Record<string, unknown>>(setup: Se
  * ```
  */
 export declare type WithPersistProps<T> = {
-  /** Unique key for storage. Used as the storage key prefix. */
-  key: string;
-  /** Version string for the persisted state. Useful for migrations. */
-  version?: string;
-  /** Debounce time in ms before persisting changes. Default: 40ms */
-  debounceTime?: number;
-  /**
-   * Custom storage provider. Defaults to `localStorage` in browsers.
-   * For non-browser environments, use `createStorageAdapter()` to create custom storage.
-   */
-  getStorage?: () => StorageAdapter | Storage;
-  /** Custom serialization function. Default: JSON.stringify */
-  stringify?: (s: T) => string;
-  /** Custom deserialization function. Default: JSON.parse */
-  parse?: (s: string) => Partial<T>;
-  /** Custom merge function to combine initial state with stored state */
-  merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
-  /**
-   * @deprecated This option is no longer supported and will be ignored
-   */
-  migrateVersion?: string;
-  /**
-   * @deprecated This option is no longer supported and will be ignored
-   */
-  migrateState?: (prevState: StorageState | null, onDeleteFromStorage: () => void) => Partial<T> | null;
-  /** Enable debug logging for persistence operations */
-  devLog?: boolean;
-  /** Use shallow comparison for detecting state changes */
-  shallow?: boolean;
-  /** Custom listener to select which part of state to persist */
-  listener?: (state: T) => any;
+    /** Unique key for storage. Used as the storage key prefix. */
+    key: string;
+    /** Version string for the persisted state. Useful for migrations. */
+    version?: string;
+    /** Debounce time in ms before persisting changes. Default: 40ms */
+    debounceTime?: number;
+    /**
+     * Custom storage provider. Defaults to `localStorage` in browsers.
+     * For non-browser environments, use `createStorageAdapter()` to create custom storage.
+     */
+    getStorage?: () => StorageAdapter | Storage;
+    /** Custom serialization function. Default: JSON.stringify */
+    stringify?: (s: T) => string;
+    /** Custom deserialization function. Default: JSON.parse */
+    parse?: (s: string) => Partial<T>;
+    /** Custom merge function to combine initial state with stored state */
+    merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
+    /**
+     * @deprecated This option is no longer supported and will be ignored
+     */
+    migrateVersion?: string;
+    /**
+     * @deprecated This option is no longer supported and will be ignored
+     */
+    migrateState?: (prevState: StorageState | null, onDeleteFromStorage: () => void) => Partial<T> | null;
+    /** Enable debug logging for persistence operations */
+    devLog?: boolean;
+    /** Use shallow comparison for detecting state changes */
+    shallow?: boolean;
+    /** Custom listener to select which part of state to persist */
+    listener?: (state: T) => any;
 };
 
 /**
  * @public
  */
-export declare function withSelectorOptions<T extends Record<string, unknown>, P extends Record<string, Function>>(
-  setup: Setup<StateWithMiddleware<T, P>>,
-  options: WithSelectorOptionsProps
-): Setup<StateWithMiddleware<T, P>>;
+export declare function withSelectorOptions<T extends Record<string, unknown>, P extends Record<string, Function>>(setup: Setup<StateWithMiddleware<T, P>>, options: WithSelectorOptionsProps): Setup<StateWithMiddleware<T, P>>;
 
 /**
  * @public
  */
-export declare function withSelectorOptions<T extends Record<string, unknown>>(
-  setup: Setup<T>,
-  options: WithSelectorOptionsProps
-): Setup<StateWithMiddleware<T, {}>>;
+export declare function withSelectorOptions<T extends Record<string, unknown>>(setup: Setup<T>, options: WithSelectorOptionsProps): Setup<StateWithMiddleware<T, {}>>;
 
 /**
  * @public
@@ -1068,12 +1026,12 @@ export declare function withSelectorOptions<T extends Record<string, unknown>>(
  * ```
  */
 export declare type WithSelectorOptionsProps = {
-  /** Enable deep tracking of nested state changes */
-  deepSelector?: boolean;
-  /** Enable stable comparison between renders */
-  stableCompare?: boolean;
-  /** Memoize selector function reference */
-  stableSelector?: boolean;
+    /** Enable deep tracking of nested state changes */
+    deepSelector?: boolean;
+    /** Enable stable comparison between renders */
+    stableCompare?: boolean;
+    /** Memoize selector function reference */
+    stableSelector?: boolean;
 };
 
 /**
@@ -1083,6 +1041,7 @@ export declare type WithSelectorOptionsProps = {
  */
 export declare const wrapperBatchUpdate: <T extends Function>(_cb: T) => T;
 
+
 export * from "@vue/reactivity";
 
-export {};
+export { }
