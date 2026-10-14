@@ -7,6 +7,13 @@
 - **Runtime deps**: `@vue/reactivity`, `@vue/shared`, `use-sync-external-store` (inlined into the build output)
 - **Peer dependency**: `react` (required); `octane` only for the `reactivity-store/octane` entry
 
+::: tip How to use this page
+This is a **concise, machine-readable** guide for AI coding assistants (and a quick human reference).
+- **AI agents**: point your context at this page — it lists capabilities, recommended usage, and pitfalls.
+- **Humans**: for the full docs browse the [documentation site](https://mrwangjusttodo.github.io/reactivity-store/).
+- **Site index**: a machine-readable [`llms.txt`](/llms.txt) is also available at the site root.
+:::
+
 ## What it is (TL;DR)
 
 A **state management library for React** built on Vue's reactivity system (`@vue/reactivity`).

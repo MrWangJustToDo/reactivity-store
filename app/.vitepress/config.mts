@@ -15,6 +15,7 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Guide", link: "/what" },
       { text: "API Reference", link: "/api-reference" },
+      { text: "AI Guide", link: "/ai" },
       { text: "Examples", link: "/use-cases" },
       {
         text: "More",

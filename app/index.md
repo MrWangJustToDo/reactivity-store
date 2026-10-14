@@ -41,6 +41,10 @@ features:
 
 RStore adapts to your background:
 
+::: tip 🤖 Using an AI coding assistant?
+If you're integrating `reactivity-store` with an AI agent, read the concise [AI Guide](/ai) — it covers capabilities, recommended usage, and common pitfalls. The site also exposes a machine-readable [`llms.txt`](/llms.txt) index for AI tools.
+:::
+
 ::: code-group
 
 ```tsx [🟢 Vue Approach] twoslash
