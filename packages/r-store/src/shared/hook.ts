@@ -300,7 +300,6 @@ export const createHook = <T extends Record<string, unknown>, C extends Record<s
     getReactiveState: () => UnwrapNestedRefs<T>;
     getReadonlyState: () => DeepReadonly<UnwrapNestedRefs<T>>;
     useLifeCycle: typeof useLifeCycle;
-    useStableSelector: typeof useSelector;
     useDeepSelector: typeof useSelector;
     useDeepStableSelector: typeof useSelector;
     useShallowSelector: typeof useSelector;
