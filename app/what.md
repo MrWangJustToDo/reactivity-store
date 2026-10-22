@@ -57,6 +57,7 @@ RStore provides **two distinct APIs** based on your background:
 **Use**: `createStore` / `createStoreWithComponent`
 
 **Features**:
+
 - Direct access to Vue APIs: `ref()`, `reactive()`, `computed()`
 - Automatic dependency tracking with `computed()`
 - Component lifecycle hooks: `onMounted`, `onUpdated`
@@ -77,41 +78,39 @@ const useStore = createStore(() => {
 **Use**: `createState` with middleware
 
 **Features**:
+
 - Plain objects - no Vue APIs to learn
 - Define actions for mutations
 - Built-in middleware: persist, DevTools, etc.
 - Familiar React patterns
 
 ```tsx
-const useStore = createState(
-  () => ({ count: 0 }),
-  {
-    withActions: (state) => ({
-      increment: () => state.count++
-    })
-  }
-);
+const useStore = createState(() => ({ count: 0 }), {
+  withActions: (state) => ({
+    increment: () => state.count++,
+  }),
+});
 ```
 
 ## Who is RStore For?
 
-| Your Background | Recommended Approach |
-|----------------|---------------------|
-| **Vue developer** moving to React | 🟢 Vue Approach |
-| **React developer** wanting simpler state | 🔵 React Approach |
-| **Full-stack team** with both Vue/React | Both approaches work! |
-| **New to both** | 🔵 React Approach (less to learn) |
+| Your Background                           | Recommended Approach              |
+| ----------------------------------------- | --------------------------------- |
+| **Vue developer** moving to React         | 🟢 Vue Approach                   |
+| **React developer** wanting simpler state | 🔵 React Approach                 |
+| **Full-stack team** with both Vue/React   | Both approaches work!             |
+| **New to both**                           | 🔵 React Approach (less to learn) |
 
 ## Key Features
 
-| Feature | Description |
-|---------|-------------|
-| ⚡ **Zero Boilerplate** | No reducers, no actions, no dispatch - just mutate and go |
-| 🎯 **Automatic Updates** | UI updates automatically when state changes - no manual subscriptions |
-| 📘 **TypeScript Native** | Full type inference and type safety throughout |
-| 🔌 **Middleware System** | Built-in middleware for persistence, actions, DevTools, and more |
-| 🪝 **Lifecycle Hooks** | Component lifecycle hooks like `onMounted`, `onUpdated` |
-| 🚀 **Performance Optimized** | Fine-grained reactivity with optional deep/stable selectors |
+| Feature                      | Description                                                           |
+| ---------------------------- | --------------------------------------------------------------------- |
+| ⚡ **Zero Boilerplate**      | No reducers, no actions, no dispatch - just mutate and go             |
+| 🎯 **Automatic Updates**     | UI updates automatically when state changes - no manual subscriptions |
+| 📘 **TypeScript Native**     | Full type inference and type safety throughout                        |
+| 🔌 **Middleware System**     | Built-in middleware for persistence, actions, DevTools, and more      |
+| 🪝 **Lifecycle Hooks**       | Component lifecycle hooks like `onMounted`, `onUpdated`               |
+| 🚀 **Performance Optimized** | Fine-grained reactivity with optional deep/stable selectors           |
 
 ## What's Next?
 

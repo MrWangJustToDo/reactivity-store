@@ -52,7 +52,9 @@ const sendToDevTools = (action: Action) => {
 
     globalDevTools?.send?.(rest, state);
   } catch (e) {
-    console.log(e);
+    if (__DEV__) {
+      console.warn(`[reactivity-store] failed to send state to redux devtools: %o`, e);
+    }
   }
 };
 
@@ -63,7 +65,7 @@ const initDevTools = () => {
     switch (message.type) {
       case "DISPATCH":
       case "ACTION":
-        console.warn(`[reactivity-store] currently don't support time-travel or dispatch action in devtools`);
+        console.warn(`[reactivity-store] currently doesn't support time-travel or dispatching actions in devtools`);
 
         devTools.init({ ...devToolMap });
 

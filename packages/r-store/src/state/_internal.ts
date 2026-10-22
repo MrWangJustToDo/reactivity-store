@@ -71,7 +71,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (__DEV__ && !isObject(state)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a plain object but got a ${state}, this is a unexpected usage. should return a plain object in this 'setup' function`
+      `[reactivity-store] '${name}' expects to receive a plain object but got a ${state}, this is an unexpected usage. should return a plain object in this 'setup' function`
     );
   }
 
@@ -80,7 +80,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (__DEV__ && isPromise(initialState)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a plain object but got a promise %o, this is a unexpected usage. should not return a promise in this 'setup' function`,
+      `[reactivity-store] '${name}' expects to receive a plain object but got a promise %o, this is an unexpected usage. should not return a promise in this 'setup' function`,
       initialState
     );
   }
@@ -97,14 +97,14 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
 
   if (__DEV__ && checkHasReactive(rawState)) {
     console.error(
-      `[reactivity-store] '${name}' expect receive a plain object but got a reactive object/field %o, this is a unexpected usage. should not use 'reactiveApi' in this 'setup' function`,
+      `[reactivity-store] '${name}' expects to receive a plain object but got a reactive object/field %o, this is an unexpected usage. should not use 'reactiveApi' in this 'setup' function`,
       rawState
     );
   }
 
   if (__DEV__ && checkHasFunction(rawState)) {
     console.error(
-      `[reactivity-store] '${name}' has a function field in state %o, this is a unexpected usage. state should be only a plain object with data field`,
+      `[reactivity-store] '${name}' has a function field in state %o, this is an unexpected usage. state should be only a plain object with data field`,
       rawState
     );
   }
@@ -112,7 +112,7 @@ export function internalCreateState<T extends Record<string, unknown>, P extends
   if (__DEV__) {
     const sameField = checkHasSameField(rawState, actions);
     sameField.forEach((key) =>
-      console.warn(`[reactivity-store] duplicate key: [${key}] in 'state' and 'actions' from createState, this is a unexpected usage`)
+      console.warn(`[reactivity-store] duplicate key: [${key}] in 'state' and 'actions' from createState, this is an unexpected usage`)
     );
   }
 

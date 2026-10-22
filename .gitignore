@@ -8,3 +8,7 @@
 node_modules
 dev
 dist
+.agents/cache
+.agents/memory
+.agents/sessions
+.agents/usage

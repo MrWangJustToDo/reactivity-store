@@ -15,12 +15,11 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Guide", link: "/what" },
       { text: "API Reference", link: "/api-reference" },
+      { text: "AI Guide", link: "/ai" },
       { text: "Examples", link: "/use-cases" },
       {
         text: "More",
-        items: [
-          { text: "git-diff-view", link: "https://github.com/MrWangJustToDo/git-diff-view", target: "_blank" }
-        ]
+        items: [{ text: "git-diff-view", link: "https://github.com/MrWangJustToDo/git-diff-view", target: "_blank" }],
       },
     ],
 
@@ -56,29 +55,30 @@ export default defineConfig({
       {
         text: "Reference",
         collapsed: false,
-        items: [
-          { text: "API Reference", link: "/api-reference" },
-        ],
+        items: [{ text: "API Reference", link: "/api-reference" }],
+      },
+      {
+        text: "AI",
+        collapsed: false,
+        items: [{ text: "AI Guide", link: "/ai" }],
       },
     ],
 
-    socialLinks: [
-      { icon: "github", link: "https://github.com/MrWangJustToDo/r-store" }
-    ],
+    socialLinks: [{ icon: "github", link: "https://github.com/MrWangJustToDo/reactivity-store" }],
 
     search: {
-      provider: "local"
+      provider: "local",
     },
 
     footer: {
       message: "Released under the MIT License.",
-      copyright: "Copyright © 2024-present MrWangJustToDo"
+      copyright: "Copyright © 2024-present MrWangJustToDo",
     },
 
     editLink: {
-      pattern: "https://github.com/MrWangJustToDo/r-store/edit/main/app/:path",
-      text: "Edit this page on GitHub"
-    }
+      pattern: "https://github.com/MrWangJustToDo/reactivity-store/edit/main/app/:path",
+      text: "Edit this page on GitHub",
+    },
   },
   head: [
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],

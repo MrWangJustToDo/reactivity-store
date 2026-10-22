@@ -9,13 +9,15 @@ Complete API documentation for RStore.
 Create a reactive store with Vue's reactivity APIs.
 
 ```tsx
-function createStore<T>(setup: () => T): UseStore<T>
+function createStore<T>(setup: () => T): UseStore<T>;
 ```
 
 **Parameters:**
+
 - `setup`: Function that returns the store's reactive state and methods
 
 **Returns:**
+
 - A hook function that can be called with an optional selector
 
 **Example:**
@@ -39,7 +41,7 @@ function App() {
   const { count, doubled, increment } = useCounter();
 
   // Or use selector
-  const count = useCounter(state => state.count);
+  const count = useCounter((state) => state.count);
 
   return <button onClick={increment}>{count}</button>;
 }
@@ -54,23 +56,30 @@ Create a state with middleware support for persistence, actions, and more.
 ```tsx
 function createState<T>(
   setup: () => T,
-  options?: StateOptions<T>
-): UseState<T>
+  options?: {
+    withPersist?: string | WithPersistProps<T>;
+    withActions?: (state: T) => Record<string, Function>;
+    withNamespace?: string | WithNamespaceProps<T>;
+    withDeepSelector?: boolean;
+    withStableSelector?: boolean;
+  }
+): UseSelectorWithState<T, {}>;
 ```
 
 **Parameters:**
+
 - `setup`: Function that returns a plain object (not reactive)
 - `options`: Configuration object for middleware
 
 **Options:**
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `withPersist` | `string \| PersistOptions` | Auto-persist to localStorage |
-| `withActions` | `(state: T) => Actions` | Define state mutations |
-| `withNamespace` | `string` | Redux DevTools namespace |
-| `withDeepSelector` | `boolean` | Track nested changes (default: `true`) |
-| `withStableSelector` | `boolean` | Stable selectors for performance |
+| Option               | Type                       | Description                            |
+| -------------------- | -------------------------- | -------------------------------------- |
+| `withPersist`        | `string \| PersistOptions` | Auto-persist to localStorage           |
+| `withActions`        | `(state: T) => Actions`    | Define state mutations                 |
+| `withNamespace`      | `string`                   | Redux DevTools namespace               |
+| `withDeepSelector`   | `boolean`                  | Track nested changes (default: `true`) |
+| `withStableSelector` | `boolean`                  | Stable selectors for performance       |
 
 **Example:**
 
@@ -80,15 +89,15 @@ import { createState } from "reactivity-store";
 const useSettings = createState(
   () => ({
     theme: "light",
-    language: "en"
+    language: "en",
   }),
   {
     withPersist: "app-settings",
     withActions: (state) => ({
-      toggleTheme: () => state.theme = state.theme === "light" ? "dark" : "light",
-      setLanguage: (lang: string) => state.language = lang
+      toggleTheme: () => (state.theme = state.theme === "light" ? "dark" : "light"),
+      setLanguage: (lang: string) => (state.language = lang),
     }),
-    withNamespace: "Settings"
+    withNamespace: "Settings",
   }
 );
 
@@ -100,15 +109,18 @@ const { theme, toggleTheme } = useSettings();
 
 ### createStoreWithComponent
 
+::: warning Deprecated
+`createStoreWithComponent` is **deprecated** and not recommended for new code. Use [createStore](/createStore) instead.
+:::
+
 Create a component-scoped store with lifecycle hooks.
 
 ```tsx
-function createStoreWithComponent<T>(config: {
-  setup: () => T
-}): Component<T>
+function createStoreWithComponent<T>(config: { setup: () => T }): (props: { children?: (state) => ReactNode }) => ReactElement;
 ```
 
 **Parameters:**
+
 - `config.setup`: Setup function with access to lifecycle hooks
 
 **Example:**
@@ -131,18 +143,12 @@ const Counter = createStoreWithComponent({
     const increment = () => count.value++;
 
     return { count, increment };
-  }
+  },
 });
 
 // Usage
 function App() {
-  return (
-    <Counter>
-      {({ count, increment }) => (
-        <button onClick={increment}>Count: {count}</button>
-      )}
-    </Counter>
-  );
+  return <Counter>{({ count, increment }) => <button onClick={increment}>Count: {count}</button>}</Counter>;
 }
 ```
 
@@ -173,7 +179,7 @@ import { reactive } from "reactivity-store";
 
 const state = reactive({
   count: 0,
-  nested: { value: 10 }
+  nested: { value: 10 },
 });
 
 state.count++; // Direct mutation
@@ -233,9 +239,7 @@ watchEffect(() => {
 Create component-local reactive state.
 
 ```tsx
-function useReactiveState<T>(
-  initial: T | (() => T)
-): [state: T, setState: (updater: T | ((state: T) => void)) => void]
+function useReactiveState<T>(initial: T | (() => T)): [state: T, setState: (updater: T | ((state: T) => void)) => void];
 ```
 
 **Example:**
@@ -247,7 +251,13 @@ function Counter() {
   const [state, setState] = useReactiveState({ count: 0 });
 
   return (
-    <button onClick={() => setState(s => { s.count++ })}>
+    <button
+      onClick={() =>
+        setState((s) => {
+          s.count++;
+        })
+      }
+    >
       Count: {state.count}
     </button>
   );
@@ -259,7 +269,7 @@ function Counter() {
 Run effects with automatic dependency tracking (no deps array needed).
 
 ```tsx
-function useReactiveEffect(effect: () => void | (() => void)): void
+function useReactiveEffect(effect: () => void | (() => void)): void;
 ```
 
 **Example:**
@@ -279,7 +289,11 @@ function MouseTracker() {
     return () => window.removeEventListener("mousemove", handleMove);
   });
 
-  return <div>Mouse: ({position.x}, {position.y})</div>;
+  return (
+    <div>
+      Mouse: ({position.x}, {position.y})
+    </div>
+  );
 }
 ```
 
@@ -299,7 +313,7 @@ function withPersist<T>(
     parse?: (str: string) => T;
     merge?: (fromCreator: T, fromStorage: Partial<T>) => T;
   }
-): () => T
+): () => T;
 ```
 
 **Example:**
@@ -308,18 +322,10 @@ function withPersist<T>(
 import { createState, withPersist } from "reactivity-store";
 
 // Middleware style
-const useSettings = createState(
-  withPersist(
-    () => ({ theme: "light" }),
-    { key: "settings" }
-  )
-);
+const useSettings = createState(withPersist(() => ({ theme: "light" }), { key: "settings" }));
 
 // Options style
-const useSettings = createState(
-  () => ({ theme: "light" }),
-  { withPersist: "settings" }
-);
+const useSettings = createState(() => ({ theme: "light" }), { withPersist: "settings" });
 ```
 
 ### withActions
@@ -330,9 +336,9 @@ Define actions for state mutations.
 function withActions<T, A>(
   setup: () => T,
   options: {
-    generateActions: (state: T) => A
+    generateActions: (state: T) => A;
   }
-): () => T & A
+): () => T & A;
 ```
 
 **Example:**
@@ -340,16 +346,13 @@ function withActions<T, A>(
 ```tsx
 import { createState, withActions } from "reactivity-store";
 
-const useCounter = createState(
-  () => ({ count: 0 }),
-  {
-    withActions: (state) => ({
-      increment: () => state.count++,
-      decrement: () => state.count--,
-      reset: () => state.count = 0
-    })
-  }
-);
+const useCounter = createState(() => ({ count: 0 }), {
+  withActions: (state) => ({
+    increment: () => state.count++,
+    decrement: () => state.count--,
+    reset: () => (state.count = 0),
+  }),
+});
 ```
 
 ### withNamespace
@@ -363,7 +366,7 @@ function withNamespace<T>(
     namespace: string;
     reduxDevTool?: boolean;
   }
-): () => T
+): () => T;
 ```
 
 **Example:**
@@ -371,15 +374,12 @@ function withNamespace<T>(
 ```tsx
 import { createState } from "reactivity-store";
 
-const useStore = createState(
-  () => ({ count: 0 }),
-  {
-    withNamespace: "Counter",
-    withActions: (state) => ({
-      increment: () => state.count++
-    })
-  }
-);
+const useStore = createState(() => ({ count: 0 }), {
+  withNamespace: "Counter",
+  withActions: (state) => ({
+    increment: () => state.count++,
+  }),
+});
 ```
 
 ### withSelectorOptions
@@ -393,10 +393,11 @@ function withSelectorOptions<T>(
     deepSelector?: boolean;
     stableSelector?: boolean;
   }
-): () => T
+): () => T;
 ```
 
 **Options:**
+
 - `deepSelector` (default: `true`) - Track nested property changes
 - `stableSelector` (default: `false`) - Use stable selectors for performance
 
@@ -405,13 +406,10 @@ function withSelectorOptions<T>(
 ```tsx
 import { createState } from "reactivity-store";
 
-const useStore = createState(
-  () => ({ nested: { count: 0 } }),
-  {
-    withDeepSelector: true, // Track nested.count changes
-    withStableSelector: false
-  }
-);
+const useStore = createState(() => ({ nested: { count: 0 } }), {
+  withDeepSelector: true, // Track nested.count changes
+  withStableSelector: false,
+});
 ```
 
 ## Lifecycle Hooks
@@ -470,10 +468,7 @@ store.subscribe<K extends keyof T>(
 **Example:**
 
 ```tsx
-const useCounter = createState(
-  () => ({ count: 0 }),
-  { withActions: (s) => ({ increment: () => s.count++ }) }
-);
+const useCounter = createState(() => ({ count: 0 }), { withActions: (s) => ({ increment: () => s.count++ }) });
 
 // Subscribe anywhere
 const unsubscribe = useCounter.subscribe(
@@ -522,7 +517,7 @@ const useCounter = createStore(() => {
 const { count, increment } = useCounter();
 
 // Type-safe selector
-const doubled = useCounter(state => state.count * 2); // number
+const doubled = useCounter((state) => state.count * 2); // number
 ```
 
 ### Generic Type Parameters

@@ -75,7 +75,9 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
       ) {
         const alreadyHasNameSpace = checkHasKey(options.namespace);
         if (alreadyHasNameSpace) {
-          console.warn(`[reactivity-store/middleware] you have duplicate namespace '${options.namespace}' for current store, this is a unexpected usage`);
+          console.warn(
+            `[reactivity-store/middleware] detected a duplicate namespace '${options.namespace}' for the current store, this is an unexpected usage`
+          );
         }
         // setNamespaceMap(options.namespace, initialState);
       }
@@ -84,7 +86,7 @@ export function withNamespace<T extends Record<string, unknown>, P extends Recor
         ["$$__state__$$"]: toRaw(initialState),
         ["$$__actions__$$"]: actions,
         ["$$__middleware__$$"]: middleware,
-        ['$$__lifeCycle__$$']: lifeCycle,
+        ["$$__lifeCycle__$$"]: lifeCycle,
         ["$$__namespace__$$"]: { ...namespace, ...options },
         ["$$__selectorOptions__$$"]: selectorOptions,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P>;

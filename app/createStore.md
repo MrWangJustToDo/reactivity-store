@@ -9,8 +9,10 @@ This API is recommended for **Vue developers** or those familiar with Vue's reac
 `createStore` allows you to use Vue's reactivity APIs (`ref`, `reactive`, `computed`) directly in React. It feels just like writing Vue Composition API!
 
 **Signature:**
+
 ```ts
-function createStore<T>(setup: () => T): UseStore<T>
+// Simplified signature. The hook also exposes methods like getState, getReactiveState, etc.
+function createStore<T extends Record<string, unknown>>(setup: () => T): UseSelectorWithStore<T>;
 ```
 
 ## Basic Usage
@@ -62,8 +64,8 @@ const useUser = createStore(() => {
     email: "",
     profile: {
       bio: "",
-      avatar: ""
-    }
+      avatar: "",
+    },
   });
 
   // Mutate nested properties directly!
@@ -89,15 +91,11 @@ import { createStore, ref, computed } from "reactivity-store";
 const useCart = createStore(() => {
   const items = ref([
     { id: 1, name: "Apple", price: 1.5, quantity: 2 },
-    { id: 2, name: "Banana", price: 0.8, quantity: 3 }
+    { id: 2, name: "Banana", price: 0.8, quantity: 3 },
   ]);
 
   // Automatically recalculates when items change
-  const total = computed(() =>
-    items.value.reduce((sum, item) =>
-      sum + item.price * item.quantity, 0
-    )
-  );
+  const total = computed(() => items.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
 
   const addItem = (item) => {
     items.value.push(item);
@@ -116,12 +114,12 @@ Pick only the state you need for better performance:
 const { count, increment } = useCounter();
 
 // Pick specific fields
-const count = useCounter(state => state.count);
+const count = useCounter((state) => state.count);
 
 // Pick multiple fields
-const { count, doubled } = useCounter(state => ({
+const { count, doubled } = useCounter((state) => ({
   count: state.count,
-  doubled: state.doubled
+  doubled: state.doubled,
 }));
 ```
 
@@ -146,14 +144,11 @@ const { count, increment } = useCount();
 ```tsx [createState]
 import { createState } from "reactivity-store";
 
-const useCount = createState(
-  () => ({ count: 0 }),
-  {
-    withActions: (state) => ({
-      increment: () => state.count++
-    })
-  }
-);
+const useCount = createState(() => ({ count: 0 }), {
+  withActions: (state) => ({
+    increment: () => state.count++,
+  }),
+});
 
 // In component
 const { count, increment } = useCount();
@@ -164,9 +159,10 @@ import { create } from "zustand";
 
 const useCount = create((set) => ({
   count: 0,
-  increment: () => set((state) => ({
-    count: state.count + 1
-  }))
+  increment: () =>
+    set((state) => ({
+      count: state.count + 1,
+    })),
 }));
 
 // In component
@@ -176,6 +172,7 @@ const { count, increment } = useCount();
 :::
 
 **Key Differences:**
+
 - **RStore createStore**: Direct mutation with Vue APIs (`ref`, `reactive`, `computed`)
 - **RStore createState**: Actions-based with middleware support
 - **Zustand**: Immutable updates with `set` function
@@ -184,13 +181,13 @@ const { count, increment } = useCount();
 
 All Vue reactivity APIs are available:
 
-| API | Description | Example |
-|-----|-------------|---------|
-| `ref()` | Reactive primitive value | `const count = ref(0)` |
-| `reactive()` | Reactive object | `const user = reactive({ name: '' })` |
-| `computed()` | Derived state | `const doubled = computed(() => count.value * 2)` |
-| `watch()` | Side effects | `watch(() => count.value, (val) => console.log(val))` |
-| `watchEffect()` | Auto-tracking side effects | `watchEffect(() => console.log(count.value))` |
+| API             | Description                | Example                                               |
+| --------------- | -------------------------- | ----------------------------------------------------- |
+| `ref()`         | Reactive primitive value   | `const count = ref(0)`                                |
+| `reactive()`    | Reactive object            | `const user = reactive({ name: '' })`                 |
+| `computed()`    | Derived state              | `const doubled = computed(() => count.value * 2)`     |
+| `watch()`       | Side effects               | `watch(() => count.value, (val) => console.log(val))` |
+| `watchEffect()` | Auto-tracking side effects | `watchEffect(() => console.log(count.value))`         |
 
 See [@vue/reactivity docs](https://vuejs.org/api/reactivity-core.html) for complete API reference.
 
@@ -208,6 +205,7 @@ count.value++; // Won't work!
 const { count, increment } = useCount();
 increment(); // Works!
 ```
+
 :::
 
 ::: tip Ref Auto-Unwrapping
@@ -223,15 +221,16 @@ const useStore = createStore(() => {
 const { count } = useStore();
 console.log(count); // No .value needed!
 ```
+
 :::
-<!-- 
+
 ## Live Demo
 
 <script setup>
   import Create from '@theme/components/createStore.vue'
 </script>
 
-<Create /> -->
+<Create />
 
 ## Next Steps
 

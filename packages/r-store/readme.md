@@ -94,15 +94,12 @@ For **React developers** who want simplicity without learning Vue APIs:
 ```tsx
 import { createState } from "reactivity-store";
 
-const useCounter = createState(
-  () => ({ count: 0 }),
-  {
-    withActions: (state) => ({
-      increment: () => state.count++,
-      decrement: () => state.count--
-    })
-  }
-);
+const useCounter = createState(() => ({ count: 0 }), {
+  withActions: (state) => ({
+    increment: () => state.count++,
+    decrement: () => state.count--,
+  }),
+});
 
 function App() {
   const { count, increment, decrement } = useCounter();
@@ -118,56 +115,47 @@ function App() {
 
 ## Two Approaches, One Library
 
-| | 🟢 Vue Approach | 🔵 React Approach |
-|---|---------------|------------------|
-| **Best for** | Vue developers | React developers |
-| **APIs** | `ref`, `reactive`, `computed` | Plain objects + actions |
+|              | 🟢 Vue Approach                | 🔵 React Approach             |
+| ------------ | ------------------------------ | ----------------------------- |
+| **Best for** | Vue developers                 | React developers              |
+| **APIs**     | `ref`, `reactive`, `computed`  | Plain objects + actions       |
 | **Features** | Auto-computed, lifecycle hooks | Middleware: persist, DevTools |
-| **Use** | `createStore` | `createState` |
+| **Use**      | `createStore`                  | `createState`                 |
 
 ## Built-in Middleware
 
 ### 💾 Persistent State
 
 ```tsx
-const useSettings = createState(
-  () => ({ theme: "light", language: "en" }),
-  {
-    withPersist: "app-settings", // Auto-saves to localStorage
-    withActions: (state) => ({
-      setTheme: (theme) => state.theme = theme
-    })
-  }
-);
+const useSettings = createState(() => ({ theme: "light", language: "en" }), {
+  withPersist: "app-settings", // Auto-saves to localStorage
+  withActions: (state) => ({
+    setTheme: (theme) => (state.theme = theme),
+  }),
+});
 ```
 
 ### 🛠️ Redux DevTools
 
 ```tsx
-const useCounter = createState(
-  () => ({ count: 0 }),
-  {
-    withNamespace: "Counter", // Shows up in Redux DevTools
-    withActions: (state) => ({
-      increment: () => state.count++
-    })
-  }
-);
+const useCounter = createState(() => ({ count: 0 }), {
+  withNamespace: "Counter", // Shows up in Redux DevTools
+  withActions: (state) => ({
+    increment: () => state.count++,
+  }),
+});
 ```
 
 ### ⚡ Performance Options
 
 ```tsx
-const useStore = createState(
-  () => ({ nested: { count: 0 } }),
-  {
-    withDeepSelector: true,      // Track nested changes (default: true)
-    withStableSelector: false,   // Stable selector for performance
-    withActions: (state) => ({
-      increment: () => state.nested.count++
-    })
-  }
-);
+const useStore = createState(() => ({ nested: { count: 0 } }), {
+  withDeepSelector: true, // Track nested changes (default: true)
+  withStableSelector: false, // Stable selector for performance
+  withActions: (state) => ({
+    increment: () => state.nested.count++,
+  }),
+});
 ```
 
 ## Advanced Features
@@ -191,7 +179,7 @@ const Timer = createStoreWithComponent({
     });
 
     return { seconds };
-  }
+  },
 });
 
 function App() {
@@ -207,7 +195,7 @@ import { useReactiveState } from "reactivity-store";
 function TodoList() {
   const [state, setState] = useReactiveState({
     todos: [],
-    filter: "all"
+    filter: "all",
   });
 
   const addTodo = (text) => {
@@ -223,10 +211,7 @@ function TodoList() {
 ### State Subscriptions
 
 ```tsx
-const useCounter = createState(
-  () => ({ count: 0 }),
-  { withActions: (s) => ({ increment: () => s.count++ }) }
-);
+const useCounter = createState(() => ({ count: 0 }), { withActions: (s) => ({ increment: () => s.count++ }) });
 
 // Subscribe anywhere in your app
 useCounter.subscribe(
@@ -242,17 +227,18 @@ useCounter.subscribe(
 <td width="33%">
 
 **Traditional React**
-```tsx
-const [count, setCount] =
-  useState(0);
 
-setCount(prev => prev + 1);
+```tsx
+const [count, setCount] = useState(0);
+
+setCount((prev) => prev + 1);
 ```
 
 </td>
 <td width="33%">
 
 **RStore (Vue Approach)**
+
 ```tsx
 const count = ref(0);
 
@@ -263,13 +249,13 @@ count.value++;
 <td width="33%">
 
 **RStore (React Approach)**
+
 ```tsx
-const useCount = createState(
-  () => ({ count: 0 }),
-  { withActions: (s) => ({
-    increment: () => s.count++
-  })}
-);
+const useCount = createState(() => ({ count: 0 }), {
+  withActions: (s) => ({
+    increment: () => s.count++,
+  }),
+});
 ```
 
 </td>
@@ -278,13 +264,13 @@ const useCount = createState(
 
 ## API Overview
 
-| API | Purpose |
-|-----|---------|
-| `createStore` | Vue-style reactive stores with `ref()`, `reactive()`, `computed()` |
-| `createState` | React-style state with actions and middleware |
-| `createStoreWithComponent` | Component-scoped stores with lifecycle hooks |
-| `useReactiveState` | Component-local reactive state (like `useState` but reactive) |
-| `useReactiveEffect` | Side effects with automatic dependency tracking |
+| API                        | Purpose                                                            |
+| -------------------------- | ------------------------------------------------------------------ |
+| `createStore`              | Vue-style reactive stores with `ref()`, `reactive()`, `computed()` |
+| `createState`              | React-style state with actions and middleware                      |
+| `createStoreWithComponent` | Component-scoped stores with lifecycle hooks                       |
+| `useReactiveState`         | Component-local reactive state (like `useState` but reactive)      |
+| `useReactiveEffect`        | Side effects with automatic dependency tracking                    |
 
 ## Documentation
 

@@ -47,7 +47,7 @@ export function withLifeCycle<T extends Record<string, unknown>, P extends Recor
         lifeCycle = () => {
           lifeCycle(reactiveState);
           options(reactiveState);
-        }
+        };
       } else {
         lifeCycle = () => options(reactiveState);
       }
@@ -58,11 +58,11 @@ export function withLifeCycle<T extends Record<string, unknown>, P extends Recor
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,
         ["$$__lifeCycle__$$"]: lifeCycle,
-        ["$$__selectorOptions__$$"]: { ...selectorOptions, ...options },
+        ["$$__selectorOptions__$$"]: selectorOptions,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P>;
     },
     {
-      name: "withReactive",
+      name: "withLifeCycle",
     }
   );
 }

@@ -13,12 +13,12 @@ React's built-in state management works well for simple cases, but as applicatio
 const [user, setUser] = useState({ name: "", age: 0, address: { city: "" } });
 
 // Need to carefully spread objects to avoid mutation
-setUser(prev => ({
+setUser((prev) => ({
   ...prev,
   address: {
     ...prev.address,
-    city: "New York"
-  }
+    city: "New York",
+  },
 }));
 ```
 
@@ -26,8 +26,8 @@ setUser(prev => ({
 
 ```tsx
 // Need to carefully manage selectors and subscriptions
-const count = useStore(state => state.count);
-const increment = useStore(state => state.increment);
+const count = useStore((state) => state.count);
+const increment = useStore((state) => state.increment);
 ```
 
 ### ⚡ Performance Concerns
@@ -73,9 +73,12 @@ const useCart = createStore(() => {
   });
 
   // Automatically runs when total changes
-  watch(() => total.value, (newTotal) => {
-    console.log("New total:", newTotal);
-  });
+  watch(
+    () => total.value,
+    (newTotal) => {
+      console.log("New total:", newTotal);
+    }
+  );
 
   return { items, discount, total };
 });
@@ -89,15 +92,12 @@ RStore comes with useful middleware out of the box:
 import { createState, withPersist, withActions } from "reactivity-store";
 
 // Persist state to localStorage automatically
-const useSettings = createState(
-  () => ({ theme: "light", language: "en" }),
-  {
-    withPersist: "app-settings", // Auto-saves to localStorage
-    withActions: (state) => ({
-      toggleTheme: () => state.theme = state.theme === "light" ? "dark" : "light"
-    })
-  }
-);
+const useSettings = createState(() => ({ theme: "light", language: "en" }), {
+  withPersist: "app-settings", // Auto-saves to localStorage
+  withActions: (state) => ({
+    toggleTheme: () => (state.theme = state.theme === "light" ? "dark" : "light"),
+  }),
+});
 ```
 
 ## When to Use RStore
@@ -121,33 +121,33 @@ const useSettings = createState(
 
 ### vs. Redux
 
-| Feature | RStore | Redux |
-|---------|--------|-------|
-| Boilerplate | Minimal | High |
-| State mutations | Direct | Immutable updates |
-| Middleware | Built-in | Extensive ecosystem |
-| Learning curve | Low | High |
-| TypeScript | Excellent | Good |
+| Feature         | RStore    | Redux               |
+| --------------- | --------- | ------------------- |
+| Boilerplate     | Minimal   | High                |
+| State mutations | Direct    | Immutable updates   |
+| Middleware      | Built-in  | Extensive ecosystem |
+| Learning curve  | Low       | High                |
+| TypeScript      | Excellent | Good                |
 
 ### vs. Zustand
 
-| Feature | RStore | Zustand |
-|---------|--------|---------|
-| API style | Vue-like reactive | Functional |
-| Computed values | Built-in | Manual |
-| Nested updates | Direct mutation | Immutable updates |
-| Middleware | Built-in | Community |
-| Reactivity | Fine-grained | Selector-based |
+| Feature         | RStore            | Zustand           |
+| --------------- | ----------------- | ----------------- |
+| API style       | Vue-like reactive | Functional        |
+| Computed values | Built-in          | Manual            |
+| Nested updates  | Direct mutation   | Immutable updates |
+| Middleware      | Built-in          | Community         |
+| Reactivity      | Fine-grained      | Selector-based    |
 
 ### vs. MobX
 
-| Feature | RStore | MobX |
-|---------|--------|------|
-| Reactivity system | Vue | MobX |
-| Bundle size | ~20KB | ~15KB |
-| Decorators | No | Optional |
-| Ecosystem | Growing | Mature |
-| Learning curve | Low (if you know Vue) | Medium |
+| Feature           | RStore                | MobX     |
+| ----------------- | --------------------- | -------- |
+| Reactivity system | Vue                   | MobX     |
+| Bundle size       | ~20KB                 | ~15KB    |
+| Decorators        | No                    | Optional |
+| Ecosystem         | Growing               | Mature   |
+| Learning curve    | Low (if you know Vue) | Medium   |
 
 ## Real-World Use Cases
 
@@ -158,12 +158,12 @@ const useUserForm = createStore(() => {
   const form = reactive({
     personal: { name: "", email: "" },
     address: { street: "", city: "", zip: "" },
-    preferences: { newsletter: false, notifications: true }
+    preferences: { newsletter: false, notifications: true },
   });
 
   // No need for complex setState logic!
   const updateField = (path: string, value: any) => {
-    const keys = path.split('.');
+    const keys = path.split(".");
     let target = form;
     for (let i = 0; i < keys.length - 1; i++) {
       target = target[keys[i]];
@@ -182,9 +182,7 @@ const useCart = createStore(() => {
   const items = ref([]);
   const taxRate = ref(0.08);
 
-  const subtotal = computed(() =>
-    items.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  );
+  const subtotal = computed(() => items.value.reduce((sum, item) => sum + item.price * item.quantity, 0));
 
   const tax = computed(() => subtotal.value * taxRate.value);
   const total = computed(() => subtotal.value + tax.value);
@@ -200,16 +198,16 @@ const useTheme = createState(
   () => ({
     mode: "light",
     primaryColor: "#007bff",
-    fontSize: 16
+    fontSize: 16,
   }),
   {
     withPersist: "app-theme",
     withActions: (state) => ({
-      toggleMode: () => state.mode = state.mode === "light" ? "dark" : "light",
-      setPrimaryColor: (color: string) => state.primaryColor = color,
+      toggleMode: () => (state.mode = state.mode === "light" ? "dark" : "light"),
+      setPrimaryColor: (color: string) => (state.primaryColor = color),
       increaseFontSize: () => state.fontSize++,
-      decreaseFontSize: () => state.fontSize--
-    })
+      decreaseFontSize: () => state.fontSize--,
+    }),
   }
 );
 ```

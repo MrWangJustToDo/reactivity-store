@@ -54,7 +54,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
 
       const middleware = getFinalMiddleware(_initialState);
 
-      const auctions = getFinalActions(_initialState);
+      const actions = getFinalActions(_initialState);
 
       const lifeCycle = getFinalLifeCycle(_initialState);
 
@@ -97,7 +97,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             return {
               ["$$__state__$$"]: toRaw(initialState),
               ["$$__middleware__$$"]: middleware,
-              ["$$__actions__$$"]: auctions,
+              ["$$__actions__$$"]: actions,
               ["$$__lifeCycle__$$"]: lifeCycle,
               ["$$__namespace__$$"]: namespace,
               ["$$__selectorOptions__$$"]: selectorOptions,
@@ -134,7 +134,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
             const cache = { data: stringifyState, version: options.version || options.key };
 
             if (__DEV__ && options.devLog) {
-              console.log(`[reactivity-store/withPersist] state changed, try to cache newState: %o`, cache);
+              console.log(`[reactivity-store/withPersist] state changed, persisting new state: %o`, cache);
             }
 
             storage.setItem?.(storageKey, JSON.stringify(cache));
@@ -181,7 +181,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
         return {
           ["$$__state__$$"]: toRaw(re),
           ["$$__middleware__$$"]: middleware,
-          ["$$__actions__$$"]: auctions,
+          ["$$__actions__$$"]: actions,
           ["$$__lifeCycle__$$"]: lifeCycle,
           ["$$__namespace__$$"]: namespace,
           ["$$__selectorOptions__$$"]: selectorOptions,
@@ -190,7 +190,7 @@ export function withPersist<T extends Record<string, unknown>, P extends Record<
         return {
           ["$$__state__$$"]: toRaw(initialState),
           ["$$__middleware__$$"]: middleware,
-          ["$$__actions__$$"]: auctions,
+          ["$$__actions__$$"]: actions,
           ["$$__lifeCycle__$$"]: lifeCycle,
           ["$$__namespace__$$"]: namespace,
           ["$$__selectorOptions__$$"]: selectorOptions,

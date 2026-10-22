@@ -15,7 +15,17 @@ This API is recommended for **React developers** who want simpler state manageme
 **Signature:**
 
 ```ts
-function createState<T>(setup: () => T, options?: StateOptions<T>): UseState<T>;
+// Simplified signature. The hook also exposes methods like getState, getReactiveState, etc.
+function createState<T extends Record<string, unknown>>(
+  setup: () => T,
+  options?: {
+    withActions?: (state: T) => Record<string, Function>;
+    withPersist?: string | WithPersistProps<T>;
+    withNamespace?: string | WithNamespaceProps<T>;
+    withDeepSelector?: boolean;
+    withStableSelector?: boolean;
+  }
+): UseSelectorWithState<T, {}>;
 ```
 
 ## Basic Usage
@@ -330,13 +340,14 @@ useCounter.getReactiveState().count++; // Use sparingly!
 But this bypasses type safety and DevTools tracking. Prefer using actions!
 :::
 
-<!-- ## Live Demos
+## Live Demos
 
 <script setup>
   import Create from '@theme/components/createState.vue'
   import CreateStorageMiddleware from '@theme/components/createStateWithStorageMiddleware.vue'
   import CreateActionsMiddleware from '@theme/components/createStateWithActionsMiddleware.vue'
   import CreateAllMiddleware from '@theme/components/createStateWithAllMiddleware.vue'
+  import CreateDeepSelectorMiddleware from '@theme/components/createStateWithDeepSelectorMiddleware.vue'
 </script>
 
 ### Basic Example
@@ -349,7 +360,10 @@ But this bypasses type safety and DevTools tracking. Prefer using actions!
 <CreateActionsMiddleware />
 
 ### All Middleware Combined
-<CreateAllMiddleware /> -->
+<CreateAllMiddleware />
+
+### With / Without Deep Selector
+<CreateDeepSelectorMiddleware />
 
 ## Next Steps
 

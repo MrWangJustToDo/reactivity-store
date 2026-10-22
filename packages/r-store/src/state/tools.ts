@@ -348,7 +348,7 @@ export function createMiddleware<T>(setup: Setup<any>, options: { name: string }
     const selectorOptions = getFinalSelectorOptions(state);
 
     if (__DEV__ && middleware[options.name]) {
-      console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is a unexpected usage`);
+      console.warn(`[reactivity-store/middleware] you are using multiple of the '${options.name}' middleware, this is an unexpected usage`);
     }
 
     if (__DEV__ && !checkMiddlewareValid(state)) {

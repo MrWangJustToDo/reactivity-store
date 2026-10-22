@@ -5,12 +5,15 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 const divRef = ref<HTMLElement | null>(null);
 
-// const useCountState = createState(withPersist(withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) }), { key: 'foo' }));
-
 const useCountState = createState(
-  withNamespace(
-    withActions(() => ({ data: { count: 1 } }), { generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }) }),
-    { namespace: "foo1", reduxDevTool: true }
+  withPersist(
+    withNamespace(
+      withActions(() => ({ data: { count: 1 } }), {
+        generateActions: (state) => ({ add: () => state.data.count++, del: () => state.data.count-- }),
+      }),
+      { namespace: "foo1", reduxDevTool: true }
+    ),
+    { key: "foo" }
   )
 );
 

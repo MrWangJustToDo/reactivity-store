@@ -32,7 +32,10 @@ export const useReactiveState = <T extends Record<string, unknown>>(initialState
     [useSelector]
   );
 
-  useEffect(() => () => !(__DEV__) && useSelector.clear(), [useSelector]);
+  // In production, stop all controllers on unmount to release resources.
+  // In development we skip cleanup because React StrictMode double-invokes effects
+  // (mount -> unmount -> mount), which would otherwise destroy a freshly mounted store.
+  useEffect(() => () => !__DEV__ && useSelector.clear(), [useSelector]);
 
   // make the state can be used in the `useReactiveEffect` hook
   // use getReactiveState to make effect can track deps

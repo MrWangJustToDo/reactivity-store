@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { reactive, toRaw } from "@vue/reactivity";
 
-import {
-  createMiddleware,
-  getFinalActions,
-  getFinalSelectorOptions,
-  getFinalMiddleware,
-  getFinalNamespace,
-  getFinalState,
-  getFinalLifeCycle,
-} from "../tools";
+import { createMiddleware, getFinalActions, getFinalSelectorOptions, getFinalMiddleware, getFinalNamespace, getFinalState, getFinalLifeCycle } from "../tools";
 
 import type { Setup } from "../createState";
 import type { MaybeStateWithMiddleware, UnWrapMiddleware, WithActionsProps, StateWithMiddleware } from "../tools";
@@ -66,14 +58,14 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         Object.keys(initialState).forEach((key) => {
           if (allActions[key]) {
             console.error(
-              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'setup' and 'generateAction' returned value, this is a unexpected behavior.`
+              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'setup' and 'generateActions' returned value, this is an unexpected behavior.`
             );
           }
         });
         Object.keys(allActions).forEach((key) => {
           if (typeof allActions[key] !== "function") {
             console.error(
-              `[reactivity-store/actions] the value[${key}] return from 'generateActions' should be a function, but current is ${allActions[key]} in %o`,
+              `[reactivity-store/actions] the value [${key}] returned from 'generateActions' should be a function, but current is ${allActions[key]} in %o`,
               allActions
             );
           }
@@ -81,7 +73,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         Object.keys(actions).forEach((key) => {
           if (allActions[key]) {
             console.error(
-              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'action' return from 'withActions', this is a unexpected behavior.`
+              `[reactivity-store/actions] there are duplicate key: [${key}] in the 'action' returned from 'withActions', this is an unexpected behavior.`
             );
           }
         });
@@ -92,7 +84,7 @@ export function withActions<T extends Record<string, unknown>, P extends Record<
         ["$$__actions__$$"]: { ...actions, ...batchActions },
         ["$$__middleware__$$"]: middleware,
         ["$$__namespace__$$"]: namespace,
-        ['$$__lifeCycle__$$']: lifeCycle,
+        ["$$__lifeCycle__$$"]: lifeCycle,
         ["$$__selectorOptions__$$"]: selectorOptions,
       } as StateWithMiddleware<UnWrapMiddleware<T>, P & L>;
     },

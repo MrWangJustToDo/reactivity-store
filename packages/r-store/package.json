@@ -1,6 +1,6 @@
 {
   "name": "reactivity-store",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "MrWangJustToDo",
   "license": "MIT",
   "description": "a reactive store, make you write reactive logic in react app just like zustand",
@@ -104,8 +104,8 @@
     "state-management, reactive, vue, react, octane"
   ],
   "dependencies": {
-    "@vue/reactivity": "~3.5.40",
-    "@vue/shared": "~3.5.40"
+    "@vue/reactivity": "~3.5.44",
+    "@vue/shared": "~3.5.44"
   },
   "peerDependencies": {
     "octane": ">=0.1.36 <0.2.0",

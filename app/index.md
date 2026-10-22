@@ -14,7 +14,7 @@ hero:
       link: /createStore
     - theme: alt
       text: View on GitHub
-      link: https://github.com/MrWangJustToDo/r-store
+      link: https://github.com/MrWangJustToDo/reactivity-store
 
 features:
   - icon: ⚡
@@ -41,6 +41,10 @@ features:
 
 RStore adapts to your background:
 
+::: tip 🤖 Using an AI coding assistant?
+If you're integrating `reactivity-store` with an AI agent, read the concise [AI Guide](/ai) — it covers capabilities, recommended usage, and common pitfalls. The site also exposes a machine-readable [`llms.txt`](/llms.txt) index for AI tools.
+:::
+
 ::: code-group
 
 ```tsx [🟢 Vue Approach] twoslash
@@ -66,14 +70,11 @@ import React from "react";
 import { createState } from "reactivity-store";
 
 // Use actions - no Vue APIs needed
-const useCounter = createState(
-  () => ({ count: 0 }),
-  {
-    withActions: (state) => ({
-      increment: () => state.count++
-    })
-  }
-);
+const useCounter = createState(() => ({ count: 0 }), {
+  withActions: (state) => ({
+    increment: () => state.count++,
+  }),
+});
 
 function App() {
   const { count, increment } = useCounter();
@@ -85,12 +86,12 @@ function App() {
 
 ### Choose Your Path
 
-| | Vue Approach | React Approach |
-|---|--------------|----------------|
-| **Best for** | Vue developers | React developers |
-| **APIs** | `ref`, `reactive`, `computed` | Plain objects + actions |
-| **Features** | Auto-computed, lifecycle hooks | Middleware: persist, DevTools |
-| **Learn more** | [createStore](/createStore) | [createState](/createState) |
+|                | Vue Approach                   | React Approach                |
+| -------------- | ------------------------------ | ----------------------------- |
+| **Best for**   | Vue developers                 | React developers              |
+| **APIs**       | `ref`, `reactive`, `computed`  | Plain objects + actions       |
+| **Features**   | Auto-computed, lifecycle hooks | Middleware: persist, DevTools |
+| **Learn more** | [createStore](/createStore)    | [createState](/createState)   |
 
 ---
 
@@ -101,7 +102,7 @@ function App() {
   <a href="https://www.npmjs.com/package/reactivity-store" target="_blank" rel="noopener">
     <img src="https://img.shields.io/npm/v/reactivity-store?style=flat&logo=npm&label=version&color=green" alt="npm version" style="display: inline-block; margin: 0 0.5rem;" />
   </a>
-  <a href="https://github.com/MrWangJustToDo/r-store" target="_blank" rel="noopener">
-    <img src="https://img.shields.io/github/stars/MrWangJustToDo/r-store?style=flat&logo=github&label=stars&color=yellow" alt="GitHub stars" style="display: inline-block; margin: 0 0.5rem;" />
+  <a href="https://github.com/MrWangJustToDo/reactivity-store" target="_blank" rel="noopener">
+    <img src="https://img.shields.io/github/stars/MrWangJustToDo/reactivity-store?style=flat&logo=github&label=stars&color=yellow" alt="GitHub stars" style="display: inline-block; margin: 0 0.5rem;" />
   </a>
 </div>
