@@ -34,6 +34,29 @@ npm install reactivity-store
 pnpm add reactivity-store
 ```
 
+### Octane
+
+Octane applications use the framework-specific entry point. It exposes the
+same `createStore` selector API and Vue reactivity primitives without loading
+React or `use-sync-external-store`.
+
+```tsrx
+import { createStore, ref } from "reactivity-store/octane";
+
+const useCounter = createStore(() => {
+  const count = ref(0);
+  return { count, increment: () => count.value++ };
+});
+
+function Counter() @{
+  const { count, increment } = useCounter();
+  <button onClick={increment}>{`Count: ${count}`}</button>
+}
+```
+
+The Octane entry currently supports `createStore`; React-only component and
+middleware APIs remain available from the default `reactivity-store` entry.
+
 ## Quick Start
 
 ### 🟢 Vue Approach
